@@ -5,10 +5,6 @@ import java.util.ArrayList;
 
 public class DataBase {
 
-  private OyenteInformacionAlmacenada oyenteInformacionAlmacenada;
-  private OyenteInformacionEliminada oyenteInformacionEliminada;
-  private OyenteInformacionBuscadaLocalmente oyenteInformacionBuscadaLocalmente;
-
   private Connection connection;
   Statement statement;
 
@@ -33,18 +29,6 @@ public class DataBase {
     } catch (SQLException e) {
       System.out.println(e.getMessage());
     }
-  }
-
-  public void setOyenteInformacionAlmacenada(OyenteInformacionAlmacenada oyenteInformacionAlmacenada){
-    this.oyenteInformacionAlmacenada = oyenteInformacionAlmacenada;
-  }
-
-  public void setOyenteInformacionEliminada(OyenteInformacionEliminada oyenteInformacionEliminada){
-    this.oyenteInformacionEliminada = oyenteInformacionEliminada;
-  }
-
-  public void setOyenteInformacionBuscadaLocalmente(OyenteInformacionBuscadaLocalmente oyenteInformacionBuscadaLocalmente) {
-    this.oyenteInformacionBuscadaLocalmente = oyenteInformacionBuscadaLocalmente;
   }
 
   public static void testDB()
@@ -130,47 +114,11 @@ public class DataBase {
     }
   }
 
-  void notificarNuevaInformacionRegistrada(){
-    oyenteInformacionAlmacenada.notificacionNuevaInformacionRegistrada();
-  }
-
   public /*static*/ void saveInfo(String title, String extract)
   {
-    /*Connection connection = null;
-    try
-    {
-      // create a database connection
-      connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
-
-      Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);  // set timeout to 30 sec.
-
-      System.out.println("INSERT  " + title + "', '"+ extract);
-
-      statement.executeUpdate("replace into catalog values(null, '"+ title + "', '"+ extract + "', 1)");
-
-      notificarNuevaInformacionRegistrada();
-    }
-    catch(SQLException e)
-    {
-      System.err.println("Error saving " + e.getMessage());
-    }
-    finally
-    {
-      try
-      {
-        if(connection != null)
-          connection.close();
-      }
-      catch(SQLException e)
-      {
-        // connection close failed.
-        System.err.println( e);
-      }
-    }*/
     initConnectionDataBase();
     guardarInformacionLocalmente(title,extract);
-    notificarNuevaInformacionRegistrada();
+    //notificarNuevaInformacionRegistrada();
     closeConnectionDataBase();
   }
 
@@ -187,7 +135,6 @@ public class DataBase {
 
       ResultSet rs = statement.executeQuery("select * from catalog WHERE title = '" + title + "'" );
       rs.next();
-      oyenteInformacionBuscadaLocalmente.notificacionInformacionBuscadaLocalmente(rs.getString("extract"));
       return rs.getString("extract");
     }
     catch(SQLException e)
@@ -225,7 +172,6 @@ public class DataBase {
 
       statement.executeUpdate("DELETE FROM catalog WHERE title = '" + title + "'" );
 
-      oyenteInformacionEliminada.notificacionInformacionEliminada();
     }
     catch(SQLException e)
     {

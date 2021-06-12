@@ -22,10 +22,8 @@ public class MainWindow {
   private JTextPane textPane2;
   private JButton deleteButton;
 
-  PresentadorRealizarBusquedas presentadorRealizarBusquedas;
-  PresentadorGuardarLocalmente presentadorGuardarLocalmente;
-  PresentadorEliminarInformacionLocalmente presentadorEliminarInformacionLocalmente;
-  PresentadorRecuperarInformacionLocalmente presentadorRecuperarInformacionLocalmente;
+  PresentadorBusquedasEnWikipedia presentadorBusquedasEnWikipedia;
+  PresentadorGestionDeInformacionLocal presentadorGestionDeInformacionLocal;
 
   String searchResultTitle = null; //For storage purposes, se below that it may not coincide with the searched term
   String text = ""; //Last searched text! this variable is central for everything
@@ -47,7 +45,7 @@ public class MainWindow {
         new Thread(new Runnable() {
           @Override
           public void run() {
-            presentadorRealizarBusquedas.notificacionNuevaBusqueda();
+            presentadorBusquedasEnWikipedia.notificacionRealizarNuevaBusqueda();
           }
         }).start();
       }
@@ -56,21 +54,21 @@ public class MainWindow {
     saveLocallyButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        presentadorGuardarLocalmente.notificacionGuardarInformacionLocalmente();
+        presentadorBusquedasEnWikipedia.notificacionGuardarBusquedaLocalmente();
       }
     });
 
     comboBox1.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        presentadorRecuperarInformacionLocalmente.notificacionBuscarInformacionLocalmente();
+        presentadorGestionDeInformacionLocal.notificacionBuscarInformacionLocalmente();
       }
     });
 
     deleteButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        presentadorEliminarInformacionLocalmente.notificacionEliminarBusquedaLocal();
+        presentadorGestionDeInformacionLocal.notificacionEliminarInformacionLocal();
       }
     });
   }
@@ -84,17 +82,17 @@ public class MainWindow {
   }
 
   private void inicializarPresentadores(){
-    presentadorRealizarBusquedas = new ImplementacionPresentadorRealizarBusquedas();
-    presentadorRealizarBusquedas.setVista(this);
+    presentadorBusquedasEnWikipedia = new ImplementacionPresentadorBusquedasEnWikipedia();
+    presentadorBusquedasEnWikipedia.setVista(this);
 
-    presentadorGuardarLocalmente = new ImplementacionPresentadorGuardarLocalmente();
-    presentadorGuardarLocalmente.setVista(this);
+    presentadorGestionDeInformacionLocal = new ImplementacionPresentadorGestionDeInformacionLocal();
+    presentadorGestionDeInformacionLocal.setVista(this);
 
-    presentadorEliminarInformacionLocalmente = new ImplementacionPresentadorEliminarInformacionLocal();
+    /*presentadorEliminarInformacionLocalmente = new ImplementacionPresentadorEliminarInformacionLocal();
     presentadorEliminarInformacionLocalmente.setVista(this);
 
     presentadorRecuperarInformacionLocalmente = new ImplementacionPresentadorRecuperarInformacionLocalmente();
-    presentadorRecuperarInformacionLocalmente.setVista(this);
+    presentadorRecuperarInformacionLocalmente.setVista(this);*/
   }
 
   public void setWorkingStatus() {

@@ -1,10 +1,8 @@
-package dyds.catalog.alpha.fulllogic.presentador;
+package dyds.catalog.alpha.fulllogic.modelo;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dyds.catalog.alpha.fulllogic.modelo.WikipediaPageAPI;
-import dyds.catalog.alpha.fulllogic.modelo.WikipediaSearchAPI;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -21,16 +19,15 @@ public class ImplementadorBuscadorEnWikipedia implements BuscadorEnWikipedia{
     String searchResultTitle = null; //For storage purposes, se below that it may not coincide with the searched term
     String text = ""; //Last searched text! this variable is central for everything
 
-
     private Retrofit retrofit;
     private WikipediaSearchAPI searchAPI ;
     private WikipediaPageAPI pageAPI ;
 
     public ImplementadorBuscadorEnWikipedia(){
-        inicializarValoresBuscador();
+        inicializarBuscador();
     }
 
-    private void inicializarValoresBuscador(){
+    private void inicializarBuscador(){
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://en.wikipedia.org/w/")
                 .addConverterFactory(ScalarsConverterFactory.create())
@@ -41,15 +38,8 @@ public class ImplementadorBuscadorEnWikipedia implements BuscadorEnWikipedia{
     }
 
     public void realizarNuevaBusqueda(String terminoDeBusqueda) {
-
-        /*new Thread(new Runnable() {
-            @Override public void run() {*/
-                //This may take some time, dear user be patient in the meanwhile!
-                // get from service
-
-                //setWorkingStatus(); //Queda a cargo del presentador.
-                Response<String> callResponse;
-                try {
+        Response<String> callResponse;
+            try {
                     //First, lets search for the term in Wikipedia
                     callResponse = searchAPI.searchForTerm(terminoDeBusqueda + " articletopic:\"video-games\"").execute();
 
@@ -99,22 +89,12 @@ public class ImplementadorBuscadorEnWikipedia implements BuscadorEnWikipedia{
                     e1.printStackTrace();
                 }
 
-                // textPane1.setText(text); esta instruccion queda para otro metodo
-
-                //Now you can keep searching stuff!
-                //setWatingStatus(); //esto tambien lo saque porque no entiendo bien que hace
-          /*  }
-
-        }).start();*/
-
-
     }
 
     @Override
     public String getTituloUltimaBusqueda() {
         return searchResultTitle;
     }
-
     @Override
     public String getInformacionUltimaBusqueda() {
         return text;

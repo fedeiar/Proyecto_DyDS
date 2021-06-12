@@ -1,4 +1,4 @@
-package dyds.catalog.alpha.fulllogic.presentador;
+package dyds.catalog.alpha.fulllogic.modelo;
 
 import dyds.catalog.alpha.fulllogic.vista.MainWindow;
 
