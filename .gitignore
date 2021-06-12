@@ -35,3 +35,7 @@ build/
 *.iml
 *.iws
 *.ipr
+
+# VSCode files
+
+.vscode/
