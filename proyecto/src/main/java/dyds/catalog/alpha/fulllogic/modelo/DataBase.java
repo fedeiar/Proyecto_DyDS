@@ -31,8 +31,7 @@ public class DataBase {
     }
   }
 
-  public static void testDB()
-  {
+  public static void testDB() {
 
     Connection connection = null;
     try
@@ -78,157 +77,79 @@ public class DataBase {
     }
   }
 
-  public static ArrayList<String> getTitles()
-  {
-    ArrayList<String> titles = new ArrayList<>();
-    Connection connection = null;
-    try
-    {
-      // create a database connection
-      connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
-      Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);  // set timeout to 30 sec.
-
-      ResultSet rs = statement.executeQuery("select * from catalog");
-      while(rs.next()) titles.add(rs.getString("title"));
-    }
-    catch(SQLException e)
-    {
-      // if the error message is "out of memory",
-      // it probably means no database file is found
-      System.err.println(e.getMessage());
-    }
-    finally
-    {
-      try
-      {
-        if(connection != null)
-          connection.close();
-      }
-      catch(SQLException e)
-      {
-        // connection close failed.
-        System.err.println(e);
-      }
-      return titles;
-    }
-  }
-
-  public /*static*/ void saveInfo(String title, String extract)
-  {
-    initConnectionDataBase();
-    guardarInformacionLocalmente(title,extract);
-    //notificarNuevaInformacionRegistrada();
-    closeConnectionDataBase();
-  }
-
-  public /*static*/ String getExtract(String title)
-  {
-
-    Connection connection = null;
-    try
-    {
-      // create a database connection
-      connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
-      Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);  // set timeout to 30 sec.
-
-      ResultSet rs = statement.executeQuery("select * from catalog WHERE title = '" + title + "'" );
-      rs.next();
-      return rs.getString("extract");
-    }
-    catch(SQLException e)
-    {
-      // if the error message is "out of memory",
-      // it probably means no database file is found
-      System.err.println("Get title error " + e.getMessage());
-    }
-    finally
-    {
-      try
-      {
-        if(connection != null)
-          connection.close();
-      }
-      catch(SQLException e)
-      {
-        // connection close failed.
-        System.err.println(e);
-      }
-    }
-    return null;
-  }
-
-  public /*static*/ void deleteEntry(String title)
-  {
-
-    Connection connection = null;
-    try
-    {
-      // create a database connection
-      connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
-      Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);  // set timeout to 30 sec.
-
-      statement.executeUpdate("DELETE FROM catalog WHERE title = '" + title + "'" );
-
-    }
-    catch(SQLException e)
-    {
-      // if the error message is "out of memory",
-      // it probably means no database file is found
-      System.err.println("Get title error " + e.getMessage());
-    }
-    finally
-    {
-      try
-      {
-        if(connection != null)
-          connection.close();
-      }
-      catch(SQLException e)
-      {
-        // connection close failed.
-        System.err.println(e);
-      }
-    }
-  }
-
-  private void initConnectionDataBase(){
+  public ArrayList<String> getTitles() {
+    ArrayList<String> titulosRecuperados = null;
     try {
-      connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
+      initConnectionDataBase();
+      titulosRecuperados = recuperarTitulos();
+      closeConnectionDataBase();
+    }
+    catch (SQLException e) {
+      System.err.println("error in titles" + e.getMessage());
+    }
+    return titulosRecuperados;
+  }
 
+  public void saveInfo(String title, String extract) {
+    try {
+      initConnectionDataBase();
+      guardarInformacion(title, extract);
+      closeConnectionDataBase();
+    }
+    catch(SQLException e) {
+      System.out.println("Error in saveinfo " + e.getMessage());
+    }
+  }
+
+  public String getExtract(String title) {
+    String informacionRecuperada = "";
+    try {
+      initConnectionDataBase();
+      informacionRecuperada = recuperarInformacion(title);
+      closeConnectionDataBase();
+    }
+    catch(SQLException e){
+      System.err.println("Get title error " + e.getMessage());
+    }
+    return informacionRecuperada;
+  }
+
+  public void deleteEntry(String title) {
+    try {
+      initConnectionDataBase();
+      eliminarInformacion(title);
+      closeConnectionDataBase();
+    }
+    catch(SQLException e){
+      System.err.println("Get title error " + e.getMessage());
+    }
+  }
+
+  private void initConnectionDataBase() throws SQLException{
+      connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
       statement = connection.createStatement();
       statement.setQueryTimeout(30);  // set timeout to 30 sec.
-    }
-    catch(SQLException e)
-    {
-      System.err.println("Error en la conexion: " + e.getMessage());
-    }
   }
-
-  private void closeConnectionDataBase(){
-    try
-    {
+  private void closeConnectionDataBase() throws SQLException{
       if(connection != null)
         connection.close();
-    }
-    catch(SQLException e)
-    {
-      // connection close failed.
-      System.err.println( e);
-    }
   }
 
-  private void guardarInformacionLocalmente(String title, String extract){
-    try
-    {
+  private void guardarInformacion(String title, String extract) throws SQLException{
       statement.executeUpdate("replace into catalog values(null, '"+ title + "', '"+ extract + "', 1)");
-    }
-    catch(SQLException e)
-    {
-      // connection close failed.
-      System.err.println( e);
-    }
+  }
+  private String recuperarInformacion(String title) throws SQLException{
+    ResultSet rs = statement.executeQuery("select * from catalog WHERE title = '" + title + "'" );
+    rs.next();
+    return rs.getString("extract");
+  }
+  private void eliminarInformacion(String title) throws SQLException{
+    statement.executeUpdate("DELETE FROM catalog WHERE title = '" + title + "'" );
+  }
+  private ArrayList<String> recuperarTitulos() throws SQLException {
+    ArrayList<String> titles = new ArrayList<>();
+    ResultSet rs = statement.executeQuery("select * from catalog");
+    while(rs.next()) titles.add(rs.getString("title"));
+    return titles;
   }
 }

@@ -21,6 +21,7 @@ public class MainWindow {
   private JComboBox comboBox1;
   private JTextPane textPane2;
   private JButton deleteButton;
+  DataBase database;
 
   PresentadorBusquedasEnWikipedia presentadorBusquedasEnWikipedia;
   PresentadorGestionDeInformacionLocal presentadorGestionDeInformacionLocal;
@@ -29,9 +30,10 @@ public class MainWindow {
   String text = ""; //Last searched text! this variable is central for everything
 
   public MainWindow() {
+    database = new DataBase();
     inicializarPresentadores();
 
-    comboBox1.setModel(new DefaultComboBoxModel(DataBase.getTitles().stream().sorted().toArray()));
+    comboBox1.setModel(new DefaultComboBoxModel(database.getTitles().stream().sorted().toArray()));
 
     textPane1.setContentType("text/html");
     textPane2.setContentType("text/html");
@@ -73,14 +75,6 @@ public class MainWindow {
     });
   }
 
-  public int getSelectedIndex() {
-    return comboBox1.getSelectedIndex();
-  }
-
-  public String getSelectedItem() {
-    return comboBox1.getSelectedItem().toString();
-  }
-
   private void inicializarPresentadores(){
     presentadorBusquedasEnWikipedia = new ImplementacionPresentadorBusquedasEnWikipedia();
     presentadorBusquedasEnWikipedia.setVista(this);
@@ -93,6 +87,14 @@ public class MainWindow {
 
     presentadorRecuperarInformacionLocalmente = new ImplementacionPresentadorRecuperarInformacionLocalmente();
     presentadorRecuperarInformacionLocalmente.setVista(this);*/
+  }
+
+  public int getSelectedIndex() {
+    return comboBox1.getSelectedIndex();
+  }
+
+  public String getSelectedItem() {
+    return comboBox1.getSelectedItem().toString();
   }
 
   public void setWorkingStatus() {
