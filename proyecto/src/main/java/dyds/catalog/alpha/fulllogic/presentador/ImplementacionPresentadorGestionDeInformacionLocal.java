@@ -5,8 +5,8 @@ import dyds.catalog.alpha.fulllogic.vista.MainWindow;
 
 import javax.swing.*;
 
-public class ImplementacionPresentadorGestionDeInformacionLocal implements PresentadorGestionDeInformacionLocal{
-    Modelo modelo;
+public class ImplementacionPresentadorGestionDeInformacionLocal implements LocalInformationPresenter{
+    VideoGameInfoModel modelo;
     private MainWindow vista;
 
     public ImplementacionPresentadorGestionDeInformacionLocal(){
@@ -14,8 +14,8 @@ public class ImplementacionPresentadorGestionDeInformacionLocal implements Prese
     }
 
     private void inicializarRecursosPresentador(){
-        modelo = new ImplementacionModelo();
-        modelo.setOyenteGestionDeInformacionLocal(new OyenteGestionDeInformacionLocal() {
+        modelo = new VideoGameInfoModelImpl();
+        modelo.setOyenteGestionDeInformacionLocal(new LocalInformationListener() {
             public void notificarInformacionBuscadaLocalmente() {
                 vista.setInformacionBuscadaLocalmente(modelo.getUltimaBusquedaLocal());
             }

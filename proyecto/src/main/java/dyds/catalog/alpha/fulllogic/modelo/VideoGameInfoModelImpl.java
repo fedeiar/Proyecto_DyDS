@@ -1,16 +1,21 @@
 package dyds.catalog.alpha.fulllogic.modelo;
 
-public class ImplementacionModelo implements Modelo{
-    private BuscadorEnWikipedia buscadorEnWikipedia;
+import dyds.catalog.alpha.fulllogic.modelo.repositorio.*;
+
+public class VideoGameInfoModelImpl implements VideoGameInfoModel{
+
+    private WikipediaSearcher buscadorEnWikipedia;
     private DataBase dataBase;
 
-    private OyenteBusquedasEnWikipedia oyenteBusquedasEnWikipedia;
-    private OyenteGestionDeInformacionLocal oyenteGestionDeInformacionLocal;
+    private WikipediaInfoListener oyenteBusquedasEnWikipedia;
+    private LocalInformationListener oyenteGestionDeInformacionLocal;
 
     private String ultimaBusquedaLocal;
+    private String ultimaBusquedaEnWikipedia;
 
-    public ImplementacionModelo(){
-        inicializarRecursosModelo();
+    public VideoGameInfoModelImpl(){
+        buscadorEnWikipedia = new WikipediaSearcherImpl();
+        dataBase = DataBaseImplementation.getInstance();
     }
 
     @Override
@@ -36,17 +41,17 @@ public class ImplementacionModelo implements Modelo{
         return buscadorEnWikipedia.getTituloUltimaBusqueda();
     }
 
-    public void setOyenteGestionDeInformacion(OyenteBusquedasEnWikipedia oyenteBusquedasEnWikipedia){
+    public void setOyenteGestionDeInformacion(WikipediaInfoListener oyenteBusquedasEnWikipedia){
         this.oyenteBusquedasEnWikipedia = oyenteBusquedasEnWikipedia;
     }
 
-    public void setOyenteGestionDeInformacionLocal(OyenteGestionDeInformacionLocal oyenteGestionDeInformacionLocal){
+    public void setOyenteGestionDeInformacionLocal(LocalInformationListener oyenteGestionDeInformacionLocal){
         this.oyenteGestionDeInformacionLocal = oyenteGestionDeInformacionLocal;
     }
 
     public Object[] getTotalTitulosRegistrados(){
         return dataBase.getTitles().stream().sorted().toArray();
-    };
+    }
 
     public void realizarBusquedaLocal(String terminoDeBusqueda) {
         ultimaBusquedaLocal = dataBase.getExtract(terminoDeBusqueda);
@@ -60,11 +65,7 @@ public class ImplementacionModelo implements Modelo{
     public void eliminarInformacionLocalmente(String terminoDeBusqueda){
         dataBase.deleteEntry(terminoDeBusqueda);
         oyenteGestionDeInformacionLocal.notificarInformacionEliminada();
-    };
-
-    private void inicializarRecursosModelo() {
-        buscadorEnWikipedia = new ImplementadorBuscadorEnWikipedia();
-        dataBase = new DataBase();
-
     }
+
+    
 }

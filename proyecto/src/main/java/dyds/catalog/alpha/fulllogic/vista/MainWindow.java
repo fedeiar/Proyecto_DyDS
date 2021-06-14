@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import dyds.catalog.alpha.fulllogic.modelo.DataBase;
+import dyds.catalog.alpha.fulllogic.modelo.repositorio.*;
 import dyds.catalog.alpha.fulllogic.presentador.*;
 
 public class MainWindow {
@@ -21,19 +21,20 @@ public class MainWindow {
   private JComboBox comboBox1;
   private JTextPane textPane2;
   private JButton deleteButton;
-  DataBase database;
 
-  PresentadorBusquedasEnWikipedia presentadorBusquedasEnWikipedia;
-  PresentadorGestionDeInformacionLocal presentadorGestionDeInformacionLocal;
+  private DataBase dataBase;
+
+  WikipediaSearchPresenter presentadorBusquedasEnWikipedia;
+  LocalInformationPresenter presentadorGestionDeInformacionLocal;
 
   String searchResultTitle = null; //For storage purposes, se below that it may not coincide with the searched term
   String text = ""; //Last searched text! this variable is central for everything
 
   public MainWindow() {
-    database = new DataBase();
+    dataBase = DataBaseImplementation.getInstance();
     inicializarPresentadores();
 
-    comboBox1.setModel(new DefaultComboBoxModel(database.getTitles().stream().sorted().toArray()));
+    comboBox1.setModel(new DefaultComboBoxModel(dataBase.getTitles().stream().sorted().toArray()));
 
     textPane1.setContentType("text/html");
     textPane2.setContentType("text/html");
@@ -140,7 +141,7 @@ public class MainWindow {
 
   public static void main(String[] args) {
 
-    DataBase.loadDatabase();
+    DataBaseImplementation.getInstance().loadDatabase();;
 
     JFrame frame = new JFrame("Video Game Info Catalog");
     frame.setContentPane(new MainWindow().contentPane);

@@ -5,17 +5,17 @@ import dyds.catalog.alpha.fulllogic.vista.MainWindow;
 
 import javax.swing.*;
 
-public class ImplementacionPresentadorBusquedasEnWikipedia implements PresentadorBusquedasEnWikipedia {
+public class ImplementacionPresentadorBusquedasEnWikipedia implements WikipediaSearchPresenter {
     MainWindow vista;
-    Modelo modelo;
+    VideoGameInfoModel modelo;
 
     public ImplementacionPresentadorBusquedasEnWikipedia() {
         inicializarModelo();
     }
 
     private void inicializarModelo(){
-        modelo = new ImplementacionModelo();
-        modelo.setOyenteGestionDeInformacion(new OyenteBusquedasEnWikipedia() {
+        modelo = new VideoGameInfoModelImpl();
+        modelo.setOyenteGestionDeInformacion(new WikipediaInfoListener() {
 
             public void notificarInformacionBuscada() {
                 vista.setUltimaBusquedaEfectuada(modelo.getInformacionUltimaBusqueda());
