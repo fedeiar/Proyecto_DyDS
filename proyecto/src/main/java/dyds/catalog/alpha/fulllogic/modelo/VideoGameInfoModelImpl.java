@@ -2,6 +2,8 @@ package dyds.catalog.alpha.fulllogic.modelo;
 
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.*;
 
+import static dyds.catalog.alpha.fulllogic.utils.Utilidades.textToHtml;
+
 public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     private WikipediaSearcher buscadorEnWikipedia;
@@ -11,7 +13,9 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private LocalInformationListener oyenteGestionDeInformacionLocal;
 
     private String ultimaBusquedaLocal;
+
     private String ultimaBusquedaEnWikipedia;
+    private String tituloUltimaBusquedaEnWikipedia;
 
     public VideoGameInfoModelImpl(){
         buscadorEnWikipedia = new WikipediaSearcherImpl();
@@ -20,7 +24,10 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     @Override
     public void realizarBusquedaEnWikipedia(String terminoDeBusqueda) {
-        buscadorEnWikipedia.realizarNuevaBusqueda(terminoDeBusqueda);
+        ultimaBusquedaEnWikipedia = buscadorEnWikipedia.realizarNuevaBusqueda(terminoDeBusqueda);
+        tituloUltimaBusquedaEnWikipedia = buscadorEnWikipedia.getTituloUltimaBusqueda();
+        formatearDatos(ultimaBusquedaEnWikipedia, terminoDeBusqueda);
+        //dar formato a los resultados de la busqueda?
         oyenteBusquedasEnWikipedia.notificarInformacionBuscada();
     }
 
@@ -35,10 +42,12 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     }
 
     public String getInformacionUltimaBusqueda() {
-        return buscadorEnWikipedia.getInformacionUltimaBusqueda();
+        //return buscadorEnWikipedia.getInformacionUltimaBusqueda();
+        return ultimaBusquedaEnWikipedia;
     }
     public String getTituloUltimaBusqueda(){
-        return buscadorEnWikipedia.getTituloUltimaBusqueda();
+        //return buscadorEnWikipedia.getTituloUltimaBusqueda();
+        return tituloUltimaBusquedaEnWikipedia;
     }
 
     public void setOyenteGestionDeInformacion(WikipediaInfoListener oyenteBusquedasEnWikipedia){
@@ -67,5 +76,15 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         oyenteGestionDeInformacionLocal.notificarInformacionEliminada();
     }
 
+    private void formatearDatos(String searchResult, String terminoDeBusqueda){
+        if (searchResult == null) {
+            ultimaBusquedaEnWikipedia = "No Results";
+        }
+        else {
+            ultimaBusquedaEnWikipedia = "<h1>" + tituloUltimaBusquedaEnWikipedia + "</h1>";
+            ultimaBusquedaEnWikipedia += searchResult.replace("\\n", "\n");
+            ultimaBusquedaEnWikipedia = textToHtml(ultimaBusquedaEnWikipedia, terminoDeBusqueda);
+        }
+    }
     
 }

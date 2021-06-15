@@ -78,7 +78,7 @@ public class MainWindow {
 
   private void inicializarPresentadores(){
     presentadorBusquedasEnWikipedia = new ImplementacionPresentadorBusquedasEnWikipedia();
-    presentadorBusquedasEnWikipedia.setVista(this);
+    presentadorBusquedasEnWikipedia.setView(this);
 
     presentadorGestionDeInformacionLocal = new ImplementacionPresentadorGestionDeInformacionLocal();
     presentadorGestionDeInformacionLocal.setVista(this);

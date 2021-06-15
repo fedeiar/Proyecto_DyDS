@@ -8,5 +8,5 @@ public interface WikipediaSearchPresenter {
     
     public void notificacionGuardarBusquedaLocalmente();
 
-    public void setVista(MainWindow vista);
+    public void setView(MainWindow view);
 }

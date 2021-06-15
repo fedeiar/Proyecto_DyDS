@@ -6,44 +6,44 @@ import dyds.catalog.alpha.fulllogic.vista.MainWindow;
 import javax.swing.*;
 
 public class ImplementacionPresentadorBusquedasEnWikipedia implements WikipediaSearchPresenter {
-    MainWindow vista;
-    VideoGameInfoModel modelo;
+    MainWindow view;
+    VideoGameInfoModel model;
 
     public ImplementacionPresentadorBusquedasEnWikipedia() {
         inicializarModelo();
     }
 
     private void inicializarModelo(){
-        modelo = new VideoGameInfoModelImpl();
-        modelo.setOyenteGestionDeInformacion(new WikipediaInfoListener() {
+        model = new VideoGameInfoModelImpl();
+        model.setOyenteGestionDeInformacion(new WikipediaInfoListener() {
 
             public void notificarInformacionBuscada() {
-                vista.setUltimaBusquedaEfectuada(modelo.getInformacionUltimaBusqueda());
-                vista.setTituloUltimaBusquedaEfectuada(modelo.getTituloUltimaBusqueda());
-                vista.setWatingStatus();
+                view.setUltimaBusquedaEfectuada(model.getInformacionUltimaBusqueda());
+                view.setTituloUltimaBusquedaEfectuada(model.getTituloUltimaBusqueda());
+                view.setWatingStatus();
             }
 
             public void notificarNuevaInformacionRegistrada() {
-                vista.setComboBox(new DefaultComboBoxModel(modelo.getTotalTitulosRegistrados()));
+                view.setComboBox(new DefaultComboBoxModel(model.getTotalTitulosRegistrados()));
             }
         });
     }
 
 
-    public void setVista(MainWindow vista){
-        this.vista = vista;
+    public void setView(MainWindow view){
+        this.view = view;
     }
 
     public void notificacionRealizarNuevaBusqueda() {
-        vista.setWorkingStatus();
+        view.setWorkingStatus();
 
-        String datosIngresados = vista.getDatosIngresados();
-        modelo.realizarBusquedaEnWikipedia(datosIngresados);
+        String datosIngresados = view.getDatosIngresados();
+        model.realizarBusquedaEnWikipedia(datosIngresados);
 
-        vista.setWatingStatus();
+        view.setWatingStatus();
     }
 
     public void notificacionGuardarBusquedaLocalmente() {
-        modelo.guardarInformacionLocalmente(vista.getInformacionBuscada(),vista.getTituloInformacionBuscada());
+        model.guardarInformacionLocalmente(view.getInformacionBuscada(), view.getTituloInformacionBuscada());
     }
 }

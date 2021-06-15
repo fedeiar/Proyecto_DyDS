@@ -23,11 +23,12 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
     private WikipediaSearchAPI searchAPI ;
     private WikipediaPageAPI pageAPI ;
 
+
     public WikipediaSearcherImpl(){
-        inicializarBuscador();
+        initSearcher();
     }
 
-    private void inicializarBuscador(){
+    private void initSearcher(){
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://en.wikipedia.org/w/")
                 .addConverterFactory(ScalarsConverterFactory.create())
@@ -37,66 +38,92 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         pageAPI = retrofit.create(WikipediaPageAPI.class);
     }
 
-    public void realizarNuevaBusqueda(String terminoDeBusqueda) {
-        Response<String> callResponse;
-            try{
-                //First, lets search for the term in Wikipedia
-                callResponse = searchAPI.searchForTerm(terminoDeBusqueda + " articletopic:\"video-games\"").execute();
-
-                System.out.println("JSON " + callResponse.body());
-
-                Gson gson = new Gson();
-                JsonObject jobj = gson.fromJson(callResponse.body(), JsonObject.class);
-                JsonObject query = jobj.get("query").getAsJsonObject();
-                Iterator<JsonElement> resultIterator = query.get("search").getAsJsonArray().iterator();
-
-                JsonObject searchResult = null;
-                JsonElement searchResultExtract = null;
-
-                searchResultTitle = null; //The searched term may not be the same as the real page title
-                String searchResultPageId = null;
-
-                if (resultIterator.hasNext()) {
-                    searchResult = resultIterator.next().getAsJsonObject();
-                    searchResultTitle = searchResult.get("title").getAsString();
-                    searchResultPageId = searchResult.get("pageid").getAsString();
-                }
-
-                //If we found a page related to the term, get the text searchResultExtract from there
-                if(searchResultPageId != null){
-                    callResponse = pageAPI.getExtractByPageID(searchResultPageId).execute();
-
-                    System.out.println("JSON " + callResponse.body());
-                    jobj = gson.fromJson(callResponse.body(), JsonObject.class);
-                    query = jobj.get("query").getAsJsonObject();
-                    JsonObject pages = query.get("pages").getAsJsonObject();
-                    Set<Map.Entry<String, JsonElement>> pagesSet = pages.entrySet();
-                    Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
-                    JsonObject page = first.getValue().getAsJsonObject();
-                    searchResultExtract = page.get("extract");
-                }
-
-                if (searchResultExtract == null) {
-                    text = "No Results";
-                } 
-                else {
-                    text = "<h1>" + searchResultTitle + "</h1>";
-                    text += searchResultExtract.getAsString().replace("\\n", "\n");
-                    text = textToHtml(text, terminoDeBusqueda);
-                }
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-
+    public String realizarNuevaBusqueda(String terminoDeBusqueda) {
+        String searchResultPageId = searchInWikipediaSearchAPI(terminoDeBusqueda);
+        String resultSearchInWikipedia = searchInWikipediaPageAPI(searchResultPageId);
+        return resultSearchInWikipedia;
+        //formatearDatos(resultSearchInWikipedia , terminoDeBusqueda);
+        //dar formato acá o en el modelo ?
     }
 
-    @Override
     public String getTituloUltimaBusqueda() {
         return searchResultTitle;
     }
-    @Override
     public String getInformacionUltimaBusqueda() {
         return text;
     }
+
+    private String searchInWikipediaSearchAPI(String terminoDeBusqueda){
+        Response<String> callResponse;
+        JsonObject jobj,query;
+        String searchResultPageId = null;
+        try {
+            callResponse = searchAPI.searchForTerm
+                    (terminoDeBusqueda + " articletopic:\"video-games\"").execute();
+
+            System.out.println("JSON " + callResponse.body());
+
+            Gson gson = new Gson();
+            jobj = gson.fromJson(callResponse.body(), JsonObject.class);
+            query = jobj.get("query").getAsJsonObject();
+            Iterator<JsonElement> resultIterator = query.get("search").getAsJsonArray().iterator();
+
+            JsonObject searchResult = null;
+            JsonElement searchResultExtract = null;
+
+            searchResultTitle = null; //The searched term may not be the same as the real page title
+
+            if (resultIterator.hasNext()) {
+                searchResult = resultIterator.next().getAsJsonObject();
+                searchResultTitle = searchResult.get("title").getAsString();
+                searchResultPageId = searchResult.get("pageid").getAsString();
+            }
+        }
+        catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return searchResultPageId;
+    }
+
+    private String searchInWikipediaPageAPI(String searchResultPageId){
+        Response<String> callResponse;
+        JsonObject jobj,query;
+        Gson gson = new Gson();
+        JsonElement searchResultExtract = null;
+        String resultOfSearch;
+        //If we found a page related to the term, get the text searchResultExtract from there
+        try {
+            if (searchResultPageId != null) {
+                callResponse = pageAPI.getExtractByPageID(searchResultPageId).execute();
+
+                System.out.println("JSON " + callResponse.body());
+                jobj = gson.fromJson(callResponse.body(), JsonObject.class);
+                query = jobj.get("query").getAsJsonObject();
+                JsonObject pages = query.get("pages").getAsJsonObject();
+                Set<Map.Entry<String, JsonElement>> pagesSet = pages.entrySet();
+                Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
+                JsonObject page = first.getValue().getAsJsonObject();
+                searchResultExtract = page.get("extract");
+            }
+        }
+        catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        if (searchResultExtract == null)
+            resultOfSearch = "No Results";
+        else
+            resultOfSearch = searchResultExtract.getAsString();
+        return resultOfSearch;
+    }
+
+    /*private void formatearDatos(String searchResult, String terminoDeBusqueda){
+        if (searchResult == null) {
+            text = "No Results";
+        }
+        else {
+            text = "<h1>" + searchResultTitle + "</h1>";
+            text += searchResult.replace("\\n", "\n");
+            text = textToHtml(text, terminoDeBusqueda);
+        }
+    }*/
 }
