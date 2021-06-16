@@ -139,7 +139,7 @@ public class MainWindow {
   public String getTituloInformacionBuscada() {
     return searchResultTitle;
   }
-*/
-  
 
+  
+*/
 }

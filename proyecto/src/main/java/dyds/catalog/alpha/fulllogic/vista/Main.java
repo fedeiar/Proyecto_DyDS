@@ -25,6 +25,8 @@ public class Main {
         wikipediaSearchPresenter.setView(wikipediaSearchView);
         storedInfoPresenter.setView(storedInfoView);
 
+        
+
         //esto debe hacerse aca o en el modelo?
         //DataBaseImplementation.getInstance().loadDatabase();
     
