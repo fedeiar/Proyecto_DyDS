@@ -37,7 +37,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
                 view.setStoredSearchedTitles(videoGameInfoModel.getTotalTitulosRegistrados());
 
-                // hay que agregar un codigo que notifique al usuario que la página fue guardada exitosamente.
+                // hay que agregar un codigo que notifique al usuario que la página fue guardada exitosamente. NO!! esto se hace en el otro presentador!!!
             }
 
         });
@@ -59,12 +59,18 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
     }
 
     public void onEventSearchLocalEntriesInfo() {
+        //hacer un thread?
+
+        //agregar el working y waiting status
         int indice = view.getSelectedTitleIndex();
         if(indice > -1)
             videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
     }
 
     public void onEventDeleteLocalEntryInfo() {
+        //hacer un thread?
+
+        //TODO: agregar el working y waiting status
         int indice = view.getSelectedTitleIndex();
         String tituloInformacion = view.getSelectedTitle();
         if(indice > -1){
@@ -72,7 +78,10 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         }
     }
 
+    //usar tal vez otro nombre, como initView
     public void setView(StoredInfoView vista) {
         this.view = vista;
+        updateViewStoredTitles();
+        // invocar a updateViewStoredTitles para actualizar los titulos de esta vista.
     }
 }

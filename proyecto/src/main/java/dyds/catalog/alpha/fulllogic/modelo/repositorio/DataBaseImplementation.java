@@ -24,13 +24,15 @@ public class DataBaseImplementation implements DataBase{
         return instance;
     }
 
+    //TODO: agregarle a cada método de la BD un throws, entonces en el modelo debemos usar try, catch, y en el catch podemos progpagar la excpecion hasta la vista.
     public void loadDatabase() {
-        //If the database doesnt exists we create it
+
         try{
             initConnectionToDataBase();
+            //chequear si la tabla ya existe, si existe, NO ejecutar executeUpdate(), bucar el metodo
 
             statement.executeUpdate("create table catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
-            //If the DB was created before, a SQL error is reported but it is not harmfull...
+            
         } 
         catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -44,6 +46,8 @@ public class DataBaseImplementation implements DataBase{
         String url = "jdbc:sqlite:./dictionary.db";
         connection = DriverManager.getConnection(url);
         statement = connection.createStatement();
+
+        //TODO: usar una constante "SEGUNDOS"
         statement.setQueryTimeout(30);  // set timeout to 30 sec.
     }
 
@@ -60,7 +64,7 @@ public class DataBaseImplementation implements DataBase{
     
 
     public ArrayList<String> getTitles() {
-        ArrayList<String> titles = new ArrayList<>();;
+        ArrayList<String> titles = new ArrayList<>();
         try {
             initConnectionToDataBase();
 
@@ -70,8 +74,6 @@ public class DataBaseImplementation implements DataBase{
             }
         }
         catch (SQLException e) {
-            // if the error message is "out of memory",
-            // it probably means no database file is found
             System.err.println("error in titles" + e.getMessage());
         }
         finally{

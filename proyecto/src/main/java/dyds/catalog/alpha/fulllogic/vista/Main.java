@@ -14,7 +14,10 @@ public class Main {
     public static void main(String[] args) {
 
         VideoGameInfoModel videoGameInfoModel = ModelModule.getInstance().setUpModel();
+        //aca o el modelo obtiene por si mismo la BD?
         videoGameInfoModel.setVideoGameInfoRepository(DataBaseImplementation.getInstance());
+        //esto debe hacerse aca o en el modelo?
+        //DataBaseImplementation.getInstance().loadDatabase();
 
         WikipediaSearchPresenter wikipediaSearchPresenter = PresenterModule.getInstance().setUpWikipediaSearchPresenter(videoGameInfoModel);
         StoredInfoPresenter storedInfoPresenter = PresenterModule.getInstance().setUpStoredInfoView(videoGameInfoModel);
@@ -27,8 +30,7 @@ public class Main {
 
         
 
-        //esto debe hacerse aca o en el modelo?
-        //DataBaseImplementation.getInstance().loadDatabase();
+        
     
         ViewCoordinator viewCoordinator = new ViewCoordinator(wikipediaSearchView, storedInfoView);
         JFrame frame = new JFrame("Video Game Info Catalog");
@@ -38,5 +40,5 @@ public class Main {
         frame.setVisible(true);
     
       
-      }
+    }
 }

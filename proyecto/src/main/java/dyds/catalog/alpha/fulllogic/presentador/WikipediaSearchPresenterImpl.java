@@ -11,6 +11,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     private WikipediaSearchView view;
     private VideoGameInfoModel videoGameInfoModel;
+    private String lastTermSearched;
 
     public WikipediaSearchPresenterImpl(VideoGameInfoModel videoGameInfoModel) {
         this.videoGameInfoModel = videoGameInfoModel;
@@ -23,10 +24,9 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
             public void didFoundPageInWikipedia() {
                 String pageIntroText = videoGameInfoModel.getLastSearchedPageIntroText();
-                String termSearched = videoGameInfoModel.getLastSearchedTerm();
                 String pageTitle = videoGameInfoModel.getLastSearchedPageTitle();
 
-                String formattedPageIntroText = formatData(pageIntroText, termSearched, pageTitle);
+                String formattedPageIntroText = formatData(pageIntroText, lastTermSearched, pageTitle);
                 
 
                 view.setPageIntroText(formattedPageIntroText);
@@ -40,7 +40,11 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
                 view.setWatingStatus();
             }
 
+            
+
         });
+
+        // TODO: debería implementarse otro método de algún oyente para notificar al usuario que la busqueda fue guardada exitosamente.
     }
 
     public void setView(WikipediaSearchView view){
@@ -58,15 +62,18 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
     }
 
     public void onEventSearchInWikipedia() {
+        //agregar un thread
+
         view.setWorkingStatus();
 
-        String searchedTerm = view.getSearchedTerm();
-        videoGameInfoModel.searchTermInWikipedia(searchedTerm);
-
-        view.setWatingStatus();
+        lastTermSearched = view.getSearchedTerm();
+        videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
     }
 
     public void onEventSaveSearchLocally() {
+        //agregar un thread?
+
+        //agregar el working y waiting status
         videoGameInfoModel.storeLastSearchedPage();
     }
 }

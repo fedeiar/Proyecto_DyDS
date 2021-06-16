@@ -12,8 +12,6 @@ public interface VideoGameInfoModel {
 
     public String getLastSearchedPageTitle();
 
-    public String getLastSearchedTerm();
-
     public void searchTermInWikipedia(String searchTerm);
 
     public String getLastLocalSearchedPage();

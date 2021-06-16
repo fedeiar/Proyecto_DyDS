@@ -12,7 +12,6 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private WikipediaSearchInfoListener wikipediaSearchInfoListener;
     private StoredInfoListener storedInfoListener;
 
-    private String lastSearchedTerm;
     private String lastSearchedPageIntroText;
     private String lastSearchedPageTitle;
 
@@ -53,18 +52,16 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         return lastSearchedPageTitle;
     }
 
-    @Override public String getLastSearchedTerm(){
-        return lastSearchedTerm;
-    }
+    
 
     @Override public void searchTermInWikipedia(String searchedTerm) {
         boolean pageFound = wikipediaSearcher.searchPage(searchedTerm);
         lastPageSearchedWithSuccess = pageFound;
 
         if(pageFound){
+            //TODO: encapsular el titulo y el extracto(page title) en un objeto
             String pageIntroText = wikipediaSearcher.getLastSearchedPageIntro();
             String pageTitle = wikipediaSearcher.getLastSearchedTitle();
-            lastSearchedTerm = searchedTerm;
 
             lastSearchedPageIntroText = giveFormatForStorage(pageIntroText);
             lastSearchedPageTitle = giveFormatForStorage(pageTitle);
@@ -99,6 +96,9 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         if(lastPageSearchedWithSuccess){
             dataBase.saveInfo(lastSearchedPageTitle, lastSearchedPageIntroText);
         }
+        //TODO: avisarle al presentador de la vista de la busqueda que la busqueda fue guardada exitosamente, para ello debemos tener algún método en algún oyente.
+        //es probable que tengamos que hacer otros oyentes que no dependan de los presentadores, sino de los datos del modelo.
+
         storedInfoListener.didUpdateStoredTitles();
     }
 
