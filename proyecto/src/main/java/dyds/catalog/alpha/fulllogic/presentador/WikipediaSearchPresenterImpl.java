@@ -62,12 +62,14 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
     }
 
     public void onEventSearchInWikipedia() {
-        //agregar un thread
+        //TODO: agregar un thread
 
         view.setWorkingStatus();
 
         lastTermSearched = view.getSearchedTerm();
         videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
+
+        // si pongo el wating status aca, no estaría ya cumnpliendo?
     }
 
     public void onEventSaveSearchLocally() {
