@@ -12,7 +12,7 @@ import dyds.catalog.alpha.fulllogic.presentador.*;
 public class MainWindow {
   private JTextField textField1;
   private JButton goButton;
-  private JPanel contentPane;
+  JPanel contentPane;
   private JTextPane textPane1;
   private JButton saveLocallyButton;
   private JTabbedPane tabbedPane1;
@@ -25,7 +25,7 @@ public class MainWindow {
   private DataBase dataBase;
 
   WikipediaSearchPresenter presentadorBusquedasEnWikipedia;
-  LocalInformationPresenter presentadorGestionDeInformacionLocal;
+  StoredInformationPresenter presentadorGestionDeInformacionLocal;
 
   String searchResultTitle = null; //For storage purposes, se below that it may not coincide with the searched term
   String text = ""; //Last searched text! this variable is central for everything
@@ -57,30 +57,30 @@ public class MainWindow {
     saveLocallyButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        presentadorBusquedasEnWikipedia.notificacionGuardarBusquedaLocalmente();
+        presentadorBusquedasEnWikipedia.onEventSaveSearchLocally();
       }
     });
 
     comboBox1.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        presentadorGestionDeInformacionLocal.notificacionBuscarInformacionLocalmente();
+        presentadorGestionDeInformacionLocal.onEventSearchLocalEntryInfo();
       }
     });
 
     deleteButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        presentadorGestionDeInformacionLocal.notificacionEliminarInformacionLocal();
+        presentadorGestionDeInformacionLocal.onEventDeleteLocalEntryInfo();
       }
     });
   }
 
   private void inicializarPresentadores(){
-    presentadorBusquedasEnWikipedia = new ImplementacionPresentadorBusquedasEnWikipedia();
+    presentadorBusquedasEnWikipedia = new WikipediaSearchPresenterImpl();
     presentadorBusquedasEnWikipedia.setView(this);
 
-    presentadorGestionDeInformacionLocal = new ImplementacionPresentadorGestionDeInformacionLocal();
+    presentadorGestionDeInformacionLocal = new StoredInformationPresenterImpl();
     presentadorGestionDeInformacionLocal.setVista(this);
 
     /*presentadorEliminarInformacionLocalmente = new ImplementacionPresentadorEliminarInformacionLocal();
@@ -137,21 +137,5 @@ public class MainWindow {
   }
   public String getTituloInformacionBuscada() {
     return searchResultTitle;
-  }
-
-  public static void main(String[] args) {
-
-    DataBaseImplementation.getInstance().loadDatabase();;
-
-    JFrame frame = new JFrame("Video Game Info Catalog");
-    frame.setContentPane(new MainWindow().contentPane);
-    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    frame.pack();
-    frame.setVisible(true);
-
-    //Debuggin Stuff - Remove later
-    //DataBase.saveInfo("test", "sarasa");
-    //System.out.println(DataBase.getExtract("test"));
-    //System.out.println(DataBase.getExtract("nada"));
   }
 }

@@ -9,13 +9,14 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private WikipediaSearcher buscadorEnWikipedia;
     private DataBase dataBase;
 
-    private WikipediaInfoListener oyenteBusquedasEnWikipedia;
-    private LocalInformationListener oyenteGestionDeInformacionLocal;
+    private WikipediaSearchInfoListener oyenteBusquedasEnWikipedia;
+    private StoredInformationListener oyenteGestionDeInformacionLocal;
 
     private String ultimaBusquedaLocal;
 
-    private String ultimaBusquedaEnWikipedia;
-    private String tituloUltimaBusquedaEnWikipedia;
+    private String lastSearchedTerm;
+    private String lastSearchedPageIntroText;
+    private String lastSearchedPageTitle;
 
     public VideoGameInfoModelImpl(){
         buscadorEnWikipedia = new WikipediaSearcherImpl();
@@ -24,12 +25,27 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     @Override
     public void realizarBusquedaEnWikipedia(String terminoDeBusqueda) {
-        ultimaBusquedaEnWikipedia = buscadorEnWikipedia.realizarNuevaBusqueda(terminoDeBusqueda);
-        tituloUltimaBusquedaEnWikipedia = buscadorEnWikipedia.getTituloUltimaBusqueda();
-        formatearDatos(ultimaBusquedaEnWikipedia, terminoDeBusqueda);
-        //dar formato a los resultados de la busqueda?
+        String pageIntroText = buscadorEnWikipedia.realizarNuevaBusqueda(terminoDeBusqueda);;
+        String pageTitle = buscadorEnWikipedia.getTituloUltimaBusqueda();;
+
+        lastSearchedTerm = terminoDeBusqueda;
+        lastSearchedPageIntroText = giveFormatForStorage(pageIntroText);
+        lastSearchedPageTitle = giveFormatForStorage(pageTitle);
+
+        //formatearDatos(pageIntroText, terminoDeBusqueda);
+
         oyenteBusquedasEnWikipedia.notificarInformacionBuscada();
     }
+
+    private String giveFormatForStorage(String text){
+        return text.replace("'", "`"); //Replace to avoid SQL errors, we will have to find a workaround..
+    }
+
+    @Override
+    public String getLastSearchedTerm(){
+        return lastSearchedTerm;
+    }
+
 
     @Override
     public void guardarInformacionLocalmente(String informacion, String tituloInformacion) {
@@ -43,18 +59,18 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     public String getInformacionUltimaBusqueda() {
         //return buscadorEnWikipedia.getInformacionUltimaBusqueda();
-        return ultimaBusquedaEnWikipedia;
+        return lastSearchedPageIntroText;
     }
     public String getTituloUltimaBusqueda(){
         //return buscadorEnWikipedia.getTituloUltimaBusqueda();
-        return tituloUltimaBusquedaEnWikipedia;
+        return lastSearchedPageTitle;
     }
 
-    public void setOyenteGestionDeInformacion(WikipediaInfoListener oyenteBusquedasEnWikipedia){
+    public void setOyenteGestionDeInformacion(WikipediaSearchInfoListener oyenteBusquedasEnWikipedia){
         this.oyenteBusquedasEnWikipedia = oyenteBusquedasEnWikipedia;
     }
 
-    public void setOyenteGestionDeInformacionLocal(LocalInformationListener oyenteGestionDeInformacionLocal){
+    public void setOyenteGestionDeInformacionLocal(StoredInformationListener oyenteGestionDeInformacionLocal){
         this.oyenteGestionDeInformacionLocal = oyenteGestionDeInformacionLocal;
     }
 
@@ -78,12 +94,12 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     private void formatearDatos(String searchResult, String terminoDeBusqueda){
         if (searchResult == null) {
-            ultimaBusquedaEnWikipedia = "No Results";
+            lastSearchedPageIntroText = "No Results";
         }
         else {
-            ultimaBusquedaEnWikipedia = "<h1>" + tituloUltimaBusquedaEnWikipedia + "</h1>";
-            ultimaBusquedaEnWikipedia += searchResult.replace("\\n", "\n");
-            ultimaBusquedaEnWikipedia = textToHtml(ultimaBusquedaEnWikipedia, terminoDeBusqueda);
+            lastSearchedPageIntroText = "<h1>" + lastSearchedPageTitle + "</h1>";
+            lastSearchedPageIntroText += searchResult.replace("\\n", "\n");
+            lastSearchedPageIntroText = textToHtml(lastSearchedPageIntroText, terminoDeBusqueda);
         }
     }
     

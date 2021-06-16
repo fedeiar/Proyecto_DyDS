@@ -6,7 +6,7 @@ public interface WikipediaSearchPresenter {
 
     public void notificacionRealizarNuevaBusqueda();
     
-    public void notificacionGuardarBusquedaLocalmente();
+    public void onEventSaveSearchLocally();
 
     public void setView(MainWindow view);
 }

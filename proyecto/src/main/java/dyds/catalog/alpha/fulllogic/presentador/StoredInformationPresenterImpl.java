@@ -5,17 +5,17 @@ import dyds.catalog.alpha.fulllogic.vista.MainWindow;
 
 import javax.swing.*;
 
-public class ImplementacionPresentadorGestionDeInformacionLocal implements LocalInformationPresenter{
+public class StoredInformationPresenterImpl implements StoredInformationPresenter{
     VideoGameInfoModel modelo;
     private MainWindow vista;
 
-    public ImplementacionPresentadorGestionDeInformacionLocal(){
+    public StoredInformationPresenterImpl(){
         inicializarRecursosPresentador();
     }
 
     private void inicializarRecursosPresentador(){
         modelo = new VideoGameInfoModelImpl();
-        modelo.setOyenteGestionDeInformacionLocal(new LocalInformationListener() {
+        modelo.setOyenteGestionDeInformacionLocal(new StoredInformationListener() {
             public void notificarInformacionBuscadaLocalmente() {
                 vista.setInformacionBuscadaLocalmente(modelo.getUltimaBusquedaLocal());
             }
@@ -31,13 +31,13 @@ public class ImplementacionPresentadorGestionDeInformacionLocal implements Local
         vista.eliminarInformacionDeLaVista();
     }
 
-    public void notificacionBuscarInformacionLocalmente() {
+    public void onEventSearchLocalEntryInfo() {
         int indice = vista.getSelectedIndex();
         if(indice > -1)
             modelo.realizarBusquedaLocal(vista.getSelectedItem());
     }
 
-    public void notificacionEliminarInformacionLocal() {
+    public void onEventDeleteLocalEntryInfo() {
         int indice = vista.getSelectedIndex();
         String tituloInformacion = vista.getSelectedItem();
         if(indice > -1){

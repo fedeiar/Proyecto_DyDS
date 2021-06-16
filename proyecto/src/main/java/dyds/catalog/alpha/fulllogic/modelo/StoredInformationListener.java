@@ -1,6 +1,6 @@
 package dyds.catalog.alpha.fulllogic.modelo;
 
-public interface LocalInformationListener {
+public interface StoredInformationListener {
 
     public void notificarInformacionBuscadaLocalmente();
 

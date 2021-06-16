@@ -4,11 +4,14 @@ public interface VideoGameInfoModel {
     
     public String getInformacionUltimaBusqueda();
     public String getTituloUltimaBusqueda();
-    public Object[] getTotalTitulosRegistrados();
+    public String getLastSearchedTerm();
+
     public String getUltimaBusquedaLocal();
 
-    public void setOyenteGestionDeInformacion(WikipediaInfoListener oyenteBusquedasEnWikipedia);
-    public void setOyenteGestionDeInformacionLocal(LocalInformationListener oyenteGestionDeInformacionLocal);
+    public Object[] getTotalTitulosRegistrados();
+    
+    public void setOyenteGestionDeInformacion(WikipediaSearchInfoListener oyenteBusquedasEnWikipedia);
+    public void setOyenteGestionDeInformacionLocal(StoredInformationListener oyenteGestionDeInformacionLocal);
 
     public void realizarBusquedaEnWikipedia(String terminoDeBusqueda);
     public void guardarInformacionLocalmente(String informacion, String tituloInformacion);
