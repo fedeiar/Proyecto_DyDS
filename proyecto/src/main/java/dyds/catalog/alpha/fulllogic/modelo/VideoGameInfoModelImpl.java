@@ -9,10 +9,10 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private WikipediaSearcher buscadorEnWikipedia;
     private DataBase dataBase;
 
-    private WikipediaSearchInfoListener oyenteBusquedasEnWikipedia;
-    private StoredInformationListener oyenteGestionDeInformacionLocal;
+    private WikipediaSearchInfoListener wikipediaSearchInfoListener;
+    private StoredInfoListener storedInfoListener;
 
-    private String ultimaBusquedaLocal;
+    private String lastPageSearchedLocally;
 
     private String lastSearchedTerm;
     private String lastSearchedPageIntroText;
@@ -23,84 +23,71 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         dataBase = DataBaseImplementation.getInstance();
     }
 
-    @Override
-    public void realizarBusquedaEnWikipedia(String terminoDeBusqueda) {
-        String pageIntroText = buscadorEnWikipedia.realizarNuevaBusqueda(terminoDeBusqueda);;
-        String pageTitle = buscadorEnWikipedia.getTituloUltimaBusqueda();;
 
-        lastSearchedTerm = terminoDeBusqueda;
+    @Override public String getLastSearchedPageIntroText() {
+        return lastSearchedPageIntroText;
+    }
+
+    @Override public String getLastSearchedPageTitle(){
+        return lastSearchedPageTitle;
+    }
+
+    @Override public String getLastSearchedTerm(){
+        return lastSearchedTerm;
+    }
+
+    @Override public void searchTermInWikipedia(String searchedTerm) {
+        String pageIntroText = buscadorEnWikipedia.realizarNuevaBusqueda(searchedTerm);
+        String pageTitle = buscadorEnWikipedia.getTituloUltimaBusqueda();
+ 
+        lastSearchedTerm = searchedTerm;
+
         lastSearchedPageIntroText = giveFormatForStorage(pageIntroText);
         lastSearchedPageTitle = giveFormatForStorage(pageTitle);
 
-        //formatearDatos(pageIntroText, terminoDeBusqueda);
 
-        oyenteBusquedasEnWikipedia.notificarInformacionBuscada();
+        wikipediaSearchInfoListener.didSearchInWikipedia();
     }
 
     private String giveFormatForStorage(String text){
         return text.replace("'", "`"); //Replace to avoid SQL errors, we will have to find a workaround..
     }
 
-    @Override
-    public String getLastSearchedTerm(){
-        return lastSearchedTerm;
-    }
-
-
-    @Override
-    public void guardarInformacionLocalmente(String informacion, String tituloInformacion) {
-        if(informacion != "" && !informacion.equals("No Results")){
-            // save to DB  <o/
-            dataBase.saveInfo(tituloInformacion.replace("'", "`"), informacion);  //Dont forget the ' sql problem
-            //comboBox1.setModel(new DefaultComboBoxModel(DataBase.getTitles().stream().sorted().toArray()));
+    
+    @Override public void storeLastSearchedPage() {
+        if(lastSearchedPageIntroText != "" && !lastSearchedPageIntroText.equals("No Results")){
+            dataBase.saveInfo(lastSearchedPageTitle, lastSearchedPageIntroText);
         }
-        oyenteBusquedasEnWikipedia.notificarNuevaInformacionRegistrada();
+        wikipediaSearchInfoListener.notificarNuevaInformacionRegistrada();
     }
 
-    public String getInformacionUltimaBusqueda() {
-        //return buscadorEnWikipedia.getInformacionUltimaBusqueda();
-        return lastSearchedPageIntroText;
-    }
-    public String getTituloUltimaBusqueda(){
-        //return buscadorEnWikipedia.getTituloUltimaBusqueda();
-        return lastSearchedPageTitle;
+    
+
+    public void setWikipediaSearchInfoListener(WikipediaSearchInfoListener wikipediaSearchInfoListener){
+        this.wikipediaSearchInfoListener = wikipediaSearchInfoListener;
     }
 
-    public void setOyenteGestionDeInformacion(WikipediaSearchInfoListener oyenteBusquedasEnWikipedia){
-        this.oyenteBusquedasEnWikipedia = oyenteBusquedasEnWikipedia;
-    }
-
-    public void setOyenteGestionDeInformacionLocal(StoredInformationListener oyenteGestionDeInformacionLocal){
-        this.oyenteGestionDeInformacionLocal = oyenteGestionDeInformacionLocal;
+    public void setStoredInformationListener(StoredInfoListener oyenteGestionDeInformacionLocal){
+        this.storedInfoListener = oyenteGestionDeInformacionLocal;
     }
 
     public Object[] getTotalTitulosRegistrados(){
         return dataBase.getTitles().stream().sorted().toArray();
     }
 
-    public void realizarBusquedaLocal(String terminoDeBusqueda) {
-        ultimaBusquedaLocal = dataBase.getExtract(terminoDeBusqueda);
-        oyenteGestionDeInformacionLocal.notificarInformacionBuscadaLocalmente();
+    public void searchInLocalStorage(String searchedTerm) {
+        lastPageSearchedLocally = dataBase.getExtract(searchedTerm);
+        storedInfoListener.didSearchPageStoredLocally();
     }
 
     public String getUltimaBusquedaLocal(){
-        return ultimaBusquedaLocal;
+        return lastPageSearchedLocally;
     }
 
-    public void eliminarInformacionLocalmente(String terminoDeBusqueda){
+    public void deleteFromLocalStorage(String terminoDeBusqueda){
         dataBase.deleteEntry(terminoDeBusqueda);
-        oyenteGestionDeInformacionLocal.notificarInformacionEliminada();
+        storedInfoListener.didDeletePageStoredLocally();
     }
 
-    private void formatearDatos(String searchResult, String terminoDeBusqueda){
-        if (searchResult == null) {
-            lastSearchedPageIntroText = "No Results";
-        }
-        else {
-            lastSearchedPageIntroText = "<h1>" + lastSearchedPageTitle + "</h1>";
-            lastSearchedPageIntroText += searchResult.replace("\\n", "\n");
-            lastSearchedPageIntroText = textToHtml(lastSearchedPageIntroText, terminoDeBusqueda);
-        }
-    }
     
 }

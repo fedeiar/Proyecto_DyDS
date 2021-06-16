@@ -24,8 +24,8 @@ public class MainWindow {
 
   private DataBase dataBase;
 
-  WikipediaSearchPresenter presentadorBusquedasEnWikipedia;
-  StoredInformationPresenter presentadorGestionDeInformacionLocal;
+  WikipediaSearchPresenter wikipediaSearchPresenter;
+  StoredInformationPresenter storedInformationPresenter;
 
   String searchResultTitle = null; //For storage purposes, se below that it may not coincide with the searched term
   String text = ""; //Last searched text! this variable is central for everything
@@ -43,12 +43,13 @@ public class MainWindow {
   }
 
   private void inicializarBotones(){
+
     goButton.addActionListener(new ActionListener() {
       @Override public void actionPerformed(ActionEvent e) {
         new Thread(new Runnable() {
           @Override
           public void run() {
-            presentadorBusquedasEnWikipedia.notificacionRealizarNuevaBusqueda();
+            wikipediaSearchPresenter.onEventSearchInWikipedia();
           }
         }).start();
       }
@@ -57,31 +58,31 @@ public class MainWindow {
     saveLocallyButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        presentadorBusquedasEnWikipedia.onEventSaveSearchLocally();
+        wikipediaSearchPresenter.onEventSaveSearchLocally();
       }
     });
 
     comboBox1.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        presentadorGestionDeInformacionLocal.onEventSearchLocalEntryInfo();
+        storedInformationPresenter.onEventSearchLocalEntriesInfo();
       }
     });
 
     deleteButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {
-        presentadorGestionDeInformacionLocal.onEventDeleteLocalEntryInfo();
+        storedInformationPresenter.onEventDeleteLocalEntryInfo();
       }
     });
   }
 
   private void inicializarPresentadores(){
-    presentadorBusquedasEnWikipedia = new WikipediaSearchPresenterImpl();
-    presentadorBusquedasEnWikipedia.setView(this);
+    wikipediaSearchPresenter = new WikipediaSearchPresenterImpl();
+    wikipediaSearchPresenter.setView(this);
 
-    presentadorGestionDeInformacionLocal = new StoredInformationPresenterImpl();
-    presentadorGestionDeInformacionLocal.setVista(this);
+    storedInformationPresenter = new StoredInformationPresenterImpl();
+    storedInformationPresenter.setVista(this);
 
     /*presentadorEliminarInformacionLocalmente = new ImplementacionPresentadorEliminarInformacionLocal();
     presentadorEliminarInformacionLocalmente.setVista(this);

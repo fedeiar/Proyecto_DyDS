@@ -29,7 +29,7 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
 
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                wikipediaSearchPresenter.notificacionRealizarNuevaBusqueda();
+                wikipediaSearchPresenter.onEventSearchInWikipedia();
             }
         });
 
@@ -57,11 +57,9 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
     public void setSearchedPageIntroText(String pageIntroText){
         searchedPageIntroTextPane.setText(pageIntroText);
     }
-/*
-    public void setTituloUltimaBusquedaEfectuada(String tituloUltimaBusquedaEfectuada){
-        searchResultTitle = tituloUltimaBusquedaEfectuada;
-      }
-*/
+
+   
+
 
 
 }

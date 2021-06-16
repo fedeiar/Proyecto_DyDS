@@ -8,37 +8,38 @@ import javax.swing.*;
 
 public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
     MainWindow view;
-    VideoGameInfoModel model;
+    VideoGameInfoModel videoGameInfoModel;
 
     public WikipediaSearchPresenterImpl() {
         inicializarModelo();
     }
 
     private void inicializarModelo(){
-        model = new VideoGameInfoModelImpl();
-        model.setOyenteGestionDeInformacion(new WikipediaSearchInfoListener() {
+        videoGameInfoModel = new VideoGameInfoModelImpl();
+        videoGameInfoModel.setWikipediaSearchInfoListener(new WikipediaSearchInfoListener() {
 
-            public void notificarInformacionBuscada() {
-                String pageIntroText = model.getInformacionUltimaBusqueda();
-                String termSearched = model.getLastSearchedTerm();
-                String pageTitle = model.getTituloUltimaBusqueda();
+            public void didSearchInWikipedia() {
+                String pageIntroText = videoGameInfoModel.getLastSearchedPageIntroText();
+                String termSearched = videoGameInfoModel.getLastSearchedTerm();
+                String pageTitle = videoGameInfoModel.getLastSearchedPageTitle();
 
-                String formattedPageIntroText = formatearDatos(pageIntroText, termSearched, pageTitle);
-
+                String formattedPageIntroText = formatData(pageIntroText, termSearched, pageTitle);
                 
 
                 view.setUltimaBusquedaEfectuada(formattedPageIntroText);
-                view.setTituloUltimaBusquedaEfectuada(pageTitle);
                 view.setWatingStatus();
             }
 
             public void notificarNuevaInformacionRegistrada() {
-                view.setComboBox(new DefaultComboBoxModel(model.getTotalTitulosRegistrados()));
+                view.setComboBox(new DefaultComboBoxModel(videoGameInfoModel.getTotalTitulosRegistrados()));
+
+                // hay que agregar un codigo que notifique al usuario que la página fue guardada exitosamente.
             }
+
         });
     }
 
-    private String formatearDatos(String pageIntroText, String termSearched, String pageTitle){
+    private String formatData(String pageIntroText, String termSearched, String pageTitle){
         String formattedText;
         if (pageIntroText.equals("No Results")) {
             formattedText = "No Results";
@@ -46,7 +47,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         else{
             formattedText = "<h1>" + pageTitle + "</h1>";
             formattedText += pageIntroText.replace("\\n", "\n");
-            formattedText = Utilidades.textToHtml(pageIntroText, termSearched);
+            formattedText = Utilidades.textToHtml(formattedText, termSearched);
         }
         return formattedText;
         
@@ -57,16 +58,16 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         this.view = view;
     }
 
-    public void notificacionRealizarNuevaBusqueda() {
+    public void onEventSearchInWikipedia() {
         view.setWorkingStatus();
 
         String datosIngresados = view.getDatosIngresados();
-        model.realizarBusquedaEnWikipedia(datosIngresados);
+        videoGameInfoModel.searchTermInWikipedia(datosIngresados);
 
         view.setWatingStatus();
     }
 
     public void onEventSaveSearchLocally() {
-        model.guardarInformacionLocalmente(view.getInformacionBuscada(), view.getTituloInformacionBuscada());
+        videoGameInfoModel.storeLastSearchedPage();
     }
 }

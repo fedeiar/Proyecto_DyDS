@@ -116,14 +116,4 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         return resultOfSearch;
     }
 
-    /*private void formatearDatos(String searchResult, String terminoDeBusqueda){
-        if (searchResult == null) {
-            text = "No Results";
-        }
-        else {
-            text = "<h1>" + searchResultTitle + "</h1>";
-            text += searchResult.replace("\\n", "\n");
-            text = textToHtml(text, terminoDeBusqueda);
-        }
-    }*/
 }

@@ -30,7 +30,7 @@ public class StoredInfoViewImpl implements StoredInfoView{
 
         storedTitlesComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                storedInformationPresenter.onEventSearchLocalEntryInfo();
+                storedInformationPresenter.onEventSearchLocalEntriesInfo();
             }
         });
     }

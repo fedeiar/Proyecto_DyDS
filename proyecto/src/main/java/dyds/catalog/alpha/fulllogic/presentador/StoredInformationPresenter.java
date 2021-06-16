@@ -4,7 +4,7 @@ import dyds.catalog.alpha.fulllogic.vista.MainWindow;
 
 public interface StoredInformationPresenter {
 
-    public void onEventSearchLocalEntryInfo();
+    public void onEventSearchLocalEntriesInfo();
 
     public void onEventDeleteLocalEntryInfo();
 
