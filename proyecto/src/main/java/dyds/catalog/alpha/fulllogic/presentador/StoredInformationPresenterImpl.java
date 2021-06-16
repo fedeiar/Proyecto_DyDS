@@ -10,12 +10,13 @@ public class StoredInformationPresenterImpl implements StoredInformationPresente
     private VideoGameInfoModel videoGameInfoModel;
     private MainWindow view;
 
-    public StoredInformationPresenterImpl(){
-        inicializarRecursosPresentador();
+    public StoredInformationPresenterImpl(VideoGameInfoModel videoGameInfoModel){
+        this.videoGameInfoModel = videoGameInfoModel;
+        initListeners();
     }
 
-    private void inicializarRecursosPresentador(){
-        videoGameInfoModel = new VideoGameInfoModelImpl();
+    private void initListeners(){
+        
         videoGameInfoModel.setStoredInformationListener(new StoredInfoListener() {
 
             public void didSearchPageStoredLocally() {

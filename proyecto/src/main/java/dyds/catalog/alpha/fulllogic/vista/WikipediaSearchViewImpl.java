@@ -50,13 +50,14 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
         for(Component c: this.searchPanel.getComponents()) c.setEnabled(true);
     }
 
-    public String getSearchedText() {
+    public String getSearchedTerm() {
         return searchTextField.getText();
     }
 
     public void setSearchedPageIntroText(String pageIntroText){
         searchedPageIntroTextPane.setText(pageIntroText);
     }
+
 
    
 

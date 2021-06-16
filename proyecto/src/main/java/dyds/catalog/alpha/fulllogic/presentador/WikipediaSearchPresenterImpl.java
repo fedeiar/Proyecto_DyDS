@@ -7,15 +7,17 @@ import dyds.catalog.alpha.fulllogic.vista.MainWindow;
 import javax.swing.*;
 
 public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
+
     MainWindow view;
     VideoGameInfoModel videoGameInfoModel;
 
-    public WikipediaSearchPresenterImpl() {
-        inicializarModelo();
+    public WikipediaSearchPresenterImpl(VideoGameInfoModel videoGameInfoModel) {
+        this.videoGameInfoModel = videoGameInfoModel;
+        initListeners();
     }
 
-    private void inicializarModelo(){
-        videoGameInfoModel = new VideoGameInfoModelImpl();
+    private void initListeners(){
+        
         videoGameInfoModel.setWikipediaSearchInfoListener(new WikipediaSearchInfoListener() {
 
             public void didFoundPageInWikipedia() {
