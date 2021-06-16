@@ -10,7 +10,8 @@ public interface VideoGameInfoModel {
 
     public void searchTermInWikipedia(String searchTerm);
 
-    public String getUltimaBusquedaLocal();
+    public String getLastLocalSearchedPage();
+    public String getLastLocalSearchedTitle();
 
     public Object[] getTotalTitulosRegistrados();
     
@@ -19,7 +20,7 @@ public interface VideoGameInfoModel {
 
     public void storeLastSearchedPage();
 
-    public void searchInLocalStorage(String termSearched);
-    public void deleteFromLocalStorage(String termSearched);
+    public void searchInLocalStorage(String videoGameTitle);
+    public void deleteFromLocalStorage(String videoGameTitle);
 
 }

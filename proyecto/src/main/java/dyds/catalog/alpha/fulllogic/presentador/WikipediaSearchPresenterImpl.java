@@ -18,7 +18,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         videoGameInfoModel = new VideoGameInfoModelImpl();
         videoGameInfoModel.setWikipediaSearchInfoListener(new WikipediaSearchInfoListener() {
 
-            public void didSearchInWikipedia() {
+            public void didFoundPageInWikipedia() {
                 String pageIntroText = videoGameInfoModel.getLastSearchedPageIntroText();
                 String termSearched = videoGameInfoModel.getLastSearchedTerm();
                 String pageTitle = videoGameInfoModel.getLastSearchedPageTitle();
@@ -27,6 +27,13 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
                 
 
                 view.setUltimaBusquedaEfectuada(formattedPageIntroText);
+                view.setWatingStatus();
+            }
+
+            public void didNotFoundPageInWikipedia(){
+                String pageIntroText = "No Results";
+
+                view.setUltimaBusquedaEfectuada(pageIntroText);
                 view.setWatingStatus();
             }
 
@@ -41,16 +48,12 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     private String formatData(String pageIntroText, String termSearched, String pageTitle){
         String formattedText;
-        if (pageIntroText.equals("No Results")) {
-            formattedText = "No Results";
-        }
-        else{
-            formattedText = "<h1>" + pageTitle + "</h1>";
-            formattedText += pageIntroText.replace("\\n", "\n");
-            formattedText = Utilidades.textToHtml(formattedText, termSearched);
-        }
-        return formattedText;
         
+        formattedText = "<h1>" + pageTitle + "</h1>";
+        formattedText += pageIntroText.replace("\\n", "\n");
+        formattedText = Utilidades.textToHtml(formattedText, termSearched);
+        
+        return formattedText;
     }
 
 

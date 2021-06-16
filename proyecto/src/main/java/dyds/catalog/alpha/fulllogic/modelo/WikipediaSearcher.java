@@ -4,9 +4,9 @@ import dyds.catalog.alpha.fulllogic.vista.MainWindow;
 
 public interface WikipediaSearcher {
 
-    public String realizarNuevaBusqueda(String terminoDeBusqueda);
+    public boolean searchPage(String terminoDeBusqueda);
 
-    String getTituloUltimaBusqueda();
+    String getLastSearchedTitle();
     
-    String getInformacionUltimaBusqueda();
+    String getLastSearchedPageIntro();
 }

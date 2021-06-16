@@ -16,13 +16,14 @@ import static dyds.catalog.alpha.fulllogic.utils.Utilidades.textToHtml;
 
 
 public class WikipediaSearcherImpl implements WikipediaSearcher{
-    String searchResultTitle = null; //For storage purposes, se below that it may not coincide with the searched term
-    String text = ""; //Last searched text! this variable is central for everything
+   
 
     private Retrofit retrofit;
     private WikipediaSearchAPI searchAPI ;
     private WikipediaPageAPI pageAPI ;
 
+    String searchResultTitle = null; 
+    String searchResultPageIntro = ""; 
 
     public WikipediaSearcherImpl(){
         initSearcher();
@@ -38,30 +39,23 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         pageAPI = retrofit.create(WikipediaPageAPI.class);
     }
 
-    public String realizarNuevaBusqueda(String terminoDeBusqueda) {
-        String searchResultPageId = searchInWikipediaSearchAPI(terminoDeBusqueda);
-        String resultSearchInWikipedia = searchInWikipediaPageAPI(searchResultPageId);
-        return resultSearchInWikipedia;
-        //formatearDatos(resultSearchInWikipedia , terminoDeBusqueda);
-        //dar formato acá o en el modelo ?
+    public boolean searchPage(String searchedTerm) {
+        String searchResultPageId = searchPageIDInWikipediaSearchAPI(searchedTerm);
+
+        if(pageFound(searchResultPageId)){
+            searchResultPageIntro = searchFirstPageIntroInWikipediaPageAPI(searchResultPageId);
+        }
+
+        return pageFound(searchResultPageId);
     }
 
-    public String getTituloUltimaBusqueda() {
-        return searchResultTitle;
-    }
-    public String getInformacionUltimaBusqueda() {
-        return text;
-    }
-
-    private String searchInWikipediaSearchAPI(String terminoDeBusqueda){
+    private String searchPageIDInWikipediaSearchAPI(String terminoDeBusqueda){
         Response<String> callResponse;
         JsonObject jobj,query;
         String searchResultPageId = null;
         try {
-            callResponse = searchAPI.searchForTerm
-                    (terminoDeBusqueda + " articletopic:\"video-games\"").execute();
+            callResponse = searchAPI.searchForTerm(terminoDeBusqueda + " articletopic:\"video-games\"").execute();
 
-            System.out.println("JSON " + callResponse.body());
 
             Gson gson = new Gson();
             jobj = gson.fromJson(callResponse.body(), JsonObject.class);
@@ -69,7 +63,6 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
             Iterator<JsonElement> resultIterator = query.get("search").getAsJsonArray().iterator();
 
             JsonObject searchResult = null;
-            JsonElement searchResultExtract = null;
 
             searchResultTitle = null; //The searched term may not be the same as the real page title
 
@@ -85,18 +78,19 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         return searchResultPageId;
     }
 
-    private String searchInWikipediaPageAPI(String searchResultPageId){
+    private boolean pageFound(String searchResultPageId){
+        return searchResultPageId != null;
+    }
+
+    private String searchFirstPageIntroInWikipediaPageAPI(String searchResultPageId){
         Response<String> callResponse;
-        JsonObject jobj,query;
+        JsonObject jobj, query;
         Gson gson = new Gson();
-        JsonElement searchResultExtract = null;
-        String resultOfSearch;
-        //If we found a page related to the term, get the text searchResultExtract from there
+        JsonElement searchResultExtract;
+        String firstPageIntro = null;
         try {
-            if (searchResultPageId != null) {
                 callResponse = pageAPI.getExtractByPageID(searchResultPageId).execute();
 
-                System.out.println("JSON " + callResponse.body());
                 jobj = gson.fromJson(callResponse.body(), JsonObject.class);
                 query = jobj.get("query").getAsJsonObject();
                 JsonObject pages = query.get("pages").getAsJsonObject();
@@ -104,16 +98,23 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
                 Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
                 JsonObject page = first.getValue().getAsJsonObject();
                 searchResultExtract = page.get("extract");
-            }
+
+                firstPageIntro = searchResultExtract.getAsString();
         }
         catch (IOException e1) {
             e1.printStackTrace();
         }
-        if (searchResultExtract == null)
-            resultOfSearch = "No Results";
-        else
-            resultOfSearch = searchResultExtract.getAsString();
-        return resultOfSearch;
+
+        return firstPageIntro;
+    }
+
+
+    public String getLastSearchedTitle() {
+        return searchResultTitle;
+    }
+
+    public String getLastSearchedPageIntro() {
+        return searchResultPageIntro;
     }
 
 }

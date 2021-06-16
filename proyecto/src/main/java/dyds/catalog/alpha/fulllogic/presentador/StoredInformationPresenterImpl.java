@@ -19,7 +19,12 @@ public class StoredInformationPresenterImpl implements StoredInformationPresente
         videoGameInfoModel.setStoredInformationListener(new StoredInfoListener() {
 
             public void didSearchPageStoredLocally() {
-                view.setInformacionBuscadaLocalmente(videoGameInfoModel.getUltimaBusquedaLocal());
+                String pageIntroText = videoGameInfoModel.getLastLocalSearchedPage();
+                String pageTitle = videoGameInfoModel.getLastLocalSearchedTitle();
+
+                String formattedPageIntroText = formatData(pageIntroText, pageTitle);
+                
+                view.setInformacionBuscadaLocalmente(formattedPageIntroText);
             }
 
             public void didDeletePageStoredLocally() {
@@ -29,6 +34,16 @@ public class StoredInformationPresenterImpl implements StoredInformationPresente
 
         });
     }
+
+    private String formatData(String pageIntroText, String pageTitle){
+        String formattedText;
+        
+        formattedText = "<h1>" + pageTitle + "</h1>";
+        formattedText += pageIntroText.replace("\\n", "\n");
+        
+        return formattedText;
+    }
+
 
     private void updateViewStoredTitles(){
         view.setComboBox(new DefaultComboBoxModel(videoGameInfoModel.getTotalTitulosRegistrados()));

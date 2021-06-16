@@ -6,21 +6,27 @@ import static dyds.catalog.alpha.fulllogic.utils.Utilidades.textToHtml;
 
 public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
-    private WikipediaSearcher buscadorEnWikipedia;
+    private WikipediaSearcher wikipediaSearcher;
     private DataBase dataBase;
 
     private WikipediaSearchInfoListener wikipediaSearchInfoListener;
     private StoredInfoListener storedInfoListener;
 
-    private String lastPageSearchedLocally;
-
     private String lastSearchedTerm;
     private String lastSearchedPageIntroText;
     private String lastSearchedPageTitle;
 
+    private boolean lastPageSearchedWithSuccess;
+
+
+    private String lastPageSearchedLocally;
+    private String lastPageTitleSearchedLocally;
+
     public VideoGameInfoModelImpl(){
-        buscadorEnWikipedia = new WikipediaSearcherImpl();
+        wikipediaSearcher = new WikipediaSearcherImpl();
         dataBase = DataBaseImplementation.getInstance();
+
+        lastPageSearchedWithSuccess = false;
     }
 
 
@@ -37,16 +43,24 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     }
 
     @Override public void searchTermInWikipedia(String searchedTerm) {
-        String pageIntroText = buscadorEnWikipedia.realizarNuevaBusqueda(searchedTerm);
-        String pageTitle = buscadorEnWikipedia.getTituloUltimaBusqueda();
- 
-        lastSearchedTerm = searchedTerm;
+        boolean pageFound = wikipediaSearcher.searchPage(searchedTerm);
+        lastPageSearchedWithSuccess = pageFound;
 
-        lastSearchedPageIntroText = giveFormatForStorage(pageIntroText);
-        lastSearchedPageTitle = giveFormatForStorage(pageTitle);
+        if(pageFound){
+            String pageIntroText = wikipediaSearcher.getLastSearchedPageIntro();
+            String pageTitle = wikipediaSearcher.getLastSearchedTitle();
+            lastSearchedTerm = searchedTerm;
 
+            lastSearchedPageIntroText = giveFormatForStorage(pageIntroText);
+            lastSearchedPageTitle = giveFormatForStorage(pageTitle);
 
-        wikipediaSearchInfoListener.didSearchInWikipedia();
+            wikipediaSearchInfoListener.didFoundPageInWikipedia();
+        }
+        else{
+            wikipediaSearchInfoListener.didNotFoundPageInWikipedia();
+        }
+
+        
     }
 
     private String giveFormatForStorage(String text){
@@ -55,7 +69,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     
     @Override public void storeLastSearchedPage() {
-        if(lastSearchedPageIntroText != "" && !lastSearchedPageIntroText.equals("No Results")){
+        if(lastPageSearchedWithSuccess){
             dataBase.saveInfo(lastSearchedPageTitle, lastSearchedPageIntroText);
         }
         wikipediaSearchInfoListener.notificarNuevaInformacionRegistrada();
@@ -75,17 +89,22 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         return dataBase.getTitles().stream().sorted().toArray();
     }
 
-    public void searchInLocalStorage(String searchedTerm) {
-        lastPageSearchedLocally = dataBase.getExtract(searchedTerm);
-        storedInfoListener.didSearchPageStoredLocally();
-    }
-
-    public String getUltimaBusquedaLocal(){
+    public String getLastLocalSearchedPage(){
         return lastPageSearchedLocally;
     }
 
-    public void deleteFromLocalStorage(String terminoDeBusqueda){
-        dataBase.deleteEntry(terminoDeBusqueda);
+    public String getLastLocalSearchedTitle(){
+        return lastPageTitleSearchedLocally;
+    }
+
+    public void searchInLocalStorage(String videoGameTitle) {
+        lastPageSearchedLocally = dataBase.getExtract(videoGameTitle);
+        lastPageTitleSearchedLocally = videoGameTitle;
+        storedInfoListener.didSearchPageStoredLocally();
+    }
+
+    public void deleteFromLocalStorage(String videoGameTitle){
+        dataBase.deleteEntry(videoGameTitle);
         storedInfoListener.didDeletePageStoredLocally();
     }
 
