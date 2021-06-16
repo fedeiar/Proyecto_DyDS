@@ -1,6 +1,6 @@
 package dyds.catalog.alpha.fulllogic.modelo;
 
-import dyds.catalog.alpha.fulllogic.vista.MainWindow;
+import dyds.catalog.alpha.fulllogic.vista.*;
 
 public interface WikipediaSearcher {
 

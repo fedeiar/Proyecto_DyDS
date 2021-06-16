@@ -1,6 +1,12 @@
 package dyds.catalog.alpha.fulllogic.modelo;
 
+import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBase;
+
 public interface VideoGameInfoModel {
+    
+    public void setVideoGameInfoRepository(DataBase dataBase);
+    public void setWikipediaSearchInfoListener(WikipediaSearchInfoListener wikipediaSearchInfoListener);
+    public void setStoredInformationListener(StoredInfoListener storedInformationListener);
     
     public String getLastSearchedPageIntroText();
 
@@ -14,9 +20,6 @@ public interface VideoGameInfoModel {
     public String getLastLocalSearchedTitle();
 
     public Object[] getTotalTitulosRegistrados();
-    
-    public void setWikipediaSearchInfoListener(WikipediaSearchInfoListener wikipediaSearchInfoListener);
-    public void setStoredInformationListener(StoredInfoListener storedInformationListener);
 
     public void storeLastSearchedPage();
 

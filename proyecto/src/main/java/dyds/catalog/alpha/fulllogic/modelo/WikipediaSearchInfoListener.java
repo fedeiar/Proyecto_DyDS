@@ -6,5 +6,5 @@ public interface WikipediaSearchInfoListener {
 
     public void didNotFoundPageInWikipedia();
 
-    public void notificarNuevaInformacionRegistrada();
+    
 }

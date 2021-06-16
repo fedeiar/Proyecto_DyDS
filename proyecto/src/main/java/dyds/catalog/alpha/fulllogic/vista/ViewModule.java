@@ -1,6 +1,6 @@
 package dyds.catalog.alpha.fulllogic.vista;
 
-import dyds.catalog.alpha.fulllogic.presentador.StoredInformationPresenter;
+import dyds.catalog.alpha.fulllogic.presentador.StoredInfoPresenter;
 import dyds.catalog.alpha.fulllogic.presentador.WikipediaSearchPresenter;
 
 public class ViewModule {
@@ -26,7 +26,7 @@ public class ViewModule {
         return wikipediaSearchView;
     }
 
-    public StoredInfoView setUpStoredInfoView(StoredInformationPresenter storedInformationPresenter){
+    public StoredInfoView setUpStoredInfoView(StoredInfoPresenter storedInformationPresenter){
         storedInfoView = new StoredInfoViewImpl(storedInformationPresenter);
         return storedInfoView;
     }

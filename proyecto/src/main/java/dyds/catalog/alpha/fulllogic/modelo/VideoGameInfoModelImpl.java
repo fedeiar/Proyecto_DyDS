@@ -24,9 +24,24 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     public VideoGameInfoModelImpl(){
         wikipediaSearcher = new WikipediaSearcherImpl();
+
+        //aca o en el main?
         dataBase = DataBaseImplementation.getInstance();
+        dataBase.loadDatabase();
 
         lastPageSearchedWithSuccess = false;
+    }
+
+    public void setVideoGameInfoRepository(DataBase dataBase){
+        this.dataBase = dataBase;
+    }
+
+    public void setWikipediaSearchInfoListener(WikipediaSearchInfoListener wikipediaSearchInfoListener){
+        this.wikipediaSearchInfoListener = wikipediaSearchInfoListener;
+    }
+
+    public void setStoredInformationListener(StoredInfoListener oyenteGestionDeInformacionLocal){
+        this.storedInfoListener = oyenteGestionDeInformacionLocal;
     }
 
 
@@ -66,29 +81,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private String giveFormatForStorage(String text){
         return text.replace("'", "`"); //Replace to avoid SQL errors, we will have to find a workaround..
     }
-
-    
-    @Override public void storeLastSearchedPage() {
-        if(lastPageSearchedWithSuccess){
-            dataBase.saveInfo(lastSearchedPageTitle, lastSearchedPageIntroText);
-        }
-        wikipediaSearchInfoListener.notificarNuevaInformacionRegistrada();
-    }
-
-    
-
-    public void setWikipediaSearchInfoListener(WikipediaSearchInfoListener wikipediaSearchInfoListener){
-        this.wikipediaSearchInfoListener = wikipediaSearchInfoListener;
-    }
-
-    public void setStoredInformationListener(StoredInfoListener oyenteGestionDeInformacionLocal){
-        this.storedInfoListener = oyenteGestionDeInformacionLocal;
-    }
-
-    public Object[] getTotalTitulosRegistrados(){
-        return dataBase.getTitles().stream().sorted().toArray();
-    }
-
+   
     public String getLastLocalSearchedPage(){
         return lastPageSearchedLocally;
     }
@@ -96,6 +89,19 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     public String getLastLocalSearchedTitle(){
         return lastPageTitleSearchedLocally;
     }
+
+    public Object[] getTotalTitulosRegistrados(){
+        return dataBase.getTitles().stream().sorted().toArray();
+    }
+
+
+    @Override public void storeLastSearchedPage() {
+        if(lastPageSearchedWithSuccess){
+            dataBase.saveInfo(lastSearchedPageTitle, lastSearchedPageIntroText);
+        }
+        storedInfoListener.didUpdateStoredTitles();
+    }
+
 
     public void searchInLocalStorage(String videoGameTitle) {
         lastPageSearchedLocally = dataBase.getExtract(videoGameTitle);

@@ -10,6 +10,9 @@ import dyds.catalog.alpha.fulllogic.modelo.repositorio.*;
 import dyds.catalog.alpha.fulllogic.presentador.*;
 
 public class MainWindow {
+
+
+    
   private JTextField textField1;
   private JButton goButton;
   JPanel contentPane;
@@ -25,12 +28,14 @@ public class MainWindow {
   private DataBase dataBase;
 
   WikipediaSearchPresenter wikipediaSearchPresenter;
-  StoredInformationPresenter storedInformationPresenter;
+  StoredInfoPresenter storedInformationPresenter;
 
   String searchResultTitle = null; //For storage purposes, se below that it may not coincide with the searched term
   String text = ""; //Last searched text! this variable is central for everything
-
+/*
   public MainWindow() {
+
+    
     dataBase = DataBaseImplementation.getInstance();
     inicializarPresentadores();
 
@@ -81,14 +86,9 @@ public class MainWindow {
     wikipediaSearchPresenter = new WikipediaSearchPresenterImpl();
     wikipediaSearchPresenter.setView(this);
 
-    storedInformationPresenter = new StoredInformationPresenterImpl();
-    storedInformationPresenter.setVista(this);
+    storedInformationPresenter = new StoredInfoPresenterImpl();
+    storedInformationPresenter.setView(this);
 
-    /*presentadorEliminarInformacionLocalmente = new ImplementacionPresentadorEliminarInformacionLocal();
-    presentadorEliminarInformacionLocalmente.setVista(this);
-
-    presentadorRecuperarInformacionLocalmente = new ImplementacionPresentadorRecuperarInformacionLocalmente();
-    presentadorRecuperarInformacionLocalmente.setVista(this);*/
   }
 
   public int getSelectedIndex() {
@@ -139,4 +139,7 @@ public class MainWindow {
   public String getTituloInformacionBuscada() {
     return searchResultTitle;
   }
+*/
+  
+
 }

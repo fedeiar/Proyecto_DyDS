@@ -2,14 +2,15 @@ package dyds.catalog.alpha.fulllogic.presentador;
 
 import dyds.catalog.alpha.fulllogic.modelo.*;
 import dyds.catalog.alpha.fulllogic.utils.Utilidades;
-import dyds.catalog.alpha.fulllogic.vista.MainWindow;
+
+import dyds.catalog.alpha.fulllogic.vista.*;
 
 import javax.swing.*;
 
 public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
-    MainWindow view;
-    VideoGameInfoModel videoGameInfoModel;
+    private WikipediaSearchView view;
+    private VideoGameInfoModel videoGameInfoModel;
 
     public WikipediaSearchPresenterImpl(VideoGameInfoModel videoGameInfoModel) {
         this.videoGameInfoModel = videoGameInfoModel;
@@ -28,24 +29,22 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
                 String formattedPageIntroText = formatData(pageIntroText, termSearched, pageTitle);
                 
 
-                view.setUltimaBusquedaEfectuada(formattedPageIntroText);
+                view.setPageIntroText(formattedPageIntroText);
                 view.setWatingStatus();
             }
 
             public void didNotFoundPageInWikipedia(){
                 String pageIntroText = "No Results";
 
-                view.setUltimaBusquedaEfectuada(pageIntroText);
+                view.setPageIntroText(pageIntroText);
                 view.setWatingStatus();
             }
 
-            public void notificarNuevaInformacionRegistrada() {
-                view.setComboBox(new DefaultComboBoxModel(videoGameInfoModel.getTotalTitulosRegistrados()));
-
-                // hay que agregar un codigo que notifique al usuario que la página fue guardada exitosamente.
-            }
-
         });
+    }
+
+    public void setView(WikipediaSearchView view){
+        this.view = view;
     }
 
     private String formatData(String pageIntroText, String termSearched, String pageTitle){
@@ -58,16 +57,11 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         return formattedText;
     }
 
-
-    public void setView(MainWindow view){
-        this.view = view;
-    }
-
     public void onEventSearchInWikipedia() {
         view.setWorkingStatus();
 
-        String datosIngresados = view.getDatosIngresados();
-        videoGameInfoModel.searchTermInWikipedia(datosIngresados);
+        String searchedTerm = view.getSearchedTerm();
+        videoGameInfoModel.searchTermInWikipedia(searchedTerm);
 
         view.setWatingStatus();
     }

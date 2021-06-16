@@ -1,12 +1,12 @@
 package dyds.catalog.alpha.fulllogic.presentador;
 
-import dyds.catalog.alpha.fulllogic.vista.MainWindow;
+import dyds.catalog.alpha.fulllogic.vista.*;
 
-public interface StoredInformationPresenter {
+public interface StoredInfoPresenter {
 
     public void onEventSearchLocalEntriesInfo();
 
     public void onEventDeleteLocalEntryInfo();
 
-    public void setVista(MainWindow vista);
+    public void setView(StoredInfoView view);
 }

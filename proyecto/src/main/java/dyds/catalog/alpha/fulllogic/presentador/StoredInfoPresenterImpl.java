@@ -1,16 +1,16 @@
 package dyds.catalog.alpha.fulllogic.presentador;
 
 import dyds.catalog.alpha.fulllogic.modelo.*;
-import dyds.catalog.alpha.fulllogic.vista.MainWindow;
+import dyds.catalog.alpha.fulllogic.vista.*;
 
 import javax.swing.*;
 
-public class StoredInformationPresenterImpl implements StoredInformationPresenter{
+public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
     private VideoGameInfoModel videoGameInfoModel;
-    private MainWindow view;
+    private StoredInfoView view;
 
-    public StoredInformationPresenterImpl(VideoGameInfoModel videoGameInfoModel){
+    public StoredInfoPresenterImpl(VideoGameInfoModel videoGameInfoModel){
         this.videoGameInfoModel = videoGameInfoModel;
         initListeners();
     }
@@ -25,12 +25,19 @@ public class StoredInformationPresenterImpl implements StoredInformationPresente
 
                 String formattedPageIntroText = formatData(pageIntroText, pageTitle);
                 
-                view.setInformacionBuscadaLocalmente(formattedPageIntroText);
+                view.setLocalStoredPageIntro(formattedPageIntroText);
             }
 
             public void didDeletePageStoredLocally() {
                 
                 updateViewStoredTitles();
+            }
+
+            public void didUpdateStoredTitles() {
+
+                view.setStoredSearchedTitles(videoGameInfoModel.getTotalTitulosRegistrados());
+
+                // hay que agregar un codigo que notifique al usuario que la página fue guardada exitosamente.
             }
 
         });
@@ -47,25 +54,25 @@ public class StoredInformationPresenterImpl implements StoredInformationPresente
 
 
     private void updateViewStoredTitles(){
-        view.setComboBox(new DefaultComboBoxModel(videoGameInfoModel.getTotalTitulosRegistrados()));
-        view.eliminarInformacionDeLaVista();
+        view.setStoredSearchedTitles(videoGameInfoModel.getTotalTitulosRegistrados());
+        view.cleanPageIntroText();
     }
 
     public void onEventSearchLocalEntriesInfo() {
-        int indice = view.getSelectedIndex();
+        int indice = view.getSelectedTitleIndex();
         if(indice > -1)
-            videoGameInfoModel.searchInLocalStorage(view.getSelectedItem());
+            videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
     }
 
     public void onEventDeleteLocalEntryInfo() {
-        int indice = view.getSelectedIndex();
-        String tituloInformacion = view.getSelectedItem();
+        int indice = view.getSelectedTitleIndex();
+        String tituloInformacion = view.getSelectedTitle();
         if(indice > -1){
             videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);
         }
     }
 
-    public void setVista(MainWindow vista) {
+    public void setView(StoredInfoView vista) {
         this.view = vista;
     }
 }

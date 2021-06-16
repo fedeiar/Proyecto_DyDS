@@ -4,20 +4,31 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.*;
 
-import dyds.catalog.alpha.fulllogic.presentador.StoredInformationPresenter;
+import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBase;
+import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBaseImplementation;
+import dyds.catalog.alpha.fulllogic.presentador.StoredInfoPresenter;
 
 public class StoredInfoViewImpl implements StoredInfoView{
+
     private JPanel storagePanel;
     private JComboBox storedTitlesComboBox;
     private JTextPane storedPageIntroTextPane;
     private JButton deleteButton;
 
-    private StoredInformationPresenter storedInformationPresenter;
+    private StoredInfoPresenter storedInformationPresenter;
 
-    public StoredInfoViewImpl(StoredInformationPresenter storedInformationPresenter){
+    public StoredInfoViewImpl(StoredInfoPresenter storedInformationPresenter){
         this.storedInformationPresenter = storedInformationPresenter;
+        formatView();
         initListeners();
+    }
+
+    private void formatView(){
+        //como hacer esta instruccion mas clean?
+        storedTitlesComboBox.setModel(new DefaultComboBoxModel(DataBaseImplementation.getInstance().getTitles().stream().sorted().toArray()));
+        storedPageIntroTextPane.setContentType("text/html");
     }
 
     private void initListeners(){
@@ -33,6 +44,10 @@ public class StoredInfoViewImpl implements StoredInfoView{
                 storedInformationPresenter.onEventSearchLocalEntriesInfo();
             }
         });
+    }
+
+    public Container getContent(){
+        return this.storagePanel;
     }
 
     public int getSelectedTitleIndex() {
