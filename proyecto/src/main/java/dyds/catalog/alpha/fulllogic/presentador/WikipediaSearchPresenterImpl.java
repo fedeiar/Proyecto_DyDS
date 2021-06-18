@@ -20,7 +20,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     private void initListeners(){
         
-        videoGameInfoModel.setWikipediaSearchInfoListener(new WikipediaSearchInfoListener() {
+        videoGameInfoModel.setWikipediaSearchInfoListener(new WikipediaSearchedInfoListener() {
 
             public void didFoundPageInWikipedia() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastWikiPageSearched();
@@ -39,7 +39,14 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
                 view.setWatingStatus();
             }
 
+        });
+
+        videoGameInfoModel.setSavedLocallyInfoListener(new SavedLocallyInfoListener(){
             
+            public void didSavePageLocally(){
+                // TODO: agregar un método a la vista en el que popeé un cartel de que se guardo exitosamente, así luego es invocado aca.
+            }
+
 
         });
 

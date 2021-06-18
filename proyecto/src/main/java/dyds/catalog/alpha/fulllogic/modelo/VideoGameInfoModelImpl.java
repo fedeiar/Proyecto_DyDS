@@ -9,8 +9,13 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private WikipediaSearcher wikipediaSearcher;
     private DataBase dataBase;
 
-    private WikipediaSearchInfoListener wikipediaSearchInfoListener;
-    private StoredInfoListener storedInfoListener;
+    private WikipediaSearchedInfoListener wikipediaSearchInfoListener;
+    private StoredSearchedInfoListener storedSearchedInfoListener;
+    private StoredTitlesListener storedTitlesListener;
+    private SavedLocallyInfoListener savedLocallyInfoListener;
+    private DeletedInfoListener deletedInfoListener;
+
+
 
     private String lastIntroPageSearched;
     private String lastPageTitleSearched;
@@ -30,18 +35,46 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         lastPageSearchedWithSuccess = false;
     }
 
-    public void setVideoGameInfoRepository(DataBase dataBase){
+    @Override public void setVideoGameInfoRepository(DataBase dataBase){
         this.dataBase = dataBase;
     }
 
-    public void setWikipediaSearchInfoListener(WikipediaSearchInfoListener wikipediaSearchInfoListener){
+    @Override public void setWikipediaSearchInfoListener(WikipediaSearchedInfoListener wikipediaSearchInfoListener){
         this.wikipediaSearchInfoListener = wikipediaSearchInfoListener;
     }
 
-    public void setStoredInformationListener(StoredInfoListener oyenteGestionDeInformacionLocal){
-        this.storedInfoListener = oyenteGestionDeInformacionLocal;
+    @Override public void setStoredSearchedInformationListener(StoredSearchedInfoListener storedSearchedInfoListener){
+        this.storedSearchedInfoListener = storedSearchedInfoListener;
+    }
+
+    @Override public void setStoredTitlesListener(StoredTitlesListener storedTitlesListener){
+        this.storedTitlesListener = storedTitlesListener;
+    }
+
+    @Override public void setSavedLocallyInfoListener(SavedLocallyInfoListener savedLocallyInfoListener){
+        this.savedLocallyInfoListener = savedLocallyInfoListener;
+    }
+
+    @Override public void setDeletedInfoListener(DeletedInfoListener deletedInfoListener){
+        this.deletedInfoListener = deletedInfoListener;
+    }
+
+    @Override public WikipediaPage getLastWikiPageSearched(){
+        WikipediaPage wikiPage = new WikipediaPage(lastPageTitleSearched, lastIntroPageSearched);
+        return wikiPage;
+    }
+
+    @Override public WikipediaPage getLastLocallyStoredWikiPageSearched(){
+        WikipediaPage wikiPage = new WikipediaPage(lastPageTitleSearchedLocally, lastIntroPageSearchedLocally);
+        return wikiPage;
+    }
+
+    @Override public Object[] getTotalTitulosRegistrados(){
+        return dataBase.getTitles().stream().sorted().toArray();
     }
     
+
+    //TODO: en los métodos que siguen, preguntar si el listener no es null antes de enviar un mensaje al que haya implementado al listener.
 
     @Override public void searchTermInWikipedia(String searchedTerm) {
         boolean pageFound = wikipediaSearcher.searchPage(searchedTerm);
@@ -65,20 +98,6 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private String giveFormatForStorage(String text){
         return text.replace("'", "`"); //Replace to avoid SQL errors, we will have to find a workaround..
     }
-   
-    @Override public WikipediaPage getLastWikiPageSearched(){
-        WikipediaPage wikiPage = new WikipediaPage(lastPageTitleSearched, lastIntroPageSearched);
-        return wikiPage;
-    }
-
-    @Override public WikipediaPage getLastLocallyStoredWikiPageSearched(){
-        WikipediaPage wikiPage = new WikipediaPage(lastPageTitleSearchedLocally, lastIntroPageSearchedLocally);
-        return wikiPage;
-    }
-
-    @Override public Object[] getTotalTitulosRegistrados(){
-        return dataBase.getTitles().stream().sorted().toArray();
-    }
 
     @Override public void storeLastSearchedPage() {
         if(lastPageSearchedWithSuccess){
@@ -86,19 +105,22 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         }
         //TODO: avisarle al presentador de la vista de la busqueda que la busqueda fue guardada exitosamente, para ello debemos tener algún método en algún oyente.
         //es probable que tengamos que hacer otros oyentes que no dependan de los presentadores, sino de los datos del modelo.
-
-        storedInfoListener.didUpdateStoredTitles();
+        savedLocallyInfoListener.didSavePageLocally();
+        storedTitlesListener.didUpdateStoredTitles();
     }
 
     @Override public void searchInLocalStorage(String videoGameTitle) {
         lastIntroPageSearchedLocally = dataBase.getExtract(videoGameTitle);
         lastPageTitleSearchedLocally = videoGameTitle;
-        storedInfoListener.didSearchPageStoredLocally();
+
+        storedSearchedInfoListener.didSearchPageStoredLocally();
     }
 
     @Override public void deleteFromLocalStorage(String videoGameTitle){
         dataBase.deleteEntry(videoGameTitle);
-        storedInfoListener.didDeletePageStoredLocally();
+
+        deletedInfoListener.didDeletePageStoredLocally();
+        storedTitlesListener.didUpdateStoredTitles();
     }
 
     
