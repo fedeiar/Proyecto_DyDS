@@ -20,30 +20,25 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         videoGameInfoModel.setStoredInformationListener(new StoredInfoListener() {
 
             public void didSearchPageStoredLocally() {
-                String pageIntroText = videoGameInfoModel.getLastLocalSearchedPage();
-                String pageTitle = videoGameInfoModel.getLastLocalSearchedTitle();
+                WikipediaPage wikiPage = videoGameInfoModel.getLastLocallyStoredWikiPageSearched();
 
-                String formattedPageIntroText = formatData(pageIntroText, pageTitle);
+                String formattedPageIntroText = formatData(wikiPage.getTitle(), wikiPage.getPageIntro());
                 
                 view.setLocalStoredPageIntro(formattedPageIntroText);
             }
 
             public void didDeletePageStoredLocally() {
-                
                 updateViewStoredTitles();
             }
 
             public void didUpdateStoredTitles() {
-
                 view.setStoredSearchedTitles(videoGameInfoModel.getTotalTitulosRegistrados());
-
-                // hay que agregar un codigo que notifique al usuario que la página fue guardada exitosamente. NO!! esto se hace en el otro presentador!!!
             }
 
         });
     }
 
-    private String formatData(String pageIntroText, String pageTitle){
+    private String formatData(String pageTitle, String pageIntroText){
         String formattedText;
         
         formattedText = "<h1>" + pageTitle + "</h1>";

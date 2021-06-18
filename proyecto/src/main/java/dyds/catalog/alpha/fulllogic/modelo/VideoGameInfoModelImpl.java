@@ -12,19 +12,18 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private WikipediaSearchInfoListener wikipediaSearchInfoListener;
     private StoredInfoListener storedInfoListener;
 
-    private String lastSearchedPageIntroText;
-    private String lastSearchedPageTitle;
+    private String lastIntroPageSearched;
+    private String lastPageTitleSearched;
 
     private boolean lastPageSearchedWithSuccess;
 
-
-    private String lastPageSearchedLocally;
+    private String lastIntroPageSearchedLocally;
     private String lastPageTitleSearchedLocally;
 
     public VideoGameInfoModelImpl(){
         wikipediaSearcher = new WikipediaSearcherImpl();
 
-        //aca o en el main?
+        //TODO: preg aca o en el main?
         dataBase = DataBaseImplementation.getInstance();
         dataBase.loadDatabase();
 
@@ -42,16 +41,6 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     public void setStoredInformationListener(StoredInfoListener oyenteGestionDeInformacionLocal){
         this.storedInfoListener = oyenteGestionDeInformacionLocal;
     }
-
-
-    @Override public String getLastSearchedPageIntroText() {
-        return lastSearchedPageIntroText;
-    }
-
-    @Override public String getLastSearchedPageTitle(){
-        return lastSearchedPageTitle;
-    }
-
     
 
     @Override public void searchTermInWikipedia(String searchedTerm) {
@@ -59,42 +48,41 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         lastPageSearchedWithSuccess = pageFound;
 
         if(pageFound){
-            //TODO: encapsular el titulo y el extracto(page title) en un objeto
-            String pageIntroText = wikipediaSearcher.getLastSearchedPageIntro();
+            //TODO: encapsular el titulo y el extracto(page title) en un objeto, debemos también encapsularlo en wikipediaSearchImpl?
             String pageTitle = wikipediaSearcher.getLastSearchedTitle();
-
-            lastSearchedPageIntroText = giveFormatForStorage(pageIntroText);
-            lastSearchedPageTitle = giveFormatForStorage(pageTitle);
+            String pageIntroText = wikipediaSearcher.getLastSearchedPageIntro();
+            
+            lastPageTitleSearched = giveFormatForStorage(pageTitle);
+            lastIntroPageSearched = giveFormatForStorage(pageIntroText);
 
             wikipediaSearchInfoListener.didFoundPageInWikipedia();
         }
         else{
             wikipediaSearchInfoListener.didNotFoundPageInWikipedia();
-        }
-
-        
+        }  
     }
 
     private String giveFormatForStorage(String text){
         return text.replace("'", "`"); //Replace to avoid SQL errors, we will have to find a workaround..
     }
    
-    public String getLastLocalSearchedPage(){
-        return lastPageSearchedLocally;
+    @Override public WikipediaPage getLastWikiPageSearched(){
+        WikipediaPage wikiPage = new WikipediaPage(lastPageTitleSearched, lastIntroPageSearched);
+        return wikiPage;
     }
 
-    public String getLastLocalSearchedTitle(){
-        return lastPageTitleSearchedLocally;
+    @Override public WikipediaPage getLastLocallyStoredWikiPageSearched(){
+        WikipediaPage wikiPage = new WikipediaPage(lastPageTitleSearchedLocally, lastIntroPageSearchedLocally);
+        return wikiPage;
     }
 
-    public Object[] getTotalTitulosRegistrados(){
+    @Override public Object[] getTotalTitulosRegistrados(){
         return dataBase.getTitles().stream().sorted().toArray();
     }
 
-
     @Override public void storeLastSearchedPage() {
         if(lastPageSearchedWithSuccess){
-            dataBase.saveInfo(lastSearchedPageTitle, lastSearchedPageIntroText);
+            dataBase.saveInfo(lastPageTitleSearched, lastIntroPageSearched);
         }
         //TODO: avisarle al presentador de la vista de la busqueda que la busqueda fue guardada exitosamente, para ello debemos tener algún método en algún oyente.
         //es probable que tengamos que hacer otros oyentes que no dependan de los presentadores, sino de los datos del modelo.
@@ -102,14 +90,13 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         storedInfoListener.didUpdateStoredTitles();
     }
 
-
-    public void searchInLocalStorage(String videoGameTitle) {
-        lastPageSearchedLocally = dataBase.getExtract(videoGameTitle);
+    @Override public void searchInLocalStorage(String videoGameTitle) {
+        lastIntroPageSearchedLocally = dataBase.getExtract(videoGameTitle);
         lastPageTitleSearchedLocally = videoGameTitle;
         storedInfoListener.didSearchPageStoredLocally();
     }
 
-    public void deleteFromLocalStorage(String videoGameTitle){
+    @Override public void deleteFromLocalStorage(String videoGameTitle){
         dataBase.deleteEntry(videoGameTitle);
         storedInfoListener.didDeletePageStoredLocally();
     }

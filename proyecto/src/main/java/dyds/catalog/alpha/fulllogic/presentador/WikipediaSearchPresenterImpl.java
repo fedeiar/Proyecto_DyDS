@@ -23,10 +23,9 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         videoGameInfoModel.setWikipediaSearchInfoListener(new WikipediaSearchInfoListener() {
 
             public void didFoundPageInWikipedia() {
-                String pageIntroText = videoGameInfoModel.getLastSearchedPageIntroText();
-                String pageTitle = videoGameInfoModel.getLastSearchedPageTitle();
+                WikipediaPage wikiPage = videoGameInfoModel.getLastWikiPageSearched();
 
-                String formattedPageIntroText = formatData(pageIntroText, lastTermSearched, pageTitle);
+                String formattedPageIntroText = formatData(wikiPage.getTitle(), wikiPage.getPageIntro(), lastTermSearched);
                 
 
                 view.setPageIntroText(formattedPageIntroText);
@@ -51,7 +50,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         this.view = view;
     }
 
-    private String formatData(String pageIntroText, String termSearched, String pageTitle){
+    private String formatData(String pageTitle, String pageIntroText, String termSearched){
         String formattedText;
         
         formattedText = "<h1>" + pageTitle + "</h1>";

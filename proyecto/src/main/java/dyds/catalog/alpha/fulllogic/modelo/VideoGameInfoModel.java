@@ -8,14 +8,10 @@ public interface VideoGameInfoModel {
     public void setWikipediaSearchInfoListener(WikipediaSearchInfoListener wikipediaSearchInfoListener);
     public void setStoredInformationListener(StoredInfoListener storedInformationListener);
     
-    public String getLastSearchedPageIntroText();
-
-    public String getLastSearchedPageTitle();
-
     public void searchTermInWikipedia(String searchTerm);
 
-    public String getLastLocalSearchedPage();
-    public String getLastLocalSearchedTitle();
+    public WikipediaPage getLastWikiPageSearched();
+    public WikipediaPage getLastLocallyStoredWikiPageSearched();
 
     public Object[] getTotalTitulosRegistrados();
 
