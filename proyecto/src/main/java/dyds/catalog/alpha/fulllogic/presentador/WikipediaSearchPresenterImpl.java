@@ -45,6 +45,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
             
             public void didSavePageLocally(){
                 // TODO: agregar un método a la vista en el que popeé un cartel de que se guardo exitosamente, así luego es invocado aca.
+                view.pageSavedSuccesfully();
             }
 
 

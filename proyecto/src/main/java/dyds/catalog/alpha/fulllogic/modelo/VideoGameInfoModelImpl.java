@@ -102,11 +102,14 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     @Override public void storeLastSearchedPage() {
         if(lastPageSearchedWithSuccess){
             dataBase.saveInfo(lastPageTitleSearched, lastIntroPageSearched);
+
+            savedLocallyInfoListener.didSavePageLocally();
+            storedTitlesListener.didUpdateStoredTitles();
+            //TODO: avisarle al presentador de la vista de la busqueda que la busqueda fue guardada exitosamente, para ello debemos tener algún método en algún oyente.
+            //es probable que tengamos que hacer otros oyentes que no dependan de los presentadores, sino de los datos del modelo.
+        }else{
+            //TODO: si no fue agregada con exito o nada fue agregado, reportar el error
         }
-        //TODO: avisarle al presentador de la vista de la busqueda que la busqueda fue guardada exitosamente, para ello debemos tener algún método en algún oyente.
-        //es probable que tengamos que hacer otros oyentes que no dependan de los presentadores, sino de los datos del modelo.
-        savedLocallyInfoListener.didSavePageLocally();
-        storedTitlesListener.didUpdateStoredTitles();
     }
 
     @Override public void searchInLocalStorage(String videoGameTitle) {
