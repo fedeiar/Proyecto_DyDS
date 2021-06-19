@@ -67,13 +67,7 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
         searchedPageIntroTextPane.setText(pageIntroText);
     }
 
-    @Override
-    public void setSearchTerm(String term) {
-        searchTextField.setText(term);
-    }
-
-    @Override
-    public String getActualSearch() {
-        return searchedPageIntroTextPane.getText();
+    public void pageSavedSuccesfully(){
+        JOptionPane.showMessageDialog(null, "Page saved Succesfully", "Page Saved", JOptionPane.INFORMATION_MESSAGE);
     }
 }

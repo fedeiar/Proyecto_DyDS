@@ -1,10 +1,8 @@
 package dyds.catalog.alpha.fulllogic.modelo;
 
-public interface WikipediaSearchInfoListener {
+public interface WikipediaSearchedInfoListener {
 
     public void didFoundPageInWikipedia();
 
     public void didNotFoundPageInWikipedia();
-
-    
 }

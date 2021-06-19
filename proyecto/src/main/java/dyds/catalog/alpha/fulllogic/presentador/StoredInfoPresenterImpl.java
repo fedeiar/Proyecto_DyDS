@@ -17,7 +17,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
     private void initListeners(){
         
-        videoGameInfoModel.setStoredInformationListener(new StoredInfoListener() {
+        videoGameInfoModel.setStoredSearchedInformationListener(new StoredSearchedInfoListener() {
 
             public void didSearchPageStoredLocally() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastLocallyStoredWikiPageSearched();
@@ -27,12 +27,20 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
                 view.setLocalStoredPageIntro(formattedPageIntroText);
             }
 
-            public void didDeletePageStoredLocally() {
+        });
+
+        videoGameInfoModel.setStoredTitlesListener(new StoredTitlesListener(){
+
+            public void didUpdateStoredTitles(){
                 updateViewStoredTitles();
             }
 
-            public void didUpdateStoredTitles() {
-                view.setStoredSearchedTitles(videoGameInfoModel.getTotalTitulosRegistrados());
+        });
+
+        videoGameInfoModel.setDeletedInfoListener(new DeletedInfoListener(){
+            
+            public void didDeletePageStoredLocally(){
+                // TODO: agregar un metodo a la vista en el que popeé un cartel de que un título fue borrado exitosamente. Luego ese método es invocado acá.
             }
 
         });
@@ -47,16 +55,16 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         return formattedText;
     }
 
-
     private void updateViewStoredTitles(){
         view.setStoredSearchedTitles(videoGameInfoModel.getTotalTitulosRegistrados());
         view.cleanPageIntroText();
     }
 
+
     public void onEventSearchLocalEntriesInfo() {
         //hacer un thread?
 
-        //agregar el working y waiting status
+        //TODO: agregar el working y waiting status
         int indice = view.getSelectedTitleIndex();
         if(indice > -1)
             videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
@@ -77,6 +85,5 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
     public void setView(StoredInfoView vista) {
         this.view = vista;
         updateViewStoredTitles();
-        // invocar a updateViewStoredTitles para actualizar los titulos de esta vista.
     }
 }
