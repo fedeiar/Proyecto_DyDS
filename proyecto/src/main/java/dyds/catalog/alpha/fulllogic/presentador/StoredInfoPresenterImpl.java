@@ -10,6 +10,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
     private VideoGameInfoModel videoGameInfoModel;
     private StoredInfoView view;
+    private Thread taskThread;
 
     public StoredInfoPresenterImpl(VideoGameInfoModel videoGameInfoModel){
         this.videoGameInfoModel = videoGameInfoModel;
@@ -40,9 +41,13 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
         videoGameInfoModel.setDeletedInfoListener(new DeletedInfoListener(){
             
-            public void didDeletePageStoredLocally(){
+            public void didSuccesfullyDeletePageStoredLocally(){
                 updateViewStoredTitles();
                 // TODO: agregar un metodo a la vista en el que popeé un cartel de que un título fue borrado exitosamente. Luego ese método es invocado acá.
+            }
+
+            public void didFailedDeletePageStoredLocally(){
+                // TODO: agregar un metodo a la vista en el que popeé un cartel de que un titulo NO fue borrado exitosamente.
             }
 
         });
@@ -55,23 +60,40 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
 
     public void onEventSearchLocalEntriesInfo() {
-        //hacer un thread?
+        //TODO: preg si está bien el thread asi.
+        int index = view.getSelectedTitleIndex();
+        if(aTitleWasSelected(index)){
+            taskThread = new Thread(new Runnable(){
 
-        //TODO: agregar el working y waiting status
-        int indice = view.getSelectedTitleIndex();
-        if(indice > -1)
-            videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
+                @Override public void run() {
+                    view.setWatingStatus();
+                    videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
+                }
+                
+            });
+            taskThread.start();
+        }
+    }
+
+    private boolean aTitleWasSelected(int index){
+        return index > -1;
     }
 
     public void onEventDeleteLocalEntryInfo() {
-        //hacer un thread?
+        //TODO: preg si está bien el thread asi.
 
-        //TODO: agregar el working y waiting status
-        int indice = view.getSelectedTitleIndex();
-        String tituloInformacion = view.getSelectedTitle();
-        if(indice > -1){
-            videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);
+        int index = view.getSelectedTitleIndex();
+        if(aTitleWasSelected(index)){
+            taskThread = new Thread(new Runnable(){
+                @Override public void run(){
+                    view.setWatingStatus();
+                    String tituloInformacion = view.getSelectedTitle();
+                    videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);
+                }
+            });
+            taskThread.start();
         }
+    
     }
 
     //usar tal vez otro nombre, como initView

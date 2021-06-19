@@ -6,6 +6,10 @@ public interface StoredInfoView {
     
     public Container getContent();
 
+    public void setWorkingStatus();
+    
+    public void setWatingStatus();
+
     public int getSelectedTitleIndex();
 
     public String getSelectedTitle();

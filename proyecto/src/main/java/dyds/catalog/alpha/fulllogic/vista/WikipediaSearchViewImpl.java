@@ -51,12 +51,16 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
     }
 
     public void setWorkingStatus() {
-        for(Component c: this.searchPanel.getComponents()) c.setEnabled(false);
+        for(Component c: this.searchPanel.getComponents()){
+            c.setEnabled(false);
+        }
         searchedPageIntroTextPane.setText("");
     }
     
     public void setWatingStatus() {
-        for(Component c: this.searchPanel.getComponents()) c.setEnabled(true);
+        for(Component c: this.searchPanel.getComponents()){
+            c.setEnabled(true);
+        }
     }
 
     public String getSearchedTerm() {
@@ -65,11 +69,13 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
 
     public void setPageIntroText(String pageIntroText){
         searchedPageIntroTextPane.setText(pageIntroText);
+        this.setWatingStatus();
         //TODO: considerar poner el setWatingStatus() aca y en todos los métodos que impliquen el fin de un recorrido, 
         //pero al hacer esto la vista es más inteligente (es mas MVC que MVP). No está mal pero aclararlo en el documento.
     }
 
     public void pageSavedSuccesfully(){
         JOptionPane.showMessageDialog(null, "Page saved Succesfully", "Page Saved", JOptionPane.INFORMATION_MESSAGE);
+        this.setWatingStatus();
     }
 }

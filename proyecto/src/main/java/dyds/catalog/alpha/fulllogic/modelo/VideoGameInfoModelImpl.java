@@ -133,7 +133,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     @Override public void deleteFromLocalStorage(String videoGameTitle){
         dataBase.deleteEntry(videoGameTitle);
 
-        deletedInfoListener.didDeletePageStoredLocally();
+        deletedInfoListener.didSuccesfullyDeletePageStoredLocally();
     }
 
     

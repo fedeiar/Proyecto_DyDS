@@ -11,8 +11,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     private WikipediaSearchView view;
     private VideoGameInfoModel videoGameInfoModel;
-    //TODO: en realidad es mejor q siemrpe lo recupere de la vista.
-    private String lastTermSearched;
+    private Thread taskThread;
 
     public WikipediaSearchPresenterImpl(VideoGameInfoModel videoGameInfoModel) {
         this.videoGameInfoModel = videoGameInfoModel;
@@ -26,9 +25,8 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
             public void didFoundPageInWikipedia() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastWikiPageSearched();
 
-                String formattedPageIntroText = Utilidades.formatData(wikiPage.getTitle(), wikiPage.getPageIntro(), lastTermSearched);
+                String formattedPageIntroText = Utilidades.formatData(wikiPage.getTitle(), wikiPage.getPageIntro(), view.getSearchedTerm());
                 
-
                 view.setPageIntroText(formattedPageIntroText);
                 view.setWatingStatus();
             }
@@ -46,7 +44,6 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
             
             @Override public void didSuccessSavePageLocally() {
                 view.pageSavedSuccesfully();
-                
             }
 
         });
@@ -56,7 +53,6 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
             @Override
             public void didFailSavePageLocally() {
                 // TODO: agregar un método a la vista que reporte un cartel cuando no se guardó una página exitosamente
-                
             }
             
         });
@@ -68,21 +64,32 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
     }
 
     public void onEventSearchInWikipedia() {
-        //TODO: agregar un thread que encapsule a estas 3 lineas.
+        //TODO: preg si está bien el thread asi.
 
-        view.setWorkingStatus();
+        String lastTermSearched = view.getSearchedTerm();
 
-        lastTermSearched = view.getSearchedTerm();
-        videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
+        taskThread = new Thread(new Runnable(){
+
+            @Override public void run(){
+                view.setWorkingStatus();
+                videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
+            }
+
+        });
+        taskThread.start();
 
        
     }
 
     public void onEventSaveSearchLocally() {
-        //agregar un thread?
+        //TODO: preg si está bien el thread asi.
 
-        //agregar el working y waiting status
-        //view.setWorkingStatus().
-        videoGameInfoModel.storeLastSearchedPage();
+        taskThread = new Thread(new Runnable(){
+            @Override public void run() {
+                view.setWatingStatus();
+                videoGameInfoModel.storeLastSearchedPage();
+            }
+        });
+        taskThread.start();
     }
 }

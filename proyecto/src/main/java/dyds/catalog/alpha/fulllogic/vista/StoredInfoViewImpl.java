@@ -48,6 +48,19 @@ public class StoredInfoViewImpl implements StoredInfoView{
         return this.storagePanel;
     }
 
+    public void setWorkingStatus() {
+        for(Component c: this.storagePanel.getComponents()){
+            c.setEnabled(false);
+        }
+        storedPageIntroTextPane.setText("");
+    }
+    
+    public void setWatingStatus() {
+        for(Component c: this.storagePanel.getComponents()){
+            c.setEnabled(true);
+        }
+    }
+
     public int getSelectedTitleIndex() {
         return storedTitlesComboBox.getSelectedIndex();
     }
@@ -59,14 +72,17 @@ public class StoredInfoViewImpl implements StoredInfoView{
     public void cleanPageIntroText(){
         storedTitlesComboBox.setSelectedIndex(-1);
         storedPageIntroTextPane.setText("");
+        //TODO: habría vque poner el setWatingStatus() también aca?
     }
 
     public void setStoredSearchedTitles(Object[] storedTitles){
         storedTitlesComboBox.setModel(new DefaultComboBoxModel(storedTitles));
+        this.setWatingStatus();
     }
 
     public void setLocalStoredPageIntro(String storedPageIntro){
         storedPageIntroTextPane.setText(storedPageIntro);
+        this.setWatingStatus();
     }
 
 }
