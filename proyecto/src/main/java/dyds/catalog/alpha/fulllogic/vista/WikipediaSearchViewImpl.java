@@ -65,6 +65,8 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
 
     public void setPageIntroText(String pageIntroText){
         searchedPageIntroTextPane.setText(pageIntroText);
+        //TODO: considerar poner el setWatingStatus() aca y en todos los métodos que impliquen el fin de un recorrido, 
+        //pero al hacer esto la vista es más inteligente (es mas MVC que MVP). No está mal pero aclararlo en el documento.
     }
 
     public void pageSavedSuccesfully(){

@@ -26,9 +26,6 @@ public class StoredInfoViewImpl implements StoredInfoView{
     }
 
     private void formatView(){
-        //como hacer esta instruccion mas clean?
-        //storedTitlesComboBox.setModel(new DefaultComboBoxModel(DataBaseImplementation.getInstance().getTitles().stream().sorted().toArray()));
-
         storedPageIntroTextPane.setContentType("text/html");
     }
 

@@ -8,9 +8,9 @@ public interface VideoGameInfoModel {
 
     public void setWikipediaSearchInfoListener(WikipediaSearchedInfoListener wikipediaSearchInfoListener);
     public void setStoredSearchedInformationListener(StoredSearchedInfoListener storedSearchedInfoListener);
-    public void setStoredTitlesListener(StoredTitlesListener storedTitlesListener);
-    public void setSavedLocallyInfoListener(SavedLocallyInfoListener savedLocallyInfoListener);
     public void setDeletedInfoListener(DeletedInfoListener deletedInfoListener);
+    public void setSuccesfullySavedLocalInfoListener(SuccesfullySavedLocalInfoListener succesfullySavedLocalInfoListener);
+    public void setUnsuccesfullySavedLocalInfoListener(UnsuccesfullySavedLocalInfoListener unsuccesfullySavedLocalInfoListener);
     
     public WikipediaPage getLastWikiPageSearched();
     public WikipediaPage getLastLocallyStoredWikiPageSearched();

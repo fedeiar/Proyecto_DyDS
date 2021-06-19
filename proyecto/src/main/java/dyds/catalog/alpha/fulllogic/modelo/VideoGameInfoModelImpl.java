@@ -4,6 +4,10 @@ import dyds.catalog.alpha.fulllogic.modelo.repositorio.*;
 
 import static dyds.catalog.alpha.fulllogic.utils.Utilidades.textToHtml;
 
+import java.sql.DatabaseMetaData;
+import java.util.List;
+import java.util.LinkedList;
+
 public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     private WikipediaSearcher wikipediaSearcher;
@@ -11,10 +15,9 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     private WikipediaSearchedInfoListener wikipediaSearchInfoListener;
     private StoredSearchedInfoListener storedSearchedInfoListener;
-    private StoredTitlesListener storedTitlesListener;
-    private SavedLocallyInfoListener savedLocallyInfoListener;
     private DeletedInfoListener deletedInfoListener;
-
+    private LinkedList<SuccesfullySavedLocalInfoListener> succesfullySavedLocalInfoListenerList = new LinkedList<SuccesfullySavedLocalInfoListener>();
+    private LinkedList<UnsuccesfullySavedLocalInfoListener> unsuccesfullySavedLocalInfoListenerList = new LinkedList<UnsuccesfullySavedLocalInfoListener>();
 
 
     private String lastIntroPageSearched;
@@ -26,17 +29,15 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private String lastPageTitleSearchedLocally;
 
     public VideoGameInfoModelImpl(){
+        //TODO: en realidad lo tiene que recibir por parámetro, no crearlo
         wikipediaSearcher = new WikipediaSearcherImpl();
-
-        //TODO: preg aca o en el main?
-        dataBase = DataBaseImplementation.getInstance();
-        dataBase.loadDatabase();
 
         lastPageSearchedWithSuccess = false;
     }
 
     @Override public void setVideoGameInfoRepository(DataBase dataBase){
         this.dataBase = dataBase;
+        dataBase.loadDatabase();
     }
 
     @Override public void setWikipediaSearchInfoListener(WikipediaSearchedInfoListener wikipediaSearchInfoListener){
@@ -47,16 +48,16 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         this.storedSearchedInfoListener = storedSearchedInfoListener;
     }
 
-    @Override public void setStoredTitlesListener(StoredTitlesListener storedTitlesListener){
-        this.storedTitlesListener = storedTitlesListener;
-    }
-
-    @Override public void setSavedLocallyInfoListener(SavedLocallyInfoListener savedLocallyInfoListener){
-        this.savedLocallyInfoListener = savedLocallyInfoListener;
-    }
-
     @Override public void setDeletedInfoListener(DeletedInfoListener deletedInfoListener){
         this.deletedInfoListener = deletedInfoListener;
+    }
+
+    @Override public void setSuccesfullySavedLocalInfoListener(SuccesfullySavedLocalInfoListener succesfullySavedLocalInfoListener){
+        succesfullySavedLocalInfoListenerList.addLast(succesfullySavedLocalInfoListener);
+    }
+
+    @Override public void setUnsuccesfullySavedLocalInfoListener(UnsuccesfullySavedLocalInfoListener unsuccesfullySavedLocalInfoListener){
+        unsuccesfullySavedLocalInfoListenerList.addLast(unsuccesfullySavedLocalInfoListener);
     }
 
     @Override public WikipediaPage getLastWikiPageSearched(){
@@ -92,7 +93,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         }
         else{
             wikipediaSearchInfoListener.didNotFoundPageInWikipedia();
-        }  
+        }
     }
 
     private String giveFormatForStorage(String text){
@@ -103,15 +104,25 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         if(lastPageSearchedWithSuccess){
             dataBase.saveInfo(lastPageTitleSearched, lastIntroPageSearched);
 
-            savedLocallyInfoListener.didSavePageLocally();
-            storedTitlesListener.didUpdateStoredTitles();
-            //TODO: avisarle al presentador de la vista de la busqueda que la busqueda fue guardada exitosamente, para ello debemos tener algún método en algún oyente.
-            //es probable que tengamos que hacer otros oyentes que no dependan de los presentadores, sino de los datos del modelo.
+            notifyAllSuccsessfullySavedLocallyInfoListeners(succesfullySavedLocalInfoListenerList);
         }else{
-            //TODO: si no fue agregada con exito o nada fue agregado, reportar el error
+            notifyAllUnSuccsessfullySavedLocallyInfoListeners(unsuccesfullySavedLocalInfoListenerList);
         }
     }
 
+    private void notifyAllSuccsessfullySavedLocallyInfoListeners(LinkedList<SuccesfullySavedLocalInfoListener> List){
+        for (SuccesfullySavedLocalInfoListener succesfullySavedLocalInfoListener : List) {
+            succesfullySavedLocalInfoListener.didSuccessSavePageLocally();
+        }
+    }
+
+    private void notifyAllUnSuccsessfullySavedLocallyInfoListeners(LinkedList<UnsuccesfullySavedLocalInfoListener> List){
+        for (UnsuccesfullySavedLocalInfoListener unsuccesfullySavedLocalInfoListener : List) {
+            unsuccesfullySavedLocalInfoListener.didFailSavePageLocally();
+        }
+    }
+
+   
     @Override public void searchInLocalStorage(String videoGameTitle) {
         lastIntroPageSearchedLocally = dataBase.getExtract(videoGameTitle);
         lastPageTitleSearchedLocally = videoGameTitle;
@@ -123,7 +134,6 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         dataBase.deleteEntry(videoGameTitle);
 
         deletedInfoListener.didDeletePageStoredLocally();
-        storedTitlesListener.didUpdateStoredTitles();
     }
 
     

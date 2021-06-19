@@ -1,6 +1,7 @@
 package dyds.catalog.alpha.fulllogic.presentador;
 
 import dyds.catalog.alpha.fulllogic.modelo.*;
+import dyds.catalog.alpha.fulllogic.utils.Utilidades;
 import dyds.catalog.alpha.fulllogic.vista.*;
 
 import javax.swing.*;
@@ -22,37 +23,29 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
             public void didSearchPageStoredLocally() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastLocallyStoredWikiPageSearched();
 
-                String formattedPageIntroText = formatData(wikiPage.getTitle(), wikiPage.getPageIntro());
+                String formattedPageIntroText = Utilidades.formatData(wikiPage.getTitle(), wikiPage.getPageIntro());
                 
                 view.setLocalStoredPageIntro(formattedPageIntroText);
             }
 
         });
 
-        videoGameInfoModel.setStoredTitlesListener(new StoredTitlesListener(){
+        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedLocalInfoListener(){
 
-            public void didUpdateStoredTitles(){
+            @Override public void didSuccessSavePageLocally() {
                 updateViewStoredTitles();
             }
-
+            
         });
 
         videoGameInfoModel.setDeletedInfoListener(new DeletedInfoListener(){
             
             public void didDeletePageStoredLocally(){
+                updateViewStoredTitles();
                 // TODO: agregar un metodo a la vista en el que popeé un cartel de que un título fue borrado exitosamente. Luego ese método es invocado acá.
             }
 
         });
-    }
-
-    private String formatData(String pageTitle, String pageIntroText){
-        String formattedText;
-        
-        formattedText = "<h1>" + pageTitle + "</h1>";
-        formattedText += pageIntroText.replace("\\n", "\n");
-        
-        return formattedText;
     }
 
     private void updateViewStoredTitles(){

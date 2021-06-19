@@ -11,6 +11,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     private WikipediaSearchView view;
     private VideoGameInfoModel videoGameInfoModel;
+    //TODO: en realidad es mejor q siemrpe lo recupere de la vista.
     private String lastTermSearched;
 
     public WikipediaSearchPresenterImpl(VideoGameInfoModel videoGameInfoModel) {
@@ -25,7 +26,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
             public void didFoundPageInWikipedia() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastWikiPageSearched();
 
-                String formattedPageIntroText = formatData(wikiPage.getTitle(), wikiPage.getPageIntro(), lastTermSearched);
+                String formattedPageIntroText = Utilidades.formatData(wikiPage.getTitle(), wikiPage.getPageIntro(), lastTermSearched);
                 
 
                 view.setPageIntroText(formattedPageIntroText);
@@ -41,48 +42,47 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
         });
 
-        videoGameInfoModel.setSavedLocallyInfoListener(new SavedLocallyInfoListener(){
+        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedLocalInfoListener(){
             
-            public void didSavePageLocally(){
-                // TODO: agregar un método a la vista en el que popeé un cartel de que se guardo exitosamente, así luego es invocado aca.
+            @Override public void didSuccessSavePageLocally() {
                 view.pageSavedSuccesfully();
+                
             }
-
 
         });
 
-        // TODO: debería implementarse otro método de algún oyente para notificar al usuario que la busqueda fue guardada exitosamente.
+        videoGameInfoModel.setUnsuccesfullySavedLocalInfoListener(new UnsuccesfullySavedLocalInfoListener(){
+
+            @Override
+            public void didFailSavePageLocally() {
+                // TODO: agregar un método a la vista que reporte un cartel cuando no se guardó una página exitosamente
+                
+            }
+            
+        });
+
     }
 
     public void setView(WikipediaSearchView view){
         this.view = view;
     }
 
-    private String formatData(String pageTitle, String pageIntroText, String termSearched){
-        String formattedText;
-        
-        formattedText = "<h1>" + pageTitle + "</h1>";
-        formattedText += pageIntroText.replace("\\n", "\n");
-        formattedText = Utilidades.textToHtml(formattedText, termSearched);
-        
-        return formattedText;
-    }
-
     public void onEventSearchInWikipedia() {
-        //TODO: agregar un thread
+        //TODO: agregar un thread que encapsule a estas 3 lineas.
 
         view.setWorkingStatus();
 
         lastTermSearched = view.getSearchedTerm();
         videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
 
-        // si pongo el wating status aca, no estaría ya cumnpliendo?
+       
     }
 
     public void onEventSaveSearchLocally() {
         //agregar un thread?
 
         //agregar el working y waiting status
+        //view.setWorkingStatus().
         videoGameInfoModel.storeLastSearchedPage();
     }
 }
