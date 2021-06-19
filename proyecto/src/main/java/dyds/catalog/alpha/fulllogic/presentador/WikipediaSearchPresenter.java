@@ -10,4 +10,5 @@ public interface WikipediaSearchPresenter {
     public void onEventSaveSearchLocally();
 
     public void setView(WikipediaSearchView view);
+
 }

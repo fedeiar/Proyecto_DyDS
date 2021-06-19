@@ -66,4 +66,14 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
     public void setPageIntroText(String pageIntroText){
         searchedPageIntroTextPane.setText(pageIntroText);
     }
+
+    @Override
+    public void setSearchTerm(String term) {
+        searchTextField.setText(term);
+    }
+
+    @Override
+    public String getActualSearch() {
+        return searchedPageIntroTextPane.getText();
+    }
 }

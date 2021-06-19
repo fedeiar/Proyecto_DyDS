@@ -15,4 +15,6 @@ public interface StoredInfoView {
     public void setStoredSearchedTitles(Object[] storedTitles);
 
     public void setLocalStoredPageIntro(String storedPageIntro);
+
+    public void setSelectedStoredTitle(String term);
 }

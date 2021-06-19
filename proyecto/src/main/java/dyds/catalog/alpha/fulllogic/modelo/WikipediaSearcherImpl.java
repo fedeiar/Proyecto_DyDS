@@ -108,7 +108,6 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         return firstPageIntro;
     }
 
-
     public String getLastSearchedTitle() {
         return searchResultTitle;
     }

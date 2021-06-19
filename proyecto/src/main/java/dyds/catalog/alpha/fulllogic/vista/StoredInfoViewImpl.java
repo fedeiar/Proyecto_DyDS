@@ -72,4 +72,9 @@ public class StoredInfoViewImpl implements StoredInfoView{
         storedPageIntroTextPane.setText(storedPageIntro);
     }
 
+    @Override
+    public void setSelectedStoredTitle(String title) {
+        storedTitlesComboBox.setSelectedItem(title);
+    }
+
 }
