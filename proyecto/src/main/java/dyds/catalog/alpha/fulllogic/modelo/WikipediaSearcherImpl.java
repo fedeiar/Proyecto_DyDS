@@ -69,6 +69,7 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
             }
         }
         catch (IOException e1) {
+            //TODO: deberíamos capturar aquí cuando queremos realizar una busqueda sin internet?
             e1.printStackTrace();
         }
         return searchResult;
@@ -106,6 +107,7 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
                 firstPageIntro = searchResultExtract.getAsString();
         }
         catch (IOException e1) {
+            //TODO: deberíamos capturar aquí cuando queremos realizar una busqueda sin internet?
             e1.printStackTrace();
         }
 

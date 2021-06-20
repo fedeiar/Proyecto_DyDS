@@ -39,6 +39,7 @@ public class DataBaseImplementation implements DataBase{
             
         } 
         catch (SQLException e) {
+            //TODO: habría algún error que capturar acá?
             System.out.println(e.getMessage());
         }
         finally{
@@ -64,46 +65,37 @@ public class DataBaseImplementation implements DataBase{
             }
         }
         catch(SQLException e){
+            //TODO: habría algún error que capturar acá?
             System.err.println("fallo el cierre de la conexion");
         }
     }
     
 
-    public ArrayList<String> getTitles() {
+    public ArrayList<String> getTitles() throws SQLException {
         ArrayList<String> titles = new ArrayList<>();
-        try {
-            initConnectionToDataBase();
+        
+        initConnectionToDataBase();
 
-            ResultSet rs = statement.executeQuery("select * from catalog");
-            while(rs.next()){
-                titles.add(rs.getString("title"));
-            }
+        ResultSet rs = statement.executeQuery("select * from catalog");
+        while(rs.next()){
+            titles.add(rs.getString("title"));
         }
-        catch (SQLException e) {
-            System.err.println("error in titles" + e.getMessage());
-        }
-        finally{
-            closeConnectionToDataBase();
-        }
+        
+        closeConnectionToDataBase();
+        
         return titles;
     }
 
-    public String getExtract(String title) {
+    public String getExtract(String title) throws SQLException {
         String extract = "";
-        try {
-            initConnectionToDataBase();
+        
+        initConnectionToDataBase();
 
-            ResultSet rs = statement.executeQuery("select * from catalog WHERE title = '" + title + "'" );
-            rs.next();
-            extract = rs.getString("extract");
-
-        }
-        catch(SQLException e){
-            System.err.println("Get title error " + e.getMessage());
-        }
-        finally{
-            closeConnectionToDataBase();
-        }
+        ResultSet rs = statement.executeQuery("select * from catalog WHERE title = '" + title + "'" );
+        rs.next();
+        extract = rs.getString("extract");
+        
+        closeConnectionToDataBase();
         
         return extract;
     }

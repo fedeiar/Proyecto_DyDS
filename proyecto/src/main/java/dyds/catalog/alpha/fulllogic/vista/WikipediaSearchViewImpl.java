@@ -74,13 +74,13 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
         //pero al hacer esto la vista es más inteligente (es mas MVC que MVP). No está mal pero aclararlo en el documento.
     }
 
-    public void pageSavedSuccesfully(){
-        JOptionPane.showMessageDialog(null, "Page saved Succesfully", "Page Save", JOptionPane.INFORMATION_MESSAGE);
+    public void operationSucceded(String title, String message){
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
         this.setWatingStatus();
     }
 
-    public void failedPageSaving(){
-        JOptionPane.showMessageDialog(null, "Failed page saving", "Page Save", JOptionPane.ERROR_MESSAGE);
+    public void operationFailed(String title, String message){
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
         this.setWatingStatus();
     }
 }

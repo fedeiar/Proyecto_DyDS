@@ -1,5 +1,7 @@
 package dyds.catalog.alpha.fulllogic.modelo;
 
+import java.sql.SQLException;
+
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBase;
 
 public interface VideoGameInfoModel {
@@ -14,13 +16,13 @@ public interface VideoGameInfoModel {
     
     public WikipediaPage getLastWikiPageSearched();
     public WikipediaPage getLastLocallyStoredWikiPageSearched();
-    public Object[] getTotalTitulosRegistrados();
+    public Object[] getTotalTitulosRegistrados() throws SQLException;
 
     public void searchTermInWikipedia(String searchTerm);
 
     public void storeLastSearchedPage();
 
-    public void searchInLocalStorage(String videoGameTitle);
+    public void searchInLocalStorage(String videoGameTitle) throws SQLException;
     
     public void deleteFromLocalStorage(String videoGameTitle);
 

@@ -20,7 +20,7 @@ public interface StoredInfoView {
 
     public void setLocalStoredPageIntro(String storedPageIntro);
 
-    public void pagedDeletedSuccesfully();
+    public void operationSucceded(String title, String message);
 
-    public void failedPageDeletion();
+    public void operationFailed(String title, String message);
 }

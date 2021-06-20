@@ -5,6 +5,7 @@ import dyds.catalog.alpha.fulllogic.modelo.repositorio.*;
 import static dyds.catalog.alpha.fulllogic.utils.Utilidades.textToHtml;
 
 import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -19,18 +20,16 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private LinkedList<SuccesfullySavedLocalInfoListener> succesfullySavedLocalInfoListenerList = new LinkedList<SuccesfullySavedLocalInfoListener>();
     private LinkedList<UnsuccesfullySavedLocalInfoListener> unsuccesfullySavedLocalInfoListenerList = new LinkedList<UnsuccesfullySavedLocalInfoListener>();
 
-
-    private String lastIntroPageSearched;
-    private String lastPageTitleSearched;
-
-    private boolean lastPageSearchedWithSuccess;
+    private String lastIntroPageSearchedInWiki;
+    private String lastPageTitleSearchedInWiki;
+    private boolean lastPageSearchedWithSuccessInWiki;
 
     private String lastIntroPageSearchedLocally;
     private String lastPageTitleSearchedLocally;
 
     public VideoGameInfoModelImpl(WikipediaSearcher wikipediaSearcher){
         this.wikipediaSearcher = wikipediaSearcher;
-        lastPageSearchedWithSuccess = false;
+        lastPageSearchedWithSuccessInWiki = false;
     }
 
     @Override public void setVideoGameInfoRepository(DataBase dataBase){
@@ -59,7 +58,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     }
 
     @Override public WikipediaPage getLastWikiPageSearched(){
-        WikipediaPage wikiPage = new WikipediaPage(lastPageTitleSearched, lastIntroPageSearched);
+        WikipediaPage wikiPage = new WikipediaPage(lastPageTitleSearchedInWiki, lastIntroPageSearchedInWiki);
         return wikiPage;
     }
 
@@ -68,7 +67,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         return wikiPage;
     }
 
-    @Override public Object[] getTotalTitulosRegistrados(){
+    @Override public Object[] getTotalTitulosRegistrados() throws SQLException{
         return dataBase.getTitles().stream().sorted().toArray();
     }
     
@@ -77,15 +76,15 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     @Override public void searchTermInWikipedia(String searchedTerm) {
         boolean pageFound = wikipediaSearcher.searchPage(searchedTerm);
-        lastPageSearchedWithSuccess = pageFound;
+        lastPageSearchedWithSuccessInWiki = pageFound;
 
         if(pageFound){
             //TODO: encapsular el titulo y el extracto(page title) en un objeto, debemos también encapsularlo en wikipediaSearchImpl?
             String pageTitle = wikipediaSearcher.getLastSearchedTitle();
             String pageIntroText = wikipediaSearcher.getLastSearchedPageIntro();
             
-            lastPageTitleSearched = giveFormatForStorage(pageTitle);
-            lastIntroPageSearched = giveFormatForStorage(pageIntroText);
+            lastPageTitleSearchedInWiki = giveFormatForStorage(pageTitle);
+            lastIntroPageSearchedInWiki = giveFormatForStorage(pageIntroText);
 
             wikipediaSearchInfoListener.didFoundPageInWikipedia();
         }
@@ -99,8 +98,8 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     }
 
     @Override public void storeLastSearchedPage() {
-        if(lastPageSearchedWithSuccess){
-            dataBase.saveInfo(lastPageTitleSearched, lastIntroPageSearched);
+        if(lastPageSearchedWithSuccessInWiki){
+            dataBase.saveInfo(lastPageTitleSearchedInWiki, lastIntroPageSearchedInWiki);
 
             notifyAllSuccsessfullySavedLocallyInfoListeners(succesfullySavedLocalInfoListenerList);
         }else{
@@ -121,7 +120,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     }
 
    
-    @Override public void searchInLocalStorage(String videoGameTitle) {
+    @Override public void searchInLocalStorage(String videoGameTitle) throws SQLException {
         lastIntroPageSearchedLocally = dataBase.getExtract(videoGameTitle);
         lastPageTitleSearchedLocally = videoGameTitle;
 

@@ -4,6 +4,8 @@ import dyds.catalog.alpha.fulllogic.modelo.*;
 import dyds.catalog.alpha.fulllogic.utils.Utilidades;
 import dyds.catalog.alpha.fulllogic.vista.*;
 
+import java.sql.SQLException;
+
 import javax.swing.*;
 
 public class StoredInfoPresenterImpl implements StoredInfoPresenter{
@@ -33,8 +35,14 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
         videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedLocalInfoListener(){
 
-            @Override public void didSuccessSavePageLocally() {
-                updateViewStoredTitles();
+            @Override public void didSuccessSavePageLocally(){
+                //TODO: preguntar si la excepcion esta bien capturada aca
+                try {
+                    updateViewStoredTitles();
+                }
+                catch (SQLException e) {
+                    view.operationFailed("Page save", "Error updating stored titles when saving");
+                }
             }
             
         });
@@ -42,18 +50,24 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         videoGameInfoModel.setDeletedInfoListener(new DeletedInfoListener(){
             
             public void didSuccesfullyDeletePageStoredLocally(){
-                updateViewStoredTitles();
-                view.pagedDeletedSuccesfully();
+                //TODO: preguntar si la excepcion esta bien capturada aca
+                try{
+                    updateViewStoredTitles();
+                    view.operationSucceded("Page delete", "Page deleted succesfully");
+                }
+                catch(SQLException e){
+                    view.operationFailed("Page delete", "Error updating stored titles when deleting");
+                }
             }
 
             public void didFailedDeletePageStoredLocally(){
-                view.failedPageDeletion();
+                view.operationFailed("Page delete", "Failed page deletion");
             }
 
         });
     }
 
-    private void updateViewStoredTitles(){
+    private void updateViewStoredTitles() throws SQLException{
         view.setStoredSearchedTitles(videoGameInfoModel.getTotalTitulosRegistrados());
         view.cleanPageIntroText();
     }
@@ -61,13 +75,20 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
     public void onEventSearchLocalEntriesInfo() {
         //TODO: preg si está bien el thread asi.
+        //TODO: preg si está bien capturada la excepción
+        
         int index = view.getSelectedTitleIndex();
         if(aTitleWasSelected(index)){
             taskThread = new Thread(new Runnable(){
 
                 @Override public void run() {
-                    view.setWatingStatus();
-                    videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
+                    try {
+                        view.setWorkingStatus();
+                        videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
+                    } 
+                    catch (SQLException e) {
+                        view.operationFailed("Select title", "Failed to search the selected entry");
+                    }
                 }
                 
             });
@@ -86,7 +107,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         if(aTitleWasSelected(index)){
             taskThread = new Thread(new Runnable(){
                 @Override public void run(){
-                    view.setWatingStatus();
+                    view.setWorkingStatus();
                     String tituloInformacion = view.getSelectedTitle();
                     videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);
                 }
@@ -96,9 +117,13 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
     
     }
 
-    //usar tal vez otro nombre, como initView
     public void setView(StoredInfoView vista) {
+        //TODO: preguntar si la excepcion esta bien capturada aca
         this.view = vista;
-        updateViewStoredTitles();
+        try {
+            updateViewStoredTitles();
+        } catch (SQLException e) {
+            view.operationFailed("Initialization", "Error loading stored titles when initializating");
+        }
     }
 }

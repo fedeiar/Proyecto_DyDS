@@ -85,14 +85,14 @@ public class StoredInfoViewImpl implements StoredInfoView{
         this.setWatingStatus();
     }
 
-    public void pagedDeletedSuccesfully(){
-        JOptionPane.showMessageDialog(null, "Page deleted succesfully", "Page delete", JOptionPane.INFORMATION_MESSAGE);
+    public void operationSucceded(String title, String message){
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
         this.setWatingStatus();
     }
 
-    public void failedPageDeletion(){
-        JOptionPane.showMessageDialog(null, "Failed page deletion", "Page delete", JOptionPane.ERROR_MESSAGE);
-        this.setWatingStatus();
+    public void operationFailed(String title, String message){
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        this.setWatingStatus();;
     }
 
 }

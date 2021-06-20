@@ -43,7 +43,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedLocalInfoListener(){
             
             @Override public void didSuccessSavePageLocally() {
-                view.pageSavedSuccesfully();
+                view.operationSucceded("Page Save", "Page saved succesfully");
             }
 
         });
@@ -52,7 +52,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
             @Override
             public void didFailSavePageLocally() {
-                view.failedPageSaving();
+                view.operationFailed("Page Save", "Failed page saving");
             }
             
         });
@@ -86,7 +86,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
         taskThread = new Thread(new Runnable(){
             @Override public void run() {
-                view.setWatingStatus();
+                view.setWorkingStatus();
                 videoGameInfoModel.storeLastSearchedPage();
             }
         });
