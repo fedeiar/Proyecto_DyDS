@@ -20,10 +20,10 @@ public interface VideoGameInfoModel {
 
     public void searchTermInWikipedia(String searchTerm);
 
-    public void storeLastSearchedPage();
+    public void storeLastSearchedPage() throws SQLException;
 
     public void searchInLocalStorage(String videoGameTitle) throws SQLException;
     
-    public void deleteFromLocalStorage(String videoGameTitle);
+    public void deleteFromLocalStorage(String videoGameTitle) throws SQLException;
 
 }

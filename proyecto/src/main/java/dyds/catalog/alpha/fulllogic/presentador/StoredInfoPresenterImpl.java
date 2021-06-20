@@ -49,7 +49,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
         videoGameInfoModel.setDeletedInfoListener(new DeletedInfoListener(){
             
-            public void didSuccesfullyDeletePageStoredLocally(){
+            public void didDeletePageStoredLocally(){
                 //TODO: preguntar si la excepcion esta bien capturada aca
                 try{
                     updateViewStoredTitles();
@@ -58,10 +58,6 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
                 catch(SQLException e){
                     view.operationFailed("Page delete", "Error updating stored titles when deleting");
                 }
-            }
-
-            public void didFailedDeletePageStoredLocally(){
-                view.operationFailed("Page delete", "Failed page deletion");
             }
 
         });
@@ -87,7 +83,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
                         videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
                     } 
                     catch (SQLException e) {
-                        view.operationFailed("Select title", "Failed to search the selected entry");
+                        view.operationFailed("Select title", "Failed to search the selected locally stored entry");
                     }
                 }
                 
@@ -102,17 +98,27 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
     public void onEventDeleteLocalEntryInfo() {
         //TODO: preg si está bien el thread asi.
-
+        //TODO: preg si está bien capturada la excepción
         int index = view.getSelectedTitleIndex();
         if(aTitleWasSelected(index)){
             taskThread = new Thread(new Runnable(){
+
                 @Override public void run(){
                     view.setWorkingStatus();
                     String tituloInformacion = view.getSelectedTitle();
-                    videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);
+                    try {
+                        videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);
+                    } 
+                    catch (SQLException e) {
+                        view.operationFailed("Page delete", "Failed page deletion");
+                    }
                 }
+
             });
             taskThread.start();
+        }
+        else{
+            view.operationFailed("Page delete", "Please select a title to delete");
         }
     
     }

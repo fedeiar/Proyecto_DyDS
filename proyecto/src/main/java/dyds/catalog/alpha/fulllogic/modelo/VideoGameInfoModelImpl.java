@@ -97,13 +97,13 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         return text.replace("'", "`"); //Replace to avoid SQL errors, we will have to find a workaround..
     }
 
-    @Override public void storeLastSearchedPage() {
+    @Override public void storeLastSearchedPage() throws SQLException{
         if(lastPageSearchedWithSuccessInWiki){
             dataBase.saveInfo(lastPageTitleSearchedInWiki, lastIntroPageSearchedInWiki);
 
             notifyAllSuccsessfullySavedLocallyInfoListeners(succesfullySavedLocalInfoListenerList);
         }else{
-            notifyAllUnSuccsessfullySavedLocallyInfoListeners(unsuccesfullySavedLocalInfoListenerList);
+            notifyAllUnsuccsessfullySavedLocallyInfoListeners(unsuccesfullySavedLocalInfoListenerList);
         }
     }
 
@@ -113,7 +113,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         }
     }
 
-    private void notifyAllUnSuccsessfullySavedLocallyInfoListeners(LinkedList<UnsuccesfullySavedLocalInfoListener> List){
+    private void notifyAllUnsuccsessfullySavedLocallyInfoListeners(LinkedList<UnsuccesfullySavedLocalInfoListener> List){
         for (UnsuccesfullySavedLocalInfoListener unsuccesfullySavedLocalInfoListener : List) {
             unsuccesfullySavedLocalInfoListener.didFailSavePageLocally();
         }
@@ -127,10 +127,10 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         storedSearchedInfoListener.didSearchPageStoredLocally();
     }
 
-    @Override public void deleteFromLocalStorage(String videoGameTitle){
+    @Override public void deleteFromLocalStorage(String videoGameTitle) throws SQLException{
         dataBase.deleteEntry(videoGameTitle);
 
-        deletedInfoListener.didSuccesfullyDeletePageStoredLocally();
+        deletedInfoListener.didDeletePageStoredLocally();
     }
 
     

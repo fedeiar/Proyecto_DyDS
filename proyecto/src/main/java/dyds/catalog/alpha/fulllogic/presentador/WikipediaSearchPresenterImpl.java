@@ -5,6 +5,8 @@ import dyds.catalog.alpha.fulllogic.utils.Utilidades;
 
 import dyds.catalog.alpha.fulllogic.vista.*;
 
+import java.sql.SQLException;
+
 import javax.swing.*;
 
 public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
@@ -49,9 +51,8 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         });
 
         videoGameInfoModel.setUnsuccesfullySavedLocalInfoListener(new UnsuccesfullySavedLocalInfoListener(){
-
-            @Override
-            public void didFailSavePageLocally() {
+            
+            @Override public void didFailSavePageLocally() {
                 view.operationFailed("Page Save", "Failed page saving");
             }
             
@@ -83,11 +84,16 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     public void onEventSaveSearchLocally() {
         //TODO: preg si está bien el thread asi.
-
+        //TODO: preg si está bien capturada la excepción
         taskThread = new Thread(new Runnable(){
             @Override public void run() {
                 view.setWorkingStatus();
-                videoGameInfoModel.storeLastSearchedPage();
+                try {
+                    videoGameInfoModel.storeLastSearchedPage();
+                } 
+                catch (SQLException e) {
+                    view.operationFailed("Page save", "Failed page saving");
+                }
             }
         });
         taskThread.start();

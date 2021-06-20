@@ -54,7 +54,6 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
         for(Component c: this.searchPanel.getComponents()){
             c.setEnabled(false);
         }
-        searchedPageIntroTextPane.setText("");
     }
     
     public void setWatingStatus() {

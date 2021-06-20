@@ -11,8 +11,8 @@ public interface DataBase{
 
     public String getExtract(String title) throws SQLException;
 
-    public void saveInfo(String title, String extract);
+    public void saveInfo(String title, String extract) throws SQLException;
 
-    public void deleteEntry(String title);
+    public void deleteEntry(String title) throws SQLException;
 
 }

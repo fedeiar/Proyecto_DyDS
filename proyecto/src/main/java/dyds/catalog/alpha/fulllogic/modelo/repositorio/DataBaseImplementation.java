@@ -100,21 +100,15 @@ public class DataBaseImplementation implements DataBase{
         return extract;
     }
 
-    public void saveInfo(String title, String extract) {
-        try {
-            initConnectionToDataBase();
+    public void saveInfo(String title, String extract) throws SQLException{
+        initConnectionToDataBase();
 
-            statement.executeUpdate("replace into catalog values(null, '"+ title + "', '"+ extract + "', 1)");
-        }
-        catch(SQLException e) {
-            System.out.println("Error in saveinfo " + e.getMessage());
-        }
-        finally{
-            closeConnectionToDataBase();
-        }
+        statement.executeUpdate("replace into catalog values(null, '"+ title + "', '"+ extract + "', 1)");
+        
+        closeConnectionToDataBase();
     }
 
-    public void deleteEntry(String title) {
+    public void deleteEntry(String title) throws SQLException{
         try {
             initConnectionToDataBase();
 
