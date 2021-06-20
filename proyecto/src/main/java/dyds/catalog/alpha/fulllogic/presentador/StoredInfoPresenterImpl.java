@@ -33,7 +33,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
         });
 
-        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedLocalInfoListener(){
+        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedInfoListener(){
 
             @Override public void didSuccessSavePageLocally(){
                 //TODO: preguntar si la excepcion esta bien capturada aca

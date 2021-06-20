@@ -42,7 +42,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
         });
 
-        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedLocalInfoListener(){
+        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedInfoListener(){
             
             @Override public void didSuccessSavePageLocally() {
                 view.operationSucceded("Page Save", "Page saved succesfully");
@@ -50,10 +50,10 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
         });
 
-        videoGameInfoModel.setUnsuccesfullySavedLocalInfoListener(new UnsuccesfullySavedLocalInfoListener(){
+        videoGameInfoModel.setUnsuccesfullySavedLocalInfoListener(new NoResultsToSaveListener(){
             
-            @Override public void didFailSavePageLocally() {
-                view.operationFailed("Page Save", "Failed page saving");
+            @Override public void noResultsToSaveLocally() {
+                view.operationFailed("Page Save", "Please search for something in order to save it");
             }
             
         });
