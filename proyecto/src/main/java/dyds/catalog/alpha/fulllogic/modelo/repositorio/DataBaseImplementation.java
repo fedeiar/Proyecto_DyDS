@@ -7,6 +7,8 @@ import javax.xml.crypto.Data;
 
 public class DataBaseImplementation implements DataBase{
 
+    private final int TIMEOUT_SEGUNDOS = 30;
+
     private static DataBaseImplementation instance;
 
     private Connection connection;
@@ -29,12 +31,15 @@ public class DataBaseImplementation implements DataBase{
 
         try{
             initConnectionToDataBase();
-            //chequear si la tabla ya existe, si existe, NO ejecutar executeUpdate(), bucar el metodo
-
-            statement.executeUpdate("create table catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
+  
+            ResultSet table = connection.getMetaData().getTables(null, null, "catalog", null);
+            if(tableDoesntExists(table)){
+                statement.executeUpdate("create table catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
+            }
             
         } 
         catch (SQLException e) {
+            //TODO: habría algún error que capturar acá?
             System.out.println(e.getMessage());
         }
         finally{
@@ -42,13 +47,15 @@ public class DataBaseImplementation implements DataBase{
         }
     }
 
+    private boolean tableDoesntExists(ResultSet table) throws SQLException{
+        return !table.next();
+    }
+
     private void initConnectionToDataBase() throws SQLException{
         String url = "jdbc:sqlite:./dictionary.db";
         connection = DriverManager.getConnection(url);
         statement = connection.createStatement();
-
-        //TODO: usar una constante "SEGUNDOS"
-        statement.setQueryTimeout(30);  // set timeout to 30 sec.
+        statement.setQueryTimeout(TIMEOUT_SEGUNDOS);  
     }
 
     private void closeConnectionToDataBase(){
@@ -58,65 +65,50 @@ public class DataBaseImplementation implements DataBase{
             }
         }
         catch(SQLException e){
+            //TODO: habría algún error que capturar acá?
             System.err.println("fallo el cierre de la conexion");
         }
     }
     
 
-    public ArrayList<String> getTitles() {
+    public ArrayList<String> getTitles() throws SQLException {
         ArrayList<String> titles = new ArrayList<>();
-        try {
-            initConnectionToDataBase();
+        
+        initConnectionToDataBase();
 
-            ResultSet rs = statement.executeQuery("select * from catalog");
-            while(rs.next()){
-                titles.add(rs.getString("title"));
-            }
+        ResultSet rs = statement.executeQuery("select * from catalog");
+        while(rs.next()){
+            titles.add(rs.getString("title"));
         }
-        catch (SQLException e) {
-            System.err.println("error in titles" + e.getMessage());
-        }
-        finally{
-            closeConnectionToDataBase();
-        }
+        
+        closeConnectionToDataBase();
+        
         return titles;
     }
 
-    public String getExtract(String title) {
+    public String getExtract(String title) throws SQLException {
         String extract = "";
-        try {
-            initConnectionToDataBase();
+        
+        initConnectionToDataBase();
 
-            ResultSet rs = statement.executeQuery("select * from catalog WHERE title = '" + title + "'" );
-            rs.next();
-            extract = rs.getString("extract");
-
-        }
-        catch(SQLException e){
-            System.err.println("Get title error " + e.getMessage());
-        }
-        finally{
-            closeConnectionToDataBase();
-        }
+        ResultSet rs = statement.executeQuery("select * from catalog WHERE title = '" + title + "'" );
+        rs.next();
+        extract = rs.getString("extract");
+        
+        closeConnectionToDataBase();
         
         return extract;
     }
 
-    public void saveInfo(String title, String extract) {
-        try {
-            initConnectionToDataBase();
+    public void saveInfo(String title, String extract) throws SQLException{
+        initConnectionToDataBase();
 
-            statement.executeUpdate("replace into catalog values(null, '"+ title + "', '"+ extract + "', 1)");
-        }
-        catch(SQLException e) {
-            System.out.println("Error in saveinfo " + e.getMessage());
-        }
-        finally{
-            closeConnectionToDataBase();
-        }
+        statement.executeUpdate("replace into catalog values(null, '"+ title + "', '"+ extract + "', 1)");
+        
+        closeConnectionToDataBase();
     }
 
-    public void deleteEntry(String title) {
+    public void deleteEntry(String title) throws SQLException{
         try {
             initConnectionToDataBase();
 

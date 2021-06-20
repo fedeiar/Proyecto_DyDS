@@ -13,5 +13,7 @@ public interface WikipediaSearchView {
 
     public void setPageIntroText(String pageIntroText);
 
-    public void pageSavedSuccesfully();
+    public void operationSucceded(String title, String message);
+
+    public void operationFailed(String title, String message);
 }

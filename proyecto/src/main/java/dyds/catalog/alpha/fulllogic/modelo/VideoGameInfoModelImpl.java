@@ -4,6 +4,11 @@ import dyds.catalog.alpha.fulllogic.modelo.repositorio.*;
 
 import static dyds.catalog.alpha.fulllogic.utils.Utilidades.textToHtml;
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.LinkedList;
+
 public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     private WikipediaSearcher wikipediaSearcher;
@@ -11,32 +16,25 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     private WikipediaSearchedInfoListener wikipediaSearchInfoListener;
     private StoredSearchedInfoListener storedSearchedInfoListener;
-    private StoredTitlesListener storedTitlesListener;
-    private SavedLocallyInfoListener savedLocallyInfoListener;
     private DeletedInfoListener deletedInfoListener;
+    private LinkedList<SuccesfullySavedInfoListener> succesfullySavedInfoListenerList = new LinkedList<SuccesfullySavedInfoListener>();
+    private LinkedList<NoResultsToSaveListener> noResultsToSaveListenerList = new LinkedList<NoResultsToSaveListener>();
 
-
-
-    private String lastIntroPageSearched;
-    private String lastPageTitleSearched;
-
-    private boolean lastPageSearchedWithSuccess;
+    private String lastIntroPageSearchedInWiki;
+    private String lastPageTitleSearchedInWiki;
+    private boolean lastPageSearchedWithSuccessInWiki;
 
     private String lastIntroPageSearchedLocally;
     private String lastPageTitleSearchedLocally;
 
-    public VideoGameInfoModelImpl(){
-        wikipediaSearcher = new WikipediaSearcherImpl();
-
-        //TODO: preg aca o en el main?
-        dataBase = DataBaseImplementation.getInstance();
-        dataBase.loadDatabase();
-
-        lastPageSearchedWithSuccess = false;
+    public VideoGameInfoModelImpl(WikipediaSearcher wikipediaSearcher){
+        this.wikipediaSearcher = wikipediaSearcher;
+        lastPageSearchedWithSuccessInWiki = false;
     }
 
     @Override public void setVideoGameInfoRepository(DataBase dataBase){
         this.dataBase = dataBase;
+        dataBase.loadDatabase();
     }
 
     @Override public void setWikipediaSearchInfoListener(WikipediaSearchedInfoListener wikipediaSearchInfoListener){
@@ -47,20 +45,20 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         this.storedSearchedInfoListener = storedSearchedInfoListener;
     }
 
-    @Override public void setStoredTitlesListener(StoredTitlesListener storedTitlesListener){
-        this.storedTitlesListener = storedTitlesListener;
-    }
-
-    @Override public void setSavedLocallyInfoListener(SavedLocallyInfoListener savedLocallyInfoListener){
-        this.savedLocallyInfoListener = savedLocallyInfoListener;
-    }
-
     @Override public void setDeletedInfoListener(DeletedInfoListener deletedInfoListener){
         this.deletedInfoListener = deletedInfoListener;
     }
 
+    @Override public void setSuccesfullySavedLocalInfoListener(SuccesfullySavedInfoListener succesfullySavedLocalInfoListener){
+        succesfullySavedInfoListenerList.addLast(succesfullySavedLocalInfoListener);
+    }
+
+    @Override public void setUnsuccesfullySavedLocalInfoListener(NoResultsToSaveListener unsuccesfullySavedLocalInfoListener){
+        noResultsToSaveListenerList.addLast(unsuccesfullySavedLocalInfoListener);
+    }
+
     @Override public WikipediaPage getLastWikiPageSearched(){
-        WikipediaPage wikiPage = new WikipediaPage(lastPageTitleSearched, lastIntroPageSearched);
+        WikipediaPage wikiPage = new WikipediaPage(lastPageTitleSearchedInWiki, lastIntroPageSearchedInWiki);
         return wikiPage;
     }
 
@@ -69,7 +67,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         return wikiPage;
     }
 
-    @Override public Object[] getTotalTitulosRegistrados(){
+    @Override public Object[] getTotalTitulosRegistrados() throws SQLException{
         return dataBase.getTitles().stream().sorted().toArray();
     }
     
@@ -78,52 +76,62 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     @Override public void searchTermInWikipedia(String searchedTerm) {
         boolean pageFound = wikipediaSearcher.searchPage(searchedTerm);
-        lastPageSearchedWithSuccess = pageFound;
+        lastPageSearchedWithSuccessInWiki = pageFound;
 
         if(pageFound){
             //TODO: encapsular el titulo y el extracto(page title) en un objeto, debemos también encapsularlo en wikipediaSearchImpl?
             String pageTitle = wikipediaSearcher.getLastSearchedTitle();
             String pageIntroText = wikipediaSearcher.getLastSearchedPageIntro();
             
-            lastPageTitleSearched = giveFormatForStorage(pageTitle);
-            lastIntroPageSearched = giveFormatForStorage(pageIntroText);
+            lastPageTitleSearchedInWiki = giveFormatForStorage(pageTitle);
+            lastIntroPageSearchedInWiki = giveFormatForStorage(pageIntroText);
 
             wikipediaSearchInfoListener.didFoundPageInWikipedia();
         }
         else{
             wikipediaSearchInfoListener.didNotFoundPageInWikipedia();
-        }  
+        }
     }
 
     private String giveFormatForStorage(String text){
         return text.replace("'", "`"); //Replace to avoid SQL errors, we will have to find a workaround..
     }
 
-    @Override public void storeLastSearchedPage() {
-        if(lastPageSearchedWithSuccess){
-            dataBase.saveInfo(lastPageTitleSearched, lastIntroPageSearched);
+    @Override public void storeLastSearchedPage() throws SQLException{
+        if(lastPageSearchedWithSuccessInWiki){
+            dataBase.saveInfo(lastPageTitleSearchedInWiki, lastIntroPageSearchedInWiki);
 
-            savedLocallyInfoListener.didSavePageLocally();
-            storedTitlesListener.didUpdateStoredTitles();
-            //TODO: avisarle al presentador de la vista de la busqueda que la busqueda fue guardada exitosamente, para ello debemos tener algún método en algún oyente.
-            //es probable que tengamos que hacer otros oyentes que no dependan de los presentadores, sino de los datos del modelo.
-        }else{
-            //TODO: si no fue agregada con exito o nada fue agregado, reportar el error
+            notifyAllSuccessfullySavedInfoListeners(succesfullySavedInfoListenerList);
+        }
+        else{
+            notifyAllNoResultsToSaveListeners(noResultsToSaveListenerList);
         }
     }
 
-    @Override public void searchInLocalStorage(String videoGameTitle) {
+    private void notifyAllSuccessfullySavedInfoListeners(LinkedList<SuccesfullySavedInfoListener> List){
+        for (SuccesfullySavedInfoListener succesfullySavedInfoListener : List) {
+            succesfullySavedInfoListener.didSuccessSavePageLocally();
+        }
+    }
+
+    private void notifyAllNoResultsToSaveListeners(LinkedList<NoResultsToSaveListener> List){
+        for (NoResultsToSaveListener noResultsToSave : List) {
+            noResultsToSave.noResultsToSaveLocally();
+        }
+    }
+
+   
+    @Override public void searchInLocalStorage(String videoGameTitle) throws SQLException {
         lastIntroPageSearchedLocally = dataBase.getExtract(videoGameTitle);
         lastPageTitleSearchedLocally = videoGameTitle;
 
         storedSearchedInfoListener.didSearchPageStoredLocally();
     }
 
-    @Override public void deleteFromLocalStorage(String videoGameTitle){
+    @Override public void deleteFromLocalStorage(String videoGameTitle) throws SQLException{
         dataBase.deleteEntry(videoGameTitle);
 
         deletedInfoListener.didDeletePageStoredLocally();
-        storedTitlesListener.didUpdateStoredTitles();
     }
 
     

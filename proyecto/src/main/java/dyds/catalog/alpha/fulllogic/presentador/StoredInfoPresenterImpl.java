@@ -1,7 +1,10 @@
 package dyds.catalog.alpha.fulllogic.presentador;
 
 import dyds.catalog.alpha.fulllogic.modelo.*;
+import dyds.catalog.alpha.fulllogic.utils.Utilidades;
 import dyds.catalog.alpha.fulllogic.vista.*;
+
+import java.sql.SQLException;
 
 import javax.swing.*;
 
@@ -9,6 +12,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
     private VideoGameInfoModel videoGameInfoModel;
     private StoredInfoView view;
+    private Thread taskThread;
 
     public StoredInfoPresenterImpl(VideoGameInfoModel videoGameInfoModel){
         this.videoGameInfoModel = videoGameInfoModel;
@@ -22,68 +26,110 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
             public void didSearchPageStoredLocally() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastLocallyStoredWikiPageSearched();
 
-                String formattedPageIntroText = formatData(wikiPage.getTitle(), wikiPage.getPageIntro());
+                String formattedPageIntroText = Utilidades.formatData(wikiPage.getTitle(), wikiPage.getPageIntro());
                 
                 view.setLocalStoredPageIntro(formattedPageIntroText);
             }
 
         });
 
-        videoGameInfoModel.setStoredTitlesListener(new StoredTitlesListener(){
+        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedInfoListener(){
 
-            public void didUpdateStoredTitles(){
-                updateViewStoredTitles();
+            @Override public void didSuccessSavePageLocally(){
+                //TODO: preguntar si la excepcion esta bien capturada aca
+                try {
+                    updateViewStoredTitles();
+                }
+                catch (SQLException e) {
+                    view.operationFailed("Page save", "Error updating stored titles when saving");
+                }
             }
-
+            
         });
 
         videoGameInfoModel.setDeletedInfoListener(new DeletedInfoListener(){
             
             public void didDeletePageStoredLocally(){
-                // TODO: agregar un metodo a la vista en el que popeé un cartel de que un título fue borrado exitosamente. Luego ese método es invocado acá.
+                //TODO: preguntar si la excepcion esta bien capturada aca
+                try{
+                    updateViewStoredTitles();
+                    view.operationSucceded("Page delete", "Page deleted succesfully");
+                }
+                catch(SQLException e){
+                    view.operationFailed("Page delete", "Error updating stored titles when deleting");
+                }
             }
 
         });
     }
 
-    private String formatData(String pageTitle, String pageIntroText){
-        String formattedText;
-        
-        formattedText = "<h1>" + pageTitle + "</h1>";
-        formattedText += pageIntroText.replace("\\n", "\n");
-        
-        return formattedText;
-    }
-
-    private void updateViewStoredTitles(){
+    private void updateViewStoredTitles() throws SQLException{
         view.setStoredSearchedTitles(videoGameInfoModel.getTotalTitulosRegistrados());
         view.cleanPageIntroText();
     }
 
 
     public void onEventSearchLocalEntriesInfo() {
-        //hacer un thread?
+        //TODO: preg si está bien el thread asi.
+        //TODO: preg si está bien capturada la excepción
+        
+        int index = view.getSelectedTitleIndex();
+        if(aTitleWasSelected(index)){
+            taskThread = new Thread(new Runnable(){
 
-        //TODO: agregar el working y waiting status
-        int indice = view.getSelectedTitleIndex();
-        if(indice > -1)
-            videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
-    }
-
-    public void onEventDeleteLocalEntryInfo() {
-        //hacer un thread?
-
-        //TODO: agregar el working y waiting status
-        int indice = view.getSelectedTitleIndex();
-        String tituloInformacion = view.getSelectedTitle();
-        if(indice > -1){
-            videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);
+                @Override public void run() {
+                    try {
+                        view.setWorkingStatus();
+                        videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
+                    } 
+                    catch (SQLException e) {
+                        view.operationFailed("Select title", "Failed to search the selected locally stored entry");
+                    }
+                }
+                
+            });
+            taskThread.start();
         }
     }
 
-    //usar tal vez otro nombre, como initView
+    private boolean aTitleWasSelected(int index){
+        return index > -1;
+    }
+
+    public void onEventDeleteLocalEntryInfo() {
+        //TODO: preg si está bien el thread asi.
+        //TODO: preg si está bien capturada la excepción
+        int index = view.getSelectedTitleIndex();
+        if(aTitleWasSelected(index)){
+            taskThread = new Thread(new Runnable(){
+
+                @Override public void run(){
+                    view.setWorkingStatus();
+                    String tituloInformacion = view.getSelectedTitle();
+                    try {
+                        videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);
+                    } 
+                    catch (SQLException e) {
+                        view.operationFailed("Page delete", "Failed page deletion");
+                    }
+                }
+
+            });
+            taskThread.start();
+        }
+        else{
+            view.operationFailed("Page delete", "Please select a title to delete");
+        }
+    
+    }
+
     public void setView(StoredInfoView vista) {
+        //TODO: preguntar si la excepcion esta bien capturada aca
         this.view = vista;
-        updateViewStoredTitles();
+        try {
+            updateViewStoredTitles();
+        } catch (SQLException e) {
+            view.operationFailed("Initialization", "Error loading stored titles when initializating");
+        }
     }
 }

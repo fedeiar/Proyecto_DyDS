@@ -5,13 +5,15 @@ import dyds.catalog.alpha.fulllogic.utils.Utilidades;
 
 import dyds.catalog.alpha.fulllogic.vista.*;
 
+import java.sql.SQLException;
+
 import javax.swing.*;
 
 public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     private WikipediaSearchView view;
     private VideoGameInfoModel videoGameInfoModel;
-    private String lastTermSearched;
+    private Thread taskThread;
 
     public WikipediaSearchPresenterImpl(VideoGameInfoModel videoGameInfoModel) {
         this.videoGameInfoModel = videoGameInfoModel;
@@ -25,9 +27,8 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
             public void didFoundPageInWikipedia() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastWikiPageSearched();
 
-                String formattedPageIntroText = formatData(wikiPage.getTitle(), wikiPage.getPageIntro(), lastTermSearched);
+                String formattedPageIntroText = Utilidades.formatData(wikiPage.getTitle(), wikiPage.getPageIntro(), view.getSearchedTerm());
                 
-
                 view.setPageIntroText(formattedPageIntroText);
                 view.setWatingStatus();
             }
@@ -41,48 +42,60 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
         });
 
-        videoGameInfoModel.setSavedLocallyInfoListener(new SavedLocallyInfoListener(){
+        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedInfoListener(){
             
-            public void didSavePageLocally(){
-                // TODO: agregar un método a la vista en el que popeé un cartel de que se guardo exitosamente, así luego es invocado aca.
-                view.pageSavedSuccesfully();
+            @Override public void didSuccessSavePageLocally() {
+                view.operationSucceded("Page Save", "Page saved succesfully");
             }
-
 
         });
 
-        // TODO: debería implementarse otro método de algún oyente para notificar al usuario que la busqueda fue guardada exitosamente.
+        videoGameInfoModel.setUnsuccesfullySavedLocalInfoListener(new NoResultsToSaveListener(){
+            
+            @Override public void noResultsToSaveLocally() {
+                view.operationFailed("Page Save", "Please search for something in order to save it");
+            }
+            
+        });
+
     }
 
     public void setView(WikipediaSearchView view){
         this.view = view;
     }
 
-    private String formatData(String pageTitle, String pageIntroText, String termSearched){
-        String formattedText;
-        
-        formattedText = "<h1>" + pageTitle + "</h1>";
-        formattedText += pageIntroText.replace("\\n", "\n");
-        formattedText = Utilidades.textToHtml(formattedText, termSearched);
-        
-        return formattedText;
-    }
-
     public void onEventSearchInWikipedia() {
-        //TODO: agregar un thread
+        //TODO: preg si está bien el thread asi.
 
-        view.setWorkingStatus();
+        String lastTermSearched = view.getSearchedTerm();
 
-        lastTermSearched = view.getSearchedTerm();
-        videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
+        taskThread = new Thread(new Runnable(){
 
-        // si pongo el wating status aca, no estaría ya cumnpliendo?
+            @Override public void run(){
+                view.setWorkingStatus();
+                videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
+            }
+
+        });
+        taskThread.start();
+
+       
     }
 
     public void onEventSaveSearchLocally() {
-        //agregar un thread?
-
-        //agregar el working y waiting status
-        videoGameInfoModel.storeLastSearchedPage();
+        //TODO: preg si está bien el thread asi.
+        //TODO: preg si está bien capturada la excepción
+        taskThread = new Thread(new Runnable(){
+            @Override public void run() {
+                view.setWorkingStatus();
+                try {
+                    videoGameInfoModel.storeLastSearchedPage();
+                } 
+                catch (SQLException e) {
+                    view.operationFailed("Page save", "Failed page saving");
+                }
+            }
+        });
+        taskThread.start();
     }
 }

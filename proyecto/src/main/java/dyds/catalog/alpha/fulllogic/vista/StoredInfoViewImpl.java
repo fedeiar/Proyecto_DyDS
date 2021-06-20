@@ -26,9 +26,6 @@ public class StoredInfoViewImpl implements StoredInfoView{
     }
 
     private void formatView(){
-        //como hacer esta instruccion mas clean?
-        //storedTitlesComboBox.setModel(new DefaultComboBoxModel(DataBaseImplementation.getInstance().getTitles().stream().sorted().toArray()));
-
         storedPageIntroTextPane.setContentType("text/html");
     }
 
@@ -51,6 +48,19 @@ public class StoredInfoViewImpl implements StoredInfoView{
         return this.storagePanel;
     }
 
+    public void setWorkingStatus() {
+        for(Component c: this.storagePanel.getComponents()){
+            c.setEnabled(false);
+        }
+        storedPageIntroTextPane.setText("");
+    }
+    
+    public void setWatingStatus() {
+        for(Component c: this.storagePanel.getComponents()){
+            c.setEnabled(true);
+        }
+    }
+
     public int getSelectedTitleIndex() {
         return storedTitlesComboBox.getSelectedIndex();
     }
@@ -62,14 +72,27 @@ public class StoredInfoViewImpl implements StoredInfoView{
     public void cleanPageIntroText(){
         storedTitlesComboBox.setSelectedIndex(-1);
         storedPageIntroTextPane.setText("");
+        //TODO: habría vque poner el setWatingStatus() también aca?
     }
 
     public void setStoredSearchedTitles(Object[] storedTitles){
         storedTitlesComboBox.setModel(new DefaultComboBoxModel(storedTitles));
+        this.setWatingStatus();
     }
 
     public void setLocalStoredPageIntro(String storedPageIntro){
         storedPageIntroTextPane.setText(storedPageIntro);
+        this.setWatingStatus();
+    }
+
+    public void operationSucceded(String title, String message){
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
+        this.setWatingStatus();
+    }
+
+    public void operationFailed(String title, String message){
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        this.setWatingStatus();;
     }
 
     @Override

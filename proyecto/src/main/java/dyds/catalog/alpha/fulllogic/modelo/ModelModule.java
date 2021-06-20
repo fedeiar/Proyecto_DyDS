@@ -16,8 +16,8 @@ public class ModelModule {
         return instance;
     }
 
-    public VideoGameInfoModel setUpModel(){
-        videoGameInfoModel = new VideoGameInfoModelImpl();
+    public VideoGameInfoModel setUpModel(WikipediaSearcher wikipediaSearcher){
+        videoGameInfoModel = new VideoGameInfoModelImpl(wikipediaSearcher);
         return videoGameInfoModel;
     }
 
