@@ -43,11 +43,11 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
             
             public void didSuccesfullyDeletePageStoredLocally(){
                 updateViewStoredTitles();
-                // TODO: agregar un metodo a la vista en el que popeé un cartel de que un título fue borrado exitosamente. Luego ese método es invocado acá.
+                view.pagedDeletedSuccesfully();
             }
 
             public void didFailedDeletePageStoredLocally(){
-                // TODO: agregar un metodo a la vista en el que popeé un cartel de que un titulo NO fue borrado exitosamente.
+                view.failedPageDeletion();
             }
 
         });

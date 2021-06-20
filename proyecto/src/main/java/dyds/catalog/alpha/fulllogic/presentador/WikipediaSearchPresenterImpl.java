@@ -52,7 +52,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
             @Override
             public void didFailSavePageLocally() {
-                // TODO: agregar un método a la vista que reporte un cartel cuando no se guardó una página exitosamente
+                view.failedPageSaving();
             }
             
         });

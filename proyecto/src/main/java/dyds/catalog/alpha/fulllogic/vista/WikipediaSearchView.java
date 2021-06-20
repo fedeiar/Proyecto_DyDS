@@ -14,4 +14,6 @@ public interface WikipediaSearchView {
     public void setPageIntroText(String pageIntroText);
 
     public void pageSavedSuccesfully();
+
+    public void failedPageSaving();
 }

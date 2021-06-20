@@ -28,10 +28,8 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private String lastIntroPageSearchedLocally;
     private String lastPageTitleSearchedLocally;
 
-    public VideoGameInfoModelImpl(){
-        //TODO: en realidad lo tiene que recibir por parámetro, no crearlo
-        wikipediaSearcher = new WikipediaSearcherImpl();
-
+    public VideoGameInfoModelImpl(WikipediaSearcher wikipediaSearcher){
+        this.wikipediaSearcher = wikipediaSearcher;
         lastPageSearchedWithSuccess = false;
     }
 

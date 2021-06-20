@@ -2,10 +2,6 @@ package dyds.catalog.alpha.fulllogic.utils;
 
 public class Utilidades {
 
-
-
-    //TODO: lo de formatData() de los presentadores ponerlo acá.
-
     public static String formatData(String title, String text, String term){
         String formattedText;
         

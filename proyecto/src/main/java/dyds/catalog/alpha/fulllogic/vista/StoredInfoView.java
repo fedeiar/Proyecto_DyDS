@@ -19,4 +19,8 @@ public interface StoredInfoView {
     public void setStoredSearchedTitles(Object[] storedTitles);
 
     public void setLocalStoredPageIntro(String storedPageIntro);
+
+    public void pagedDeletedSuccesfully();
+
+    public void failedPageDeletion();
 }

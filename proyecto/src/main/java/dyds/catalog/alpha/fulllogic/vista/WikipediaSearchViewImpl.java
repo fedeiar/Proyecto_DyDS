@@ -75,7 +75,12 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
     }
 
     public void pageSavedSuccesfully(){
-        JOptionPane.showMessageDialog(null, "Page saved Succesfully", "Page Saved", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Page saved Succesfully", "Page Save", JOptionPane.INFORMATION_MESSAGE);
+        this.setWatingStatus();
+    }
+
+    public void failedPageSaving(){
+        JOptionPane.showMessageDialog(null, "Failed page saving", "Page Save", JOptionPane.ERROR_MESSAGE);
         this.setWatingStatus();
     }
 }

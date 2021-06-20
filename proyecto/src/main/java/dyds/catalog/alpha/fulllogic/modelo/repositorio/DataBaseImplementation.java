@@ -7,6 +7,8 @@ import javax.xml.crypto.Data;
 
 public class DataBaseImplementation implements DataBase{
 
+    private final int TIMEOUT_SEGUNDOS = 30;
+
     private static DataBaseImplementation instance;
 
     private Connection connection;
@@ -29,9 +31,11 @@ public class DataBaseImplementation implements DataBase{
 
         try{
             initConnectionToDataBase();
-            //chequear si la tabla ya existe, si existe, NO ejecutar executeUpdate(), bucar el metodo
-
-            statement.executeUpdate("create table catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
+  
+            ResultSet table = connection.getMetaData().getTables(null, null, "catalog", null);
+            if(tableDoesntExists(table)){
+                statement.executeUpdate("create table catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
+            }
             
         } 
         catch (SQLException e) {
@@ -42,13 +46,15 @@ public class DataBaseImplementation implements DataBase{
         }
     }
 
+    private boolean tableDoesntExists(ResultSet table) throws SQLException{
+        return !table.next();
+    }
+
     private void initConnectionToDataBase() throws SQLException{
         String url = "jdbc:sqlite:./dictionary.db";
         connection = DriverManager.getConnection(url);
         statement = connection.createStatement();
-
-        //TODO: usar una constante "SEGUNDOS"
-        statement.setQueryTimeout(30);  // set timeout to 30 sec.
+        statement.setQueryTimeout(TIMEOUT_SEGUNDOS);  
     }
 
     private void closeConnectionToDataBase(){

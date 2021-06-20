@@ -40,46 +40,50 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
     }
 
     public boolean searchPage(String searchedTerm) {
-        String searchResultPageId = searchPageIDInWikipediaSearchAPI(searchedTerm);
+        JsonObject searchResult = searchPageIDInWikipediaSearchAPI(searchedTerm);
 
-        if(pageFound(searchResultPageId)){
-            searchResultPageIntro = searchFirstPageIntroInWikipediaPageAPI(searchResultPageId);
+        if(pageFound(searchResult)){
+            String pageId = getPageId(searchResult);
+            searchResultTitle = getTitle(searchResult);
+            searchResultPageIntro = searchFirstPageIntroInWikipediaPageAPI(pageId);
         }
 
-        return pageFound(searchResultPageId);
+        return pageFound(searchResult);
     }
 
-    private String searchPageIDInWikipediaSearchAPI(String terminoDeBusqueda){
+    private JsonObject searchPageIDInWikipediaSearchAPI(String terminoDeBusqueda){
         Response<String> callResponse;
-        JsonObject jobj,query;
-        String searchResultPageId = null;
+        JsonObject jobj;
+        JsonObject query;
+        JsonObject searchResult = null;
         try {
             callResponse = searchAPI.searchForTerm(terminoDeBusqueda + " articletopic:\"video-games\"").execute();
-
 
             Gson gson = new Gson();
             jobj = gson.fromJson(callResponse.body(), JsonObject.class);
             query = jobj.get("query").getAsJsonObject();
             Iterator<JsonElement> resultIterator = query.get("search").getAsJsonArray().iterator();
 
-            JsonObject searchResult = null;
-
-            searchResultTitle = null; //The searched term may not be the same as the real page title
-
             if (resultIterator.hasNext()) {
                 searchResult = resultIterator.next().getAsJsonObject();
-                searchResultTitle = searchResult.get("title").getAsString();
-                searchResultPageId = searchResult.get("pageid").getAsString();
             }
         }
         catch (IOException e1) {
             e1.printStackTrace();
         }
-        return searchResultPageId;
+        return searchResult;
     }
 
-    private boolean pageFound(String searchResultPageId){
-        return searchResultPageId != null;
+    private String getPageId(JsonObject searchResult){
+        return searchResult.get("pageid").getAsString();
+    }
+
+    private String getTitle(JsonObject searchResult){
+        return searchResult.get("title").getAsString();
+    }
+
+    private boolean pageFound(JsonObject searchResult){
+        return searchResult != null;
     }
 
     private String searchFirstPageIntroInWikipediaPageAPI(String searchResultPageId){
