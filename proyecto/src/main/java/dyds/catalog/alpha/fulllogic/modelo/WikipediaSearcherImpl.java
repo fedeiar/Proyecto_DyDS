@@ -19,11 +19,11 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
    
 
     private Retrofit retrofit;
-    private WikipediaSearchAPI searchAPI ;
-    private WikipediaPageAPI pageAPI ;
+    private WikipediaSearchAPI searchAPI;
+    private WikipediaPageAPI pageAPI;
 
-    String searchResultTitle = null; 
-    String searchResultPageIntro = ""; 
+    String searchResultTitle = null;
+    String searchResultPageIntro = "";
 
     public WikipediaSearcherImpl(){
         initSearcher();
@@ -40,7 +40,7 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
     }
 
     public boolean searchPage(String searchedTerm) {
-        JsonObject searchResult = searchPageIDInWikipediaSearchAPI(searchedTerm);
+        JsonObject searchResult = searchPageInWikipediaSearchAPI(searchedTerm);
 
         if(pageFound(searchResult)){
             String pageId = getPageId(searchResult);
@@ -51,7 +51,7 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         return pageFound(searchResult);
     }
 
-    private JsonObject searchPageIDInWikipediaSearchAPI(String terminoDeBusqueda){
+    private JsonObject searchPageInWikipediaSearchAPI(String terminoDeBusqueda){
         Response<String> callResponse;
         JsonObject jobj;
         JsonObject query;
@@ -89,7 +89,8 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
 
     private String searchFirstPageIntroInWikipediaPageAPI(String searchResultPageId){
         Response<String> callResponse;
-        JsonObject jobj, query;
+        JsonObject jobj;
+        JsonObject query;
         Gson gson = new Gson();
         JsonElement searchResultExtract;
         String firstPageIntro = null;
@@ -99,10 +100,8 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
                 jobj = gson.fromJson(callResponse.body(), JsonObject.class);
                 query = jobj.get("query").getAsJsonObject();
                 JsonObject pages = query.get("pages").getAsJsonObject();
-                Set<Map.Entry<String, JsonElement>> pagesSet = pages.entrySet();
-                Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
-                JsonObject page = first.getValue().getAsJsonObject();
-                searchResultExtract = page.get("extract");
+                
+                searchResultExtract = getFirstPageExtract(pages);
 
                 firstPageIntro = searchResultExtract.getAsString();
         }
@@ -112,6 +111,13 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         }
 
         return firstPageIntro;
+    }
+
+    private JsonElement getFirstPageExtract(JsonObject pages){
+        Set<Map.Entry<String, JsonElement>> pagesSet = pages.entrySet();
+        Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
+        JsonObject page = first.getValue().getAsJsonObject();
+        return page.get("extract");
     }
 
     public String getLastSearchedTitle() {

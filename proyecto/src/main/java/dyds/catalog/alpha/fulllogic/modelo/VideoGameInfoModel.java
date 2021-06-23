@@ -12,19 +12,19 @@ public interface VideoGameInfoModel {
     public void setStoredSearchedInformationListener(StoredSearchedInfoListener storedSearchedInfoListener);
     public void setDeletedInfoListener(DeletedInfoListener deletedInfoListener);
     public void setSuccesfullySavedLocalInfoListener(SuccesfullySavedInfoListener succesfullySavedLocalInfoListener);
-    public void setUnsuccesfullySavedLocalInfoListener(NoResultsToSaveListener unsuccesfullySavedLocalInfoListener);
+    public void setNoResultsToSaveListener(NoResultsToSaveListener unsuccesfullySavedLocalInfoListener);
     
     public WikipediaPage getLastWikiPageSearched();
     public WikipediaPage getLastLocallyStoredWikiPageSearched();
-    public Object[] getTotalTitulosRegistrados() throws SQLException;
+    public Object[] getTotalTitulosRegistrados() throws Exception;
 
     public void searchTermInWikipedia(String searchTerm);
 
-    public void storeLastSearchedPage() throws SQLException;
+    public void storeLastSearchedPage() throws Exception;
 
-    public void searchInLocalStorage(String videoGameTitle) throws SQLException;
+    public void searchInLocalStorage(String videoGameTitle) throws Exception;
     
-    public void deleteFromLocalStorage(String videoGameTitle) throws SQLException;
+    public void deleteFromLocalStorage(String videoGameTitle) throws Exception;
 
     //set for testing
     public void setWikipediaSearcher(WikipediaSearcher wikipediaSearcher);

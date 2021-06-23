@@ -72,7 +72,6 @@ public class StoredInfoViewImpl implements StoredInfoView{
     public void cleanPageIntroText(){
         storedTitlesComboBox.setSelectedIndex(-1);
         storedPageIntroTextPane.setText("");
-        //TODO: habría vque poner el setWatingStatus() también aca?
     }
 
     public void setStoredSearchedTitles(Object[] storedTitles){

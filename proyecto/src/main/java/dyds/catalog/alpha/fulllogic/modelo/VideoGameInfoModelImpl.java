@@ -50,11 +50,11 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     }
 
     @Override public void setSuccesfullySavedLocalInfoListener(SuccesfullySavedInfoListener succesfullySavedLocalInfoListener){
-        succesfullySavedInfoListenerList.addLast(succesfullySavedLocalInfoListener);
+        this.succesfullySavedInfoListenerList.addLast(succesfullySavedLocalInfoListener);
     }
 
-    @Override public void setUnsuccesfullySavedLocalInfoListener(NoResultsToSaveListener unsuccesfullySavedLocalInfoListener){
-        noResultsToSaveListenerList.addLast(unsuccesfullySavedLocalInfoListener);
+    @Override public void setNoResultsToSaveListener(NoResultsToSaveListener noResultsToSaveListener){
+        this.noResultsToSaveListenerList.addLast(noResultsToSaveListener);
     }
 
     @Override public WikipediaPage getLastWikiPageSearched(){
@@ -67,7 +67,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         return wikiPage;
     }
 
-    @Override public Object[] getTotalTitulosRegistrados() throws SQLException{
+    @Override public Object[] getTotalTitulosRegistrados() throws Exception{
         return dataBase.getTitles().stream().sorted().toArray();
     }
     
@@ -94,10 +94,11 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     }
 
     private String giveFormatForStorage(String text){
-        return text.replace("'", "`"); //Replace to avoid SQL errors, we will have to find a workaround..
+        return text.replace("'", "`");
     }
 
-    @Override public void storeLastSearchedPage() throws SQLException{
+    
+    @Override public void storeLastSearchedPage() throws Exception{
         if(lastPageSearchedWithSuccessInWiki){
             dataBase.saveInfo(lastPageTitleSearchedInWiki, lastIntroPageSearchedInWiki);
 
@@ -115,20 +116,20 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     }
 
     private void notifyAllNoResultsToSaveListeners(LinkedList<NoResultsToSaveListener> List){
-        for (NoResultsToSaveListener noResultsToSave : List) {
-            noResultsToSave.noResultsToSaveLocally();
+        for (NoResultsToSaveListener noResultsToSaveListener : List) {
+            noResultsToSaveListener.noResultsToSaveLocally();
         }
     }
 
    
-    @Override public void searchInLocalStorage(String videoGameTitle) throws SQLException {
+    @Override public void searchInLocalStorage(String videoGameTitle) throws Exception {
         lastIntroPageSearchedLocally = dataBase.getExtract(videoGameTitle);
         lastPageTitleSearchedLocally = videoGameTitle;
 
         storedSearchedInfoListener.didSearchPageStoredLocally();
     }
 
-    @Override public void deleteFromLocalStorage(String videoGameTitle) throws SQLException{
+    @Override public void deleteFromLocalStorage(String videoGameTitle) throws Exception{
         dataBase.deleteEntry(videoGameTitle);
 
         deletedInfoListener.didDeletePageStoredLocally();

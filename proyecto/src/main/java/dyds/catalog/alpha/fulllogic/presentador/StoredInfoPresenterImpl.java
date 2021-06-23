@@ -40,8 +40,8 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
                 try {
                     updateViewStoredTitles();
                 }
-                catch (SQLException e) {
-                    view.operationFailed("Page save", "Error updating stored titles when saving");
+                catch (Exception e) {
+                    view.operationFailed("Page save", "Error updating stored titles after saving");
                 }
             }
             
@@ -55,7 +55,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
                     updateViewStoredTitles();
                     view.operationSucceded("Page delete", "Page deleted succesfully");
                 }
-                catch(SQLException e){
+                catch(Exception e){
                     view.operationFailed("Page delete", "Error updating stored titles when deleting");
                 }
             }
@@ -63,7 +63,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         });
     }
 
-    private void updateViewStoredTitles() throws SQLException{
+    private void updateViewStoredTitles() throws Exception{
         view.setStoredSearchedTitles(videoGameInfoModel.getTotalTitulosRegistrados());
         view.cleanPageIntroText();
     }
@@ -82,7 +82,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
                         view.setWorkingStatus();
                         videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
                     } 
-                    catch (SQLException e) {
+                    catch (Exception e) {
                         view.operationFailed("Select title", "Failed to search the selected locally stored entry");
                     }
                 }
@@ -109,7 +109,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
                     try {
                         videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);
                     } 
-                    catch (SQLException e) {
+                    catch (Exception e) {
                         view.operationFailed("Page delete", "Failed page deletion");
                     }
                 }
@@ -128,7 +128,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         this.view = vista;
         try {
             updateViewStoredTitles();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             view.operationFailed("Initialization", "Error loading stored titles when initializating");
         }
     }

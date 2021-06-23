@@ -50,7 +50,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
         });
 
-        videoGameInfoModel.setUnsuccesfullySavedLocalInfoListener(new NoResultsToSaveListener(){
+        videoGameInfoModel.setNoResultsToSaveListener(new NoResultsToSaveListener(){
             
             @Override public void noResultsToSaveLocally() {
                 view.operationFailed("Page Save", "Please search for something in order to save it");
@@ -72,6 +72,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         taskThread = new Thread(new Runnable(){
 
             @Override public void run(){
+                //TODO: el setWorking tambien ponerlo en la vista para que la idea sea mas consistente.
                 view.setWorkingStatus();
                 videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
             }
@@ -91,7 +92,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
                 try {
                     videoGameInfoModel.storeLastSearchedPage();
                 } 
-                catch (SQLException e) {
+                catch (Exception e) {
                     view.operationFailed("Page save", "Failed page saving");
                 }
             }

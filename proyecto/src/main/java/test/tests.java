@@ -72,7 +72,7 @@ public class tests {
     }
 
     @Test
-    public void testSaveLocally() throws InterruptedException, SQLException {
+    public void testSaveLocally() throws InterruptedException, Exception {
         //Stub database
         DataBase stubDataBase = new StubDataBase();
 
@@ -105,7 +105,7 @@ public class tests {
     }
 
     @Test
-    public void testDeleteFromLocalStorage() throws InterruptedException, SQLException{
+    public void testDeleteFromLocalStorage() throws InterruptedException, Exception{
         //Stub database
         DataBase stubDataBase = new StubDataBase();
 
