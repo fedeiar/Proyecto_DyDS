@@ -16,4 +16,8 @@ public interface WikipediaSearchView {
     public void operationSucceded(String title, String message);
 
     public void operationFailed(String title, String message);
+
+    //get for testing
+
+    public String getActualSearch();
 }

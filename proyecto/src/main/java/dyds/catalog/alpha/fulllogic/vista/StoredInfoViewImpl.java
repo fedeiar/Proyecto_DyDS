@@ -95,7 +95,6 @@ public class StoredInfoViewImpl implements StoredInfoView{
         this.setWatingStatus();;
     }
 
-    @Override
     public void setSelectedStoredTitle(String title) {
         storedTitlesComboBox.setSelectedItem(title);
     }

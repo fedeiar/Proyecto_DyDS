@@ -11,4 +11,6 @@ public interface WikipediaSearchPresenter {
 
     public void setView(WikipediaSearchView view);
 
+    //for testing
+    boolean isActivellyWorking();
 }

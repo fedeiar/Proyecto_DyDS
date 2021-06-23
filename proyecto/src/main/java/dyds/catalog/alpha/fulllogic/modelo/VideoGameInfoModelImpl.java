@@ -134,5 +134,21 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         deletedInfoListener.didDeletePageStoredLocally();
     }
 
-    
+    //for testing
+
+    public void setWikipediaSearcher(WikipediaSearcher wikipediaSearcher){
+        this.wikipediaSearcher = wikipediaSearcher;
+    };
+
+    public void setLastPageSearchedWithSuccessInWiki(boolean value) {
+        lastPageSearchedWithSuccessInWiki = value;
+    };
+
+    public void setLastPageTitleSearchedInWiki(String lastPageTitleSearchedInWiki){
+        this.lastPageTitleSearchedInWiki = lastPageTitleSearchedInWiki;
+    };
+
+    public void setLastIntroPageSearchedInWiki(String lastIntroPageSearchedInWiki) {
+        this.lastIntroPageSearchedInWiki = lastIntroPageSearchedInWiki;
+    }
 }

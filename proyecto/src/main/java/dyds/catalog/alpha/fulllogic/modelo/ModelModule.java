@@ -20,5 +20,4 @@ public class ModelModule {
         videoGameInfoModel = new VideoGameInfoModelImpl(wikipediaSearcher);
         return videoGameInfoModel;
     }
-
 }

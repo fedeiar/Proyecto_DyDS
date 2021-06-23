@@ -98,4 +98,9 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         });
         taskThread.start();
     }
+
+    //for testing
+    public boolean isActivellyWorking() {
+        return taskThread.isAlive();
+    };
 }

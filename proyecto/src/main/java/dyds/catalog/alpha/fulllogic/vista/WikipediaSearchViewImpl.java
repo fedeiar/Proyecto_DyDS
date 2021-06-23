@@ -82,4 +82,10 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
         this.setWatingStatus();
     }
+
+    //get for testing
+    @Override
+    public String getActualSearch() {
+        return searchedPageIntroTextPane.getText();
+    }
 }

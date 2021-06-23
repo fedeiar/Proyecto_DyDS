@@ -16,5 +16,9 @@ public interface StoredInfoView {
 
     public void setLocalStoredPageIntro(String storedPageIntro);
 
-    public void setSelectedStoredTitle(String term);
+    void operationFailed(String page_save, String s);
+
+    void setWorkingStatus();
+
+    void operationSucceded(String page_delete, String page_deleted_succesfully);
 }

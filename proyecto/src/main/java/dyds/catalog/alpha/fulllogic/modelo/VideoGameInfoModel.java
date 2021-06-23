@@ -26,4 +26,12 @@ public interface VideoGameInfoModel {
     
     public void deleteFromLocalStorage(String videoGameTitle) throws SQLException;
 
+    //set for testing
+    public void setWikipediaSearcher(WikipediaSearcher wikipediaSearcher);
+
+    public void setLastPageSearchedWithSuccessInWiki(boolean value);
+
+    public void setLastPageTitleSearchedInWiki(String lastPageTitleSearchedInWiki);
+
+    public void setLastIntroPageSearchedInWiki(String lastIntroPageSearchedInWiki);
 }
