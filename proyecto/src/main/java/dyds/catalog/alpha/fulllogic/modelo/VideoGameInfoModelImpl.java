@@ -152,4 +152,16 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     public void setLastIntroPageSearchedInWiki(String lastIntroPageSearchedInWiki) {
         this.lastIntroPageSearchedInWiki = lastIntroPageSearchedInWiki;
     }
+
+    //getters for testing
+
+    @Override
+    public LinkedList<SuccesfullySavedInfoListener> getListOfSuccesfullySavedInfoListenerList() {
+        return succesfullySavedInfoListenerList;
+    }
+
+    @Override
+    public LinkedList<NoResultsToSaveListener> getListNoResultsToSaveListener() {
+        return noResultsToSaveListenerList;
+    }
 }

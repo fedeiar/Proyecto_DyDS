@@ -32,6 +32,7 @@ public class StubDataBase implements DataBase {
 
     @Override
     public void deleteEntry(String title) throws SQLException {
-
+        this.title = null;
+        this.extract = null;
     }
 }
