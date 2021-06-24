@@ -74,7 +74,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     //TODO: en los métodos que siguen, preguntar si el listener no es null antes de enviar un mensaje al que haya implementado al listener.
 
-    @Override public void searchTermInWikipedia(String searchedTerm) {
+    @Override public void searchTermInWikipedia(String searchedTerm) throws Exception {
         boolean pageFound = wikipediaSearcher.searchPage(searchedTerm);
         lastPageSearchedWithSuccessInWiki = pageFound;
 

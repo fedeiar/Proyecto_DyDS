@@ -47,7 +47,7 @@ public class tests {
     }
 
     @Test(timeout = 4000)
-    public void testNewSearchInWikipedia() throws InterruptedException {
+    public void testNewSearchInWikipedia() throws Exception, InterruptedException {
         //Stub database
         DataBase stubDataBase = new StubDataBase();
 

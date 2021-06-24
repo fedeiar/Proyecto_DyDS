@@ -39,7 +39,7 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         pageAPI = retrofit.create(WikipediaPageAPI.class);
     }
 
-    public boolean searchPage(String searchedTerm) {
+    public boolean searchPage(String searchedTerm) throws Exception {
         JsonObject searchResult = searchPageInWikipediaSearchAPI(searchedTerm);
 
         if(pageFound(searchResult)){
@@ -51,27 +51,23 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         return pageFound(searchResult);
     }
 
-    private JsonObject searchPageInWikipediaSearchAPI(String terminoDeBusqueda){
+    private JsonObject searchPageInWikipediaSearchAPI(String terminoDeBusqueda) throws Exception{
         Response<String> callResponse;
         JsonObject jobj;
         JsonObject query;
         JsonObject searchResult = null;
-        try {
-            callResponse = searchAPI.searchForTerm(terminoDeBusqueda + " articletopic:\"video-games\"").execute();
+        
+        callResponse = searchAPI.searchForTerm(terminoDeBusqueda + " articletopic:\"video-games\"").execute();
 
-            Gson gson = new Gson();
-            jobj = gson.fromJson(callResponse.body(), JsonObject.class);
-            query = jobj.get("query").getAsJsonObject();
-            Iterator<JsonElement> resultIterator = query.get("search").getAsJsonArray().iterator();
+        Gson gson = new Gson();
+        jobj = gson.fromJson(callResponse.body(), JsonObject.class);
+        query = jobj.get("query").getAsJsonObject();
+        Iterator<JsonElement> resultIterator = query.get("search").getAsJsonArray().iterator();
 
-            if (resultIterator.hasNext()) {
-                searchResult = resultIterator.next().getAsJsonObject();
-            }
+        if (resultIterator.hasNext()) {
+            searchResult = resultIterator.next().getAsJsonObject();
         }
-        catch (IOException e1) {
-            //TODO: deberíamos capturar aquí cuando queremos realizar una busqueda sin internet?
-            e1.printStackTrace();
-        }
+        
         return searchResult;
     }
 
@@ -87,29 +83,24 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         return searchResult != null;
     }
 
-    private String searchFirstPageIntroInWikipediaPageAPI(String searchResultPageId){
+    private String searchFirstPageIntroInWikipediaPageAPI(String searchResultPageId) throws Exception{
         Response<String> callResponse;
         JsonObject jobj;
         JsonObject query;
         Gson gson = new Gson();
         JsonElement searchResultExtract;
         String firstPageIntro = null;
-        try {
-                callResponse = pageAPI.getExtractByPageID(searchResultPageId).execute();
+        
+        callResponse = pageAPI.getExtractByPageID(searchResultPageId).execute();
 
-                jobj = gson.fromJson(callResponse.body(), JsonObject.class);
-                query = jobj.get("query").getAsJsonObject();
-                JsonObject pages = query.get("pages").getAsJsonObject();
-                
-                searchResultExtract = getFirstPageExtract(pages);
+        jobj = gson.fromJson(callResponse.body(), JsonObject.class);
+        query = jobj.get("query").getAsJsonObject();
+        JsonObject pages = query.get("pages").getAsJsonObject();
+        
+        searchResultExtract = getFirstPageExtract(pages);
 
-                firstPageIntro = searchResultExtract.getAsString();
-        }
-        catch (IOException e1) {
-            //TODO: deberíamos capturar aquí cuando queremos realizar una busqueda sin internet?
-            e1.printStackTrace();
-        }
-
+        firstPageIntro = searchResultExtract.getAsString();
+        
         return firstPageIntro;
     }
 

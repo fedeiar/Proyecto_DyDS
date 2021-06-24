@@ -36,7 +36,6 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedInfoListener(){
 
             @Override public void didSuccessSavePageLocally(){
-                //TODO: preguntar si la excepcion esta bien capturada aca
                 try {
                     updateViewStoredTitles();
                 }
@@ -50,7 +49,6 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         videoGameInfoModel.setDeletedInfoListener(new DeletedInfoListener(){
             
             public void didDeletePageStoredLocally(){
-                //TODO: preguntar si la excepcion esta bien capturada aca
                 try{
                     updateViewStoredTitles();
                     view.operationSucceded("Page delete", "Page deleted succesfully");
@@ -70,9 +68,6 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
 
     public void onEventSearchLocalEntriesInfo() {
-        //TODO: preg si está bien el thread asi.
-        //TODO: preg si está bien capturada la excepción
-        
         int index = view.getSelectedTitleIndex();
         if(aTitleWasSelected(index)){
             taskThread = new Thread(new Runnable(){
@@ -97,8 +92,6 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
     }
 
     public void onEventDeleteLocalEntryInfo() {
-        //TODO: preg si está bien el thread asi.
-        //TODO: preg si está bien capturada la excepción
         int index = view.getSelectedTitleIndex();
         if(aTitleWasSelected(index)){
             taskThread = new Thread(new Runnable(){
@@ -124,7 +117,6 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
     }
 
     public void setView(StoredInfoView vista) {
-        //TODO: preguntar si la excepcion esta bien capturada aca
         this.view = vista;
         try {
             updateViewStoredTitles();

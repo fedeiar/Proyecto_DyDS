@@ -26,7 +26,6 @@ public class DataBaseImplementation implements DataBase{
         return instance;
     }
 
-    //TODO: agregarle a cada método de la BD un throws, entonces en el modelo debemos usar try, catch, y en el catch podemos progpagar la excpecion hasta la vista.
     public void loadDatabase() {
 
         try{
@@ -71,7 +70,7 @@ public class DataBaseImplementation implements DataBase{
     }
     
 
-    public ArrayList<String> getTitles() throws SQLException {
+    public ArrayList<String> getTitles() throws Exception {
         ArrayList<String> titles = new ArrayList<>();
         
         initConnectionToDataBase();
@@ -86,7 +85,7 @@ public class DataBaseImplementation implements DataBase{
         return titles;
     }
 
-    public String getExtract(String title) throws SQLException {
+    public String getExtract(String title) throws Exception {
         String extract = "";
         
         initConnectionToDataBase();
@@ -100,7 +99,7 @@ public class DataBaseImplementation implements DataBase{
         return extract;
     }
 
-    public void saveInfo(String title, String extract) throws SQLException{
+    public void saveInfo(String title, String extract) throws Exception{
         initConnectionToDataBase();
 
         statement.executeUpdate("replace into catalog values(null, '"+ title + "', '"+ extract + "', 1)");
@@ -108,7 +107,7 @@ public class DataBaseImplementation implements DataBase{
         closeConnectionToDataBase();
     }
 
-    public void deleteEntry(String title) throws SQLException{
+    public void deleteEntry(String title) throws Exception{
         try {
             initConnectionToDataBase();
 

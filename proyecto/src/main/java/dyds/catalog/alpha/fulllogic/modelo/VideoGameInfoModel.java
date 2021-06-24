@@ -18,7 +18,7 @@ public interface VideoGameInfoModel {
     public WikipediaPage getLastLocallyStoredWikiPageSearched();
     public Object[] getTotalTitulosRegistrados() throws Exception;
 
-    public void searchTermInWikipedia(String searchTerm);
+    public void searchTermInWikipedia(String searchTerm) throws Exception;
 
     public void storeLastSearchedPage() throws Exception;
 

@@ -65,16 +65,18 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
     }
 
     public void onEventSearchInWikipedia() {
-        //TODO: preg si está bien el thread asi.
-
         String lastTermSearched = view.getSearchedTerm();
-
         taskThread = new Thread(new Runnable(){
 
             @Override public void run(){
                 //TODO: el setWorking tambien ponerlo en la vista para que la idea sea mas consistente.
                 view.setWorkingStatus();
-                videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
+                try {
+                    videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
+                } 
+                catch (Exception e){
+                    view.operationFailed("Search", "could not search for the term, probably an internet connection issue");
+                }
             }
 
         });
@@ -84,10 +86,9 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
     }
 
     public void onEventSaveSearchLocally() {
-        //TODO: preg si está bien el thread asi.
-        //TODO: preg si está bien capturada la excepción
         taskThread = new Thread(new Runnable(){
             @Override public void run() {
+
                 view.setWorkingStatus();
                 try {
                     videoGameInfoModel.storeLastSearchedPage();
@@ -96,6 +97,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
                     view.operationFailed("Page save", "Failed page saving");
                 }
             }
+
         });
         taskThread.start();
     }

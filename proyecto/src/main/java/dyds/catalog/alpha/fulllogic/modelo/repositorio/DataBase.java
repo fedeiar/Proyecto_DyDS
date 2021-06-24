@@ -7,12 +7,12 @@ public interface DataBase{
     
     public void loadDatabase();
 
-    public ArrayList<String> getTitles() throws SQLException;
+    public ArrayList<String> getTitles() throws Exception;
 
-    public String getExtract(String title) throws SQLException;
+    public String getExtract(String title) throws Exception;
 
-    public void saveInfo(String title, String extract) throws SQLException;
+    public void saveInfo(String title, String extract) throws Exception;
 
-    public void deleteEntry(String title) throws SQLException;
+    public void deleteEntry(String title) throws Exception;
 
 }
