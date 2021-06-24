@@ -53,7 +53,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         videoGameInfoModel.setNoResultsToSaveListener(new NoResultsToSaveListener(){
             
             @Override public void noResultsToSaveLocally() {
-                view.operationFailed("Page Save", "Please search for something in order to save it");
+                view.operationFailed("Page Save", "Cant store a page if there are no results from the search");
             }
             
         });
