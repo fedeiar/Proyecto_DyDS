@@ -119,4 +119,8 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         return searchResultPageIntro;
     }
 
+    //for testing
+
+    public void setValues(String title, String extract, boolean searchedPage){}
+
 }

@@ -17,7 +17,8 @@ public interface WikipediaSearchView {
 
     public void operationFailed(String title, String message);
 
-    //get for testing
+    //setters & getters for testing
+    public void setTermOfSearch(String termOfSearch);
 
     public String getActualSearch();
 }

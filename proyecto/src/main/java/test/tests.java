@@ -43,9 +43,6 @@ public class tests {
 
     @Test(timeout = 4000)
     public void testNewSearchInWikipediaAndFound() throws Exception {
-        //Stub database
-        DataBase stubDataBase = new StubDataBase();
-
         //Mock wikipediaSearcher
         WikipediaSearcher mockWikipediaSearcher = mock(WikipediaSearcher.class);
 
@@ -62,7 +59,6 @@ public class tests {
 
         //set up stubDatabase + mockWikipediaSearcher
         videoGameInfoModel.setWikipediaSearcher(mockWikipediaSearcher);
-        videoGameInfoModel.setVideoGameInfoRepository(stubDataBase);
 
         //init test
         videoGameInfoModel.searchTermInWikipedia("League of Legends");
@@ -73,9 +69,6 @@ public class tests {
 
     @Test(timeout = 4000)
     public void testNewSearchInWikipediaButNotFound() throws Exception {
-        //Stub database
-        DataBase stubDataBase = new StubDataBase();
-
         //Mock wikipediaSearcher
         WikipediaSearcher mockWikipediaSearcher = mock(WikipediaSearcher.class);
 
@@ -90,9 +83,9 @@ public class tests {
         doNothing().when(mockWikipediaSearchedInfoListener).didNotFoundPageInWikipedia();
         videoGameInfoModel.setWikipediaSearchInfoListener(mockWikipediaSearchedInfoListener);
 
-        //set up stubDatabase + mockWikipediaSearcher
+        //set up mockWikipediaSearcher
         videoGameInfoModel.setWikipediaSearcher(mockWikipediaSearcher);
-        videoGameInfoModel.setVideoGameInfoRepository(stubDataBase);
+        //videoGameInfoModel.setVideoGameInfoRepository(stubDataBase);
 
         //init test
         videoGameInfoModel.searchTermInWikipedia("League of Legends");
@@ -167,5 +160,34 @@ public class tests {
             doNothing().when(noResultsToSaveListener).noResultsToSaveLocally();
         }
     }
+
+    @Test
+    public void testUnitarioNuevaBusquedaExitosa() throws Exception{
+        //Stub WikipediaSearcher and set values
+        WikipediaSearcher stubWikipediaSearcher = new StubWikipediaSearcher();
+        stubWikipediaSearcher.setValues("League of Legends is a game of ...","League of Legends",true);
+        videoGameInfoModel.setWikipediaSearcher(stubWikipediaSearcher);
+
+        //Simular el ingreso de datos a la vista
+        wikipediaSearchView.setPageIntroText("League of Legends");
+
+        //check results
+        //TODO como chequear los resultados? porque en la vista la informacion esta mezclada con HTML
+        //assertEquals("League of Legends is a game of ...",wikipediaSearchView.getActualSearch());
+    }
+
+   /* @Test
+    public void testUnitarioNuevaBusquedaSinExito() throws Exception{
+        //Stub WikipediaSearcher and set values
+        WikipediaSearcher stubWikipediaSearcher = new StubWikipediaSearcher();
+        stubWikipediaSearcher.setValues("No results","No results",false);
+        videoGameInfoModel.setWikipediaSearcher(stubWikipediaSearcher);
+
+        //Simular el ingreso de datos a la vista
+        wikipediaSearchView.setPageIntroText("League of Legends");
+
+        //check results
+        assertEquals("No results",wikipediaSearchView.get);
+    } */
 }
 

@@ -9,4 +9,8 @@ public interface WikipediaSearcher {
     String getLastSearchedTitle();
     
     String getLastSearchedPageIntro();
+
+    //for testing
+
+    public void setValues(String title, String extract, boolean searchedPage);
 }

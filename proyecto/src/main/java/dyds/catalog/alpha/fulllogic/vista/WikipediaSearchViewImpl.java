@@ -83,9 +83,13 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
         this.setWatingStatus();
     }
 
-    //get for testing
+    //setters & getters for testing
     @Override
     public String getActualSearch() {
         return searchedPageIntroTextPane.getText();
+    }
+
+    public void setTermOfSearch(String termOfSearch){
+        searchTextField.setText(termOfSearch);
     }
 }
