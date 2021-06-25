@@ -26,8 +26,7 @@ public class DataBaseImplementation implements DataBase{
         return instance;
     }
 
-    public void loadDatabase() {
-
+    public void loadDatabase(){
         try{
             initConnectionToDataBase();
   
@@ -35,14 +34,12 @@ public class DataBaseImplementation implements DataBase{
             if(tableDoesntExists(table)){
                 statement.executeUpdate("create table catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
             }
+
+            closeConnectionToDataBase();
             
         } 
         catch (SQLException e) {
-            //TODO: habría algún error que capturar acá?
-            System.out.println(e.getMessage());
-        }
-        finally{
-            closeConnectionToDataBase();
+            e.printStackTrace();
         }
     }
 
@@ -57,20 +54,13 @@ public class DataBaseImplementation implements DataBase{
         statement.setQueryTimeout(TIMEOUT_SEGUNDOS);  
     }
 
-    private void closeConnectionToDataBase(){
-        try{
-            if(connection != null){
-                connection.close();
-            }
-        }
-        catch(SQLException e){
-            //TODO: habría algún error que capturar acá?
-            System.err.println("fallo el cierre de la conexion");
+    private void closeConnectionToDataBase() throws SQLException{
+        if(connection != null){
+            connection.close();
         }
     }
     
-
-    public ArrayList<String> getTitles() throws Exception {
+    public ArrayList<String> getTitles() throws SQLException {
         ArrayList<String> titles = new ArrayList<>();
         
         initConnectionToDataBase();
@@ -85,7 +75,7 @@ public class DataBaseImplementation implements DataBase{
         return titles;
     }
 
-    public String getExtract(String title) throws Exception {
+    public String getExtract(String title) throws SQLException {
         String extract = "";
         
         initConnectionToDataBase();
@@ -99,7 +89,7 @@ public class DataBaseImplementation implements DataBase{
         return extract;
     }
 
-    public void saveInfo(String title, String extract) throws Exception{
+    public void saveInfo(String title, String extract) throws SQLException{
         initConnectionToDataBase();
 
         statement.executeUpdate("replace into catalog values(null, '"+ title + "', '"+ extract + "', 1)");
@@ -107,7 +97,7 @@ public class DataBaseImplementation implements DataBase{
         closeConnectionToDataBase();
     }
 
-    public void deleteEntry(String title) throws Exception{
+    public void deleteEntry(String title) throws SQLException{
         try {
             initConnectionToDataBase();
 

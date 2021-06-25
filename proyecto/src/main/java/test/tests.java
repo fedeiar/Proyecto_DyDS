@@ -9,6 +9,8 @@ import dyds.catalog.alpha.fulllogic.vista.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import java.sql.DatabaseMetaData;
+
 import org.junit.Test;
 import org.junit.Before;
 
@@ -24,12 +26,9 @@ public class tests {
 
     @Before
     public void setUp() throws Exception {
-        //TODO: preg: se lo paso al setup por parámetro, o primero creo y dsp seteo?
-        videoGameInfoModel = ModelModule.getInstance().setUpModel(new WikipediaSearcherImpl());
-        //TODO: preg: no es mejor pasarselo al constructor? ya que el modelo sin la BD no funciona, no le encuentro el sentido a setearselo.
-        videoGameInfoModel.setVideoGameInfoRepository(DataBaseImplementation.getInstance());
 
-
+        videoGameInfoModel = ModelModule.getInstance().setUpModel(DataBaseImplementation.getInstance(), new WikipediaSearcherImpl());
+  
         wikipediaSearchPresenter = PresenterModule.getInstance().setUpWikipediaSearchPresenter(videoGameInfoModel);
         storedInfoPresenter = PresenterModule.getInstance().setUpStoredInfoView(videoGameInfoModel);
 

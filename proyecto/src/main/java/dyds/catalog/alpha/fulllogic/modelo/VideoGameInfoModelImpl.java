@@ -27,9 +27,11 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private String lastIntroPageSearchedLocally;
     private String lastPageTitleSearchedLocally;
 
-    public VideoGameInfoModelImpl(WikipediaSearcher wikipediaSearcher){
+    public VideoGameInfoModelImpl(DataBase database, WikipediaSearcher wikipediaSearcher){
         this.wikipediaSearcher = wikipediaSearcher;
         lastPageSearchedWithSuccessInWiki = false;
+        dataBase = database;
+        dataBase.loadDatabase();
     }
 
     @Override public void setVideoGameInfoRepository(DataBase dataBase){
@@ -67,7 +69,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         return wikiPage;
     }
 
-    @Override public Object[] getTotalTitulosRegistrados() throws Exception{
+    @Override public Object[] getAllStoredTitles() throws Exception{
         return dataBase.getTitles().stream().sorted().toArray();
     }
     
@@ -86,10 +88,15 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
             lastPageTitleSearchedInWiki = giveFormatForStorage(pageTitle);
             lastIntroPageSearchedInWiki = giveFormatForStorage(pageIntroText);
 
-            wikipediaSearchInfoListener.didFoundPageInWikipedia();
+            //TODO: capaz sea mejor que todos sean listas así no hay que hacer estos chequeos null.
+            if(wikipediaSearchInfoListener != null){
+                wikipediaSearchInfoListener.didFoundPageInWikipedia();
+            }
         }
         else{
-            wikipediaSearchInfoListener.didNotFoundPageInWikipedia();
+            if(wikipediaSearchInfoListener != null){
+                wikipediaSearchInfoListener.didNotFoundPageInWikipedia();
+            }
         }
     }
 

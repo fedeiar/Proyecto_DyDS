@@ -34,12 +34,14 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
 
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                setWorkingStatus();
                 wikipediaSearchPresenter.onEventSearchInWikipedia();
             }
         });
 
         saveLocallyButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
+                setWorkingStatus();
                 wikipediaSearchPresenter.onEventSaveSearchLocally();
             }
         });
@@ -50,13 +52,13 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
         return this.searchPanel;
     }
 
-    public void setWorkingStatus() {
+    private void setWorkingStatus() {
         for(Component c: this.searchPanel.getComponents()){
             c.setEnabled(false);
         }
     }
     
-    public void setWatingStatus() {
+    private void setWatingStatus() {
         for(Component c: this.searchPanel.getComponents()){
             c.setEnabled(true);
         }

@@ -52,16 +52,13 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
     }
 
     private JsonObject searchPageInWikipediaSearchAPI(String terminoDeBusqueda) throws Exception{
-        Response<String> callResponse;
-        JsonObject jobj;
-        JsonObject query;
         JsonObject searchResult = null;
         
-        callResponse = searchAPI.searchForTerm(terminoDeBusqueda + " articletopic:\"video-games\"").execute();
+        Response<String> callResponse = searchAPI.searchForTerm(terminoDeBusqueda + " articletopic:\"video-games\"").execute();
 
         Gson gson = new Gson();
-        jobj = gson.fromJson(callResponse.body(), JsonObject.class);
-        query = jobj.get("query").getAsJsonObject();
+        JsonObject searchResponseJsonObject = gson.fromJson(callResponse.body(), JsonObject.class);
+        JsonObject query = searchResponseJsonObject.get("query").getAsJsonObject();
         Iterator<JsonElement> resultIterator = query.get("search").getAsJsonArray().iterator();
 
         if (resultIterator.hasNext()) {
@@ -84,22 +81,16 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
     }
 
     private String searchFirstPageIntroInWikipediaPageAPI(String searchResultPageId) throws Exception{
-        Response<String> callResponse;
-        JsonObject jobj;
-        JsonObject query;
-        Gson gson = new Gson();
-        JsonElement searchResultExtract;
-        String firstPageIntro = null;
-        
-        callResponse = pageAPI.getExtractByPageID(searchResultPageId).execute();
+        Response<String> callResponse = pageAPI.getExtractByPageID(searchResultPageId).execute();
 
-        jobj = gson.fromJson(callResponse.body(), JsonObject.class);
-        query = jobj.get("query").getAsJsonObject();
+        Gson gson = new Gson();
+        JsonObject pageIDresponseJsonObject = gson.fromJson(callResponse.body(), JsonObject.class);
+        JsonObject query = pageIDresponseJsonObject.get("query").getAsJsonObject();
         JsonObject pages = query.get("pages").getAsJsonObject();
         
-        searchResultExtract = getFirstPageExtract(pages);
+        JsonElement searchResultExtract = getFirstPageExtract(pages);
 
-        firstPageIntro = searchResultExtract.getAsString();
+        String firstPageIntro = searchResultExtract.getAsString();
         
         return firstPageIntro;
     }

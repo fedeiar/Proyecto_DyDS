@@ -5,10 +5,6 @@ public interface WikipediaSearchView {
     
     public Container getContent();
 
-    public void setWorkingStatus();
-
-    public void setWatingStatus();
-
     public String getSearchedTerm();
 
     public void setPageIntroText(String pageIntroText);

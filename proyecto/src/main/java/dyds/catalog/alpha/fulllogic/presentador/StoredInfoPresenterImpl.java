@@ -62,7 +62,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
     }
 
     private void updateViewStoredTitles() throws Exception{
-        view.setStoredSearchedTitles(videoGameInfoModel.getTotalTitulosRegistrados());
+        view.setStoredSearchedTitles(videoGameInfoModel.getAllStoredTitles());
         view.cleanPageIntroText();
     }
 
@@ -74,7 +74,6 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
                 @Override public void run() {
                     try {
-                        view.setWorkingStatus();
                         videoGameInfoModel.searchInLocalStorage(view.getSelectedTitle());
                     } 
                     catch (Exception e) {
@@ -84,6 +83,9 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
                 
             });
             taskThread.start();
+        }
+        else{
+            view.setLocalStoredPageIntro("");
         }
     }
 
@@ -97,7 +99,6 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
             taskThread = new Thread(new Runnable(){
 
                 @Override public void run(){
-                    view.setWorkingStatus();
                     String tituloInformacion = view.getSelectedTitle();
                     try {
                         videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);

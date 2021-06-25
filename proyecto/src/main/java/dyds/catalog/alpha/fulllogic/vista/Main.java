@@ -14,11 +14,7 @@ import dyds.catalog.alpha.fulllogic.presentador.WikipediaSearchPresenter;
 public class Main {
     public static void main(String[] args) {
 
-        //TODO: preg: se lo paso al setup por parámetro, o primero creo y dsp seteo?
-        VideoGameInfoModel videoGameInfoModel = ModelModule.getInstance().setUpModel(new WikipediaSearcherImpl());
-        //TODO: preg: no es mejor pasarselo al constructor? ya que el modelo sin la BD no funciona, no le encuentro el sentido a setearselo.
-        videoGameInfoModel.setVideoGameInfoRepository(DataBaseImplementation.getInstance());
-
+        VideoGameInfoModel videoGameInfoModel = ModelModule.getInstance().setUpModel(DataBaseImplementation.getInstance(), new WikipediaSearcherImpl());
         
       
         WikipediaSearchPresenter wikipediaSearchPresenter = PresenterModule.getInstance().setUpWikipediaSearchPresenter(videoGameInfoModel);
@@ -31,15 +27,15 @@ public class Main {
         storedInfoPresenter.setView(storedInfoView);
 
         
+        showView(wikipediaSearchView, storedInfoView);
+    }
 
-        
-    
+    private static void showView(WikipediaSearchView wikipediaSearchView, StoredInfoView storedInfoView){
         ViewCoordinator viewCoordinator = new ViewCoordinator(wikipediaSearchView, storedInfoView);
         JFrame frame = new JFrame("Video Game Info Catalog");
         frame.setContentPane(viewCoordinator.getContent());
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-
     }
 }

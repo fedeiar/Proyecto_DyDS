@@ -1,5 +1,6 @@
 package dyds.catalog.alpha.fulllogic.modelo;
 
+import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBase;
 
 public class ModelModule {
     private static ModelModule instance;
@@ -16,8 +17,8 @@ public class ModelModule {
         return instance;
     }
 
-    public VideoGameInfoModel setUpModel(WikipediaSearcher wikipediaSearcher){
-        videoGameInfoModel = new VideoGameInfoModelImpl(wikipediaSearcher);
+    public VideoGameInfoModel setUpModel(DataBase database, WikipediaSearcher wikipediaSearcher){
+        videoGameInfoModel = new VideoGameInfoModelImpl(database, wikipediaSearcher);
         return videoGameInfoModel;
     }
 }

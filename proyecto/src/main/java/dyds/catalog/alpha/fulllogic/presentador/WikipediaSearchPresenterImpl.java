@@ -30,14 +30,12 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
                 String formattedPageIntroText = Utilidades.formatData(wikiPage.getTitle(), wikiPage.getPageIntro(), view.getSearchedTerm());
                 
                 view.setPageIntroText(formattedPageIntroText);
-                view.setWatingStatus();
             }
 
             public void didNotFoundPageInWikipedia(){
                 String pageIntroText = "No Results";
 
                 view.setPageIntroText(pageIntroText);
-                view.setWatingStatus();
             }
 
         });
@@ -69,8 +67,6 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         taskThread = new Thread(new Runnable(){
 
             @Override public void run(){
-                //TODO: el setWorking tambien ponerlo en la vista para que la idea sea mas consistente.
-                view.setWorkingStatus();
                 try {
                     videoGameInfoModel.searchTermInWikipedia(lastTermSearched);
                 } 
@@ -81,15 +77,11 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
         });
         taskThread.start();
-
-       
     }
 
     public void onEventSaveSearchLocally() {
         taskThread = new Thread(new Runnable(){
             @Override public void run() {
-
-                view.setWorkingStatus();
                 try {
                     videoGameInfoModel.storeLastSearchedPage();
                 } 

@@ -33,12 +33,14 @@ public class StoredInfoViewImpl implements StoredInfoView{
 
         deleteButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent actionEvent){
+                setWorkingStatus();
                 storedInformationPresenter.onEventDeleteLocalEntryInfo();
             }
         });
 
         storedTitlesComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
+                setWorkingStatus();
                 storedInformationPresenter.onEventSearchLocalEntriesInfo();
             }
         });
@@ -48,14 +50,14 @@ public class StoredInfoViewImpl implements StoredInfoView{
         return this.storagePanel;
     }
 
-    public void setWorkingStatus() {
+    private void setWorkingStatus() {
         for(Component c: this.storagePanel.getComponents()){
             c.setEnabled(false);
         }
         storedPageIntroTextPane.setText("");
     }
     
-    public void setWatingStatus() {
+    private void setWatingStatus() {
         for(Component c: this.storagePanel.getComponents()){
             c.setEnabled(true);
         }

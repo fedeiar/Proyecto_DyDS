@@ -4,11 +4,11 @@ import dyds.catalog.alpha.fulllogic.vista.*;
 
 public interface WikipediaSearcher {
 
-    public boolean searchPage(String terminoDeBusqueda) throws Exception;
+    public boolean searchPage(String searchedTerm) throws Exception;
 
-    String getLastSearchedTitle();
+    public String getLastSearchedTitle();
     
-    String getLastSearchedPageIntro();
+    public String getLastSearchedPageIntro();
 
     //for testing
 
