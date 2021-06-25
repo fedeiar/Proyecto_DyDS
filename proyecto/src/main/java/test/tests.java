@@ -4,15 +4,16 @@ import dyds.catalog.alpha.fulllogic.modelo.*;
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBase;
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBaseImplementation;
 import dyds.catalog.alpha.fulllogic.presentador.*;
+import dyds.catalog.alpha.fulllogic.utils.Utilidades;
 import dyds.catalog.alpha.fulllogic.vista.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-import java.sql.DatabaseMetaData;
-
 import org.junit.Test;
 import org.junit.Before;
+
+import java.util.LinkedList;
 
 public class tests {
     VideoGameInfoModel videoGameInfoModel;
@@ -26,9 +27,8 @@ public class tests {
 
     @Before
     public void setUp() throws Exception {
+        videoGameInfoModel = ModelModule.getInstance().setUpModel(DataBaseImplementation.getInstance(),new WikipediaSearcherImpl());
 
-        videoGameInfoModel = ModelModule.getInstance().setUpModel(DataBaseImplementation.getInstance(), new WikipediaSearcherImpl());
-  
         wikipediaSearchPresenter = PresenterModule.getInstance().setUpWikipediaSearchPresenter(videoGameInfoModel);
         storedInfoPresenter = PresenterModule.getInstance().setUpStoredInfoView(videoGameInfoModel);
 
@@ -40,7 +40,7 @@ public class tests {
 
     }
 
-    @Test(timeout = 4000)
+    /*@Test(timeout = 4000)
     public void testNewSearchInWikipediaAndFound() throws Exception {
         //Mock wikipediaSearcher
         WikipediaSearcher mockWikipediaSearcher = mock(WikipediaSearcher.class);
@@ -56,17 +56,18 @@ public class tests {
         doNothing().when(mockWikipediaSearchedInfoListener).didFoundPageInWikipedia();
         videoGameInfoModel.setWikipediaSearchInfoListener(mockWikipediaSearchedInfoListener);
 
-        //set up stubDatabase + mockWikipediaSearcher
+        //set up mockWikipediaSearcher
         videoGameInfoModel.setWikipediaSearcher(mockWikipediaSearcher);
 
         //init test
         videoGameInfoModel.searchTermInWikipedia("League of Legends");
 
         //check results
+        verify(mockWikipediaSearchedInfoListener).didFoundPageInWikipedia();
         assertEquals("League of Legends",videoGameInfoModel.getLastWikiPageSearched().getTitle());
-    }
+    }*/
 
-    @Test(timeout = 4000)
+    /*@Test(timeout = 4000)
     public void testNewSearchInWikipediaButNotFound() throws Exception {
         //Mock wikipediaSearcher
         WikipediaSearcher mockWikipediaSearcher = mock(WikipediaSearcher.class);
@@ -84,17 +85,17 @@ public class tests {
 
         //set up mockWikipediaSearcher
         videoGameInfoModel.setWikipediaSearcher(mockWikipediaSearcher);
-        //videoGameInfoModel.setVideoGameInfoRepository(stubDataBase);
 
         //init test
         videoGameInfoModel.searchTermInWikipedia("League of Legends");
 
         //check results
+        verify(mockWikipediaSearchedInfoListener).didNotFoundPageInWikipedia();
         assertNull(videoGameInfoModel.getLastWikiPageSearched().getPageIntro());
-    }
+    }*/
 
-    @Test
-    public void testSaveLocally() throws Exception {
+    /*@Test
+    public void testSuccesfullySaveLocally() throws Exception {
         //Stub database
         DataBase stubDataBase = new StubDataBase();
 
@@ -109,16 +110,17 @@ public class tests {
 
         //TODO do nothing methods of listeners
         //mockear cada listener en la lista, para que al realizar un save, no se notifique a nadie
-        listeners_doNothing();
+        videoGameInfoModel.setNewSuccesfullySavedInfoListenerList(newListSuccesfullyListenersDoNothing());
 
         //metodo guardar informacion localmente
         videoGameInfoModel.storeLastSearchedPage();
 
         //revisar si el resultado es el esperado
+        verifyCalledMethodSuccefullyListeners();
         assertEquals("League of Legends is a game of ...",stubDataBase.getExtract(null));
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void testDeleteFromLocalStorage() throws Exception{
         //Stub database
         DataBase stubDataBase = new StubDataBase();
@@ -129,54 +131,47 @@ public class tests {
         //set up stubDatabase
         videoGameInfoModel.setVideoGameInfoRepository(stubDataBase);
 
+        //listener deleted
+        DeletedInfoListener deletedInfoListener = mock(DeletedInfoListener.class);
+        doNothing().when(deletedInfoListener).didDeletePageStoredLocally();
+
+        //set new listener deleted
+        videoGameInfoModel.setDeletedInfoListener(deletedInfoListener);
+
         //metodo eliminar informacion localmente
         videoGameInfoModel.deleteFromLocalStorage("Fifa 21");
 
         //check results
+        verify(deletedInfoListener).didDeletePageStoredLocally();
         assertNull(stubDataBase.getExtract("Something"));
-    }
+    }*/
 
-
-    //for testing
-    public void p(String algo){
-        System.out.println(algo);
-    }
-
-    private void waitForControllerTaskInSave() throws InterruptedException{
-        while(wikipediaSearchPresenter.isActivellyWorking()) Thread.sleep(1);
-    }
-
-    private void listeners_doNothing(){
-        for(SuccesfullySavedInfoListener succesfullySavedInfoListener :
-                videoGameInfoModel.getListOfSuccesfullySavedInfoListenerList()){
-            succesfullySavedInfoListener = mock(SuccesfullySavedInfoListener.class);
-            doNothing().when(succesfullySavedInfoListener).didSuccessSavePageLocally();
-        }
-
-        for(NoResultsToSaveListener noResultsToSaveListener :
-                videoGameInfoModel.getListNoResultsToSaveListener()){
-            noResultsToSaveListener = mock(NoResultsToSaveListener.class);
-            doNothing().when(noResultsToSaveListener).noResultsToSaveLocally();
-        }
-    }
-
-    @Test
-    public void testUnitarioNuevaBusquedaExitosa() throws Exception{
+    /*@Test
+    public void testIntegracionNuevaBusquedaExitosa() throws Exception{
         //Stub WikipediaSearcher and set values
         WikipediaSearcher stubWikipediaSearcher = new StubWikipediaSearcher();
-        stubWikipediaSearcher.setValues("League of Legends is a game of ...","League of Legends",true);
+        stubWikipediaSearcher.setValues("League of Legends",
+                "League of Legends is a game of ...",true);
+
+        //set StubWikipediaSearcher
         videoGameInfoModel.setWikipediaSearcher(stubWikipediaSearcher);
 
         //Simular el ingreso de datos a la vista
         wikipediaSearchView.setPageIntroText("League of Legends");
 
+        //search button
+        wikipediaSearchPresenter.onEventSearchInWikipedia();
+
+        //wait for search
+        waitForControllerTaskInSearch();
+
         //check results
         //TODO como chequear los resultados? porque en la vista la informacion esta mezclada con HTML
-        //assertEquals("League of Legends is a game of ...",wikipediaSearchView.getActualSearch());
-    }
+        assertEquals("League of Legends",videoGameInfoModel.getLastWikiPageSearched().getTitle());
+    }*/
 
-   /* @Test
-    public void testUnitarioNuevaBusquedaSinExito() throws Exception{
+    /*@Test
+    public void testSaveLocally() throws Exception{
         //Stub WikipediaSearcher and set values
         WikipediaSearcher stubWikipediaSearcher = new StubWikipediaSearcher();
         stubWikipediaSearcher.setValues("No results","No results",false);
@@ -187,6 +182,54 @@ public class tests {
 
         //check results
         assertEquals("No results",wikipediaSearchView.get);
-    } */
+    }*/
+
+    //for testing
+    public void p(String algo){
+        System.out.println(algo);
+    }
+
+    private void waitForControllerTaskInSearch() throws InterruptedException{
+        while(wikipediaSearchPresenter.isActivellyWorking()) Thread.sleep(1);
+    }
+
+    private LinkedList<SuccesfullySavedInfoListener> newListSuccesfullyListenersDoNothing() {
+        LinkedList<SuccesfullySavedInfoListener> newListListenersSuccesfullyDoNothing = new LinkedList<SuccesfullySavedInfoListener>();
+
+        for (SuccesfullySavedInfoListener succesfullySavedInfoListener :
+                videoGameInfoModel.getListOfSuccesfullySavedInfoListenerList()) {
+            newListListenersSuccesfullyDoNothing.add(mock(SuccesfullySavedInfoListener.class));
+            doNothing().when(newListListenersSuccesfullyDoNothing.getLast()).didSuccessSavePageLocally();
+        }
+
+        return newListListenersSuccesfullyDoNothing;
+    }
+
+    private LinkedList<NoResultsToSaveListener> newListNoResultsListenersDoNothing(){
+        LinkedList<NoResultsToSaveListener> newListNoResultsListenersDoNothing
+                = new LinkedList<NoResultsToSaveListener>();
+
+        for(NoResultsToSaveListener noResultsToSaveListener :
+                videoGameInfoModel.getListNoResultsToSaveListener()){
+            newListNoResultsListenersDoNothing.add(mock(NoResultsToSaveListener.class));
+            doNothing().when(newListNoResultsListenersDoNothing.getLast()).noResultsToSaveLocally();
+        }
+
+        return newListNoResultsListenersDoNothing;
+    }
+
+    private void verifyCalledMethodSuccefullyListeners(){
+        for(SuccesfullySavedInfoListener succesfullySavedInfoListener :
+                videoGameInfoModel.getListOfSuccesfullySavedInfoListenerList()){
+            verify(succesfullySavedInfoListener).didSuccessSavePageLocally();
+        }
+    }
+
+    private void verifyCalledMethodNoResultsListeners(){
+        for(NoResultsToSaveListener noResultsToSaveListener :
+                videoGameInfoModel.getListNoResultsToSaveListener()){
+            verify(noResultsToSaveListener).noResultsToSaveLocally();
+        }
+    }
 }
 
