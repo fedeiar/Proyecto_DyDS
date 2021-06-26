@@ -10,7 +10,7 @@ public interface VideoGameInfoModel {
 
     public void setPageFoundInWikipediaListener(Listener PageFoundInWikipediaListener);
     public void setPageNotFoundInWikipediaListener(Listener PageNotFoundInWikipediaListener);
-    public void setStoredSearchedInformationListener(Listener storedSearchedInfoListener);
+    public void setSearchedStoredInfoListenerList(Listener storedSearchedInfoListener);
     public void setDeletedInfoListener(Listener deletedInfoListener);
     public void setSuccesfullySavedLocalInfoListener(Listener succesfullySavedLocalInfoListener);
     public void setNoResultsToSaveListener(Listener noResultsToSaveListener);

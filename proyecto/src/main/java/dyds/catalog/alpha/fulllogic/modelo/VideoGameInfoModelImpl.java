@@ -11,7 +11,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     private LinkedList<Listener> pageFoundInWikipediaListenerListenerList = new LinkedList<Listener>();
     private LinkedList<Listener> PageNotFoundInWikipediaListenerList = new LinkedList<Listener>();
-    private LinkedList<Listener> storedSearchedInfoListenerList = new LinkedList<Listener>();
+    private LinkedList<Listener> searchedStoredInfoListenerList = new LinkedList<Listener>();
     private LinkedList<Listener> deletedInfoListenerList = new LinkedList<Listener>();
     private LinkedList<Listener> succesfullySavedInfoListenerList = new LinkedList<Listener>();
     private LinkedList<Listener> noResultsToSaveListenerList = new LinkedList<Listener>();
@@ -43,8 +43,8 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         this.PageNotFoundInWikipediaListenerList.addLast(listener);
     }
 
-    @Override public void setStoredSearchedInformationListener(Listener listener){
-        this.storedSearchedInfoListenerList.addLast(listener);    
+    @Override public void setSearchedStoredInfoListenerList(Listener listener){
+        this.searchedStoredInfoListenerList.addLast(listener);    
     }
 
     @Override public void setDeletedInfoListener(Listener listener){
@@ -118,7 +118,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         lastIntroPageSearchedLocally = dataBase.getExtract(videoGameTitle);
         lastPageTitleSearchedLocally = videoGameTitle;
 
-        notifyAllListeners(storedSearchedInfoListenerList);
+        notifyAllListeners(searchedStoredInfoListenerList);
     }
 
     @Override public void deleteFromLocalStorage(String videoGameTitle) throws Exception{
