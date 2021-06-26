@@ -22,9 +22,9 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     private void initListeners(){
         
-        videoGameInfoModel.setWikipediaSearchInfoListener(new WikipediaSearchedInfoListener() {
+        videoGameInfoModel.setSuccesfullySearchedWikipediaInfoListener(new Listener() {
 
-            public void didFoundPageInWikipedia() {
+            public void notifyListener() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastWikiPageSearched();
 
                 String formattedPageIntroText = Utilidades.formatData(wikiPage.getTitle(), wikiPage.getPageIntro(), view.getSearchedTerm());
@@ -32,25 +32,29 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
                 view.setPageIntroText(formattedPageIntroText);
             }
 
-            public void didNotFoundPageInWikipedia(){
+        });
+
+        videoGameInfoModel.setFailedSearchWikipediaInfoListener(new Listener(){
+
+            @Override public void notifyListener() {
                 String pageIntroText = "No Results";
 
                 view.setPageIntroText(pageIntroText);
             }
-
+            
         });
 
-        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedInfoListener(){
+        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new Listener(){
             
-            @Override public void didSuccessSavePageLocally() {
+            @Override public void notifyListener() {
                 view.operationSucceded("Page Save", "Page saved succesfully");
             }
 
         });
 
-        videoGameInfoModel.setNoResultsToSaveListener(new NoResultsToSaveListener(){
+        videoGameInfoModel.setNoResultsToSaveListener(new Listener(){
             
-            @Override public void noResultsToSaveLocally() {
+            @Override public void notifyListener() {
                 view.operationFailed("Page Save", "Cant store a page if there are no results from the search");
             }
             

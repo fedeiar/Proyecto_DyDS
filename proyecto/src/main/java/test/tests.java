@@ -193,42 +193,42 @@ public class tests {
         while(wikipediaSearchPresenter.isActivellyWorking()) Thread.sleep(1);
     }
 
-    private LinkedList<SuccesfullySavedInfoListener> newListSuccesfullyListenersDoNothing() {
-        LinkedList<SuccesfullySavedInfoListener> newListListenersSuccesfullyDoNothing = new LinkedList<SuccesfullySavedInfoListener>();
+    private LinkedList<Listener> newListSuccesfullyListenersDoNothing() {
+        LinkedList<Listener> newListListenersSuccesfullyDoNothing = new LinkedList<Listener>();
 
-        for (SuccesfullySavedInfoListener succesfullySavedInfoListener :
+        for (Listener succesfullySavedInfoListener :
                 videoGameInfoModel.getListOfSuccesfullySavedInfoListenerList()) {
-            newListListenersSuccesfullyDoNothing.add(mock(SuccesfullySavedInfoListener.class));
-            doNothing().when(newListListenersSuccesfullyDoNothing.getLast()).didSuccessSavePageLocally();
+            newListListenersSuccesfullyDoNothing.add(mock(Listener.class));
+            doNothing().when(newListListenersSuccesfullyDoNothing.getLast()).notifyListener();
         }
 
         return newListListenersSuccesfullyDoNothing;
     }
 
-    private LinkedList<NoResultsToSaveListener> newListNoResultsListenersDoNothing(){
-        LinkedList<NoResultsToSaveListener> newListNoResultsListenersDoNothing
-                = new LinkedList<NoResultsToSaveListener>();
+    private LinkedList<Listener> newListNoResultsListenersDoNothing(){
+        LinkedList<Listener> newListNoResultsListenersDoNothing
+                = new LinkedList<Listener>();
 
-        for(NoResultsToSaveListener noResultsToSaveListener :
+        for(Listener noResultsToSaveListener :
                 videoGameInfoModel.getListNoResultsToSaveListener()){
-            newListNoResultsListenersDoNothing.add(mock(NoResultsToSaveListener.class));
-            doNothing().when(newListNoResultsListenersDoNothing.getLast()).noResultsToSaveLocally();
+            newListNoResultsListenersDoNothing.add(mock(Listener.class));
+            doNothing().when(newListNoResultsListenersDoNothing.getLast()).notifyListener();
         }
 
         return newListNoResultsListenersDoNothing;
     }
 
     private void verifyCalledMethodSuccefullyListeners(){
-        for(SuccesfullySavedInfoListener succesfullySavedInfoListener :
+        for(Listener succesfullySavedInfoListener :
                 videoGameInfoModel.getListOfSuccesfullySavedInfoListenerList()){
-            verify(succesfullySavedInfoListener).didSuccessSavePageLocally();
+            verify(succesfullySavedInfoListener).notifyListener();
         }
     }
 
     private void verifyCalledMethodNoResultsListeners(){
-        for(NoResultsToSaveListener noResultsToSaveListener :
+        for(Listener noResultsToSaveListener :
                 videoGameInfoModel.getListNoResultsToSaveListener()){
-            verify(noResultsToSaveListener).noResultsToSaveLocally();
+            verify(noResultsToSaveListener).notifyListener();
         }
     }
 }

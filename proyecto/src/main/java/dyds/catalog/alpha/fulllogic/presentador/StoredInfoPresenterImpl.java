@@ -21,9 +21,9 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
     private void initListeners(){
         
-        videoGameInfoModel.setStoredSearchedInformationListener(new StoredSearchedInfoListener() {
+        videoGameInfoModel.setStoredSearchedInformationListener(new Listener() {
 
-            public void didSearchPageStoredLocally() {
+            public void notifyListener() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastLocallyStoredWikiPageSearched();
 
                 String formattedPageIntroText = Utilidades.formatData(wikiPage.getTitle(), wikiPage.getPageIntro());
@@ -33,9 +33,9 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
         });
 
-        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new SuccesfullySavedInfoListener(){
+        videoGameInfoModel.setSuccesfullySavedLocalInfoListener(new Listener(){
 
-            @Override public void didSuccessSavePageLocally(){
+            @Override public void notifyListener(){
                 try {
                     updateViewStoredTitles();
                 }
@@ -46,9 +46,9 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
             
         });
 
-        videoGameInfoModel.setDeletedInfoListener(new DeletedInfoListener(){
+        videoGameInfoModel.setDeletedInfoListener(new Listener(){
             
-            public void didDeletePageStoredLocally(){
+            @Override public void notifyListener(){
                 try{
                     updateViewStoredTitles();
                     view.operationSucceded("Page delete", "Page deleted succesfully");

@@ -14,11 +14,12 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private WikipediaSearcher wikipediaSearcher;
     private DataBase dataBase;
 
-    private WikipediaSearchedInfoListener wikipediaSearchInfoListener;
-    private StoredSearchedInfoListener storedSearchedInfoListener;
-    private DeletedInfoListener deletedInfoListener;
-    private LinkedList<SuccesfullySavedInfoListener> succesfullySavedInfoListenerList = new LinkedList<SuccesfullySavedInfoListener>();
-    private LinkedList<NoResultsToSaveListener> noResultsToSaveListenerList = new LinkedList<NoResultsToSaveListener>();
+    private LinkedList<Listener> succesfullySearchedWikipediaInfoListenerList = new LinkedList<Listener>();
+    private LinkedList<Listener> failedSearchWikipediaInfoListenerList = new LinkedList<Listener>();
+    private LinkedList<Listener> storedSearchedInfoListenerList = new LinkedList<Listener>();
+    private LinkedList<Listener> deletedInfoListenerList = new LinkedList<Listener>();
+    private LinkedList<Listener> succesfullySavedInfoListenerList = new LinkedList<Listener>();
+    private LinkedList<Listener> noResultsToSaveListenerList = new LinkedList<Listener>();
 
     private String lastIntroPageSearchedInWiki;
     private String lastPageTitleSearchedInWiki;
@@ -39,24 +40,28 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         dataBase.loadDatabase();
     }
 
-    @Override public void setWikipediaSearchInfoListener(WikipediaSearchedInfoListener wikipediaSearchInfoListener){
-        this.wikipediaSearchInfoListener = wikipediaSearchInfoListener;
+    @Override public void setSuccesfullySearchedWikipediaInfoListener(Listener listener){
+        this.succesfullySearchedWikipediaInfoListenerList.addLast(listener);
     }
 
-    @Override public void setStoredSearchedInformationListener(StoredSearchedInfoListener storedSearchedInfoListener){
-        this.storedSearchedInfoListener = storedSearchedInfoListener;
+    @Override public void setFailedSearchWikipediaInfoListener(Listener listener){
+        this.failedSearchWikipediaInfoListenerList.addLast(listener);
     }
 
-    @Override public void setDeletedInfoListener(DeletedInfoListener deletedInfoListener){
-        this.deletedInfoListener = deletedInfoListener;
+    @Override public void setStoredSearchedInformationListener(Listener listener){
+        this.storedSearchedInfoListenerList.addLast(listener);    
     }
 
-    @Override public void setSuccesfullySavedLocalInfoListener(SuccesfullySavedInfoListener succesfullySavedLocalInfoListener){
-        this.succesfullySavedInfoListenerList.addLast(succesfullySavedLocalInfoListener);
+    @Override public void setDeletedInfoListener(Listener listener){
+        this.deletedInfoListenerList.addLast(listener);
     }
 
-    @Override public void setNoResultsToSaveListener(NoResultsToSaveListener noResultsToSaveListener){
-        this.noResultsToSaveListenerList.addLast(noResultsToSaveListener);
+    @Override public void setSuccesfullySavedLocalInfoListener(Listener listener){
+        this.succesfullySavedInfoListenerList.addLast(listener);
+    }
+
+    @Override public void setNoResultsToSaveListener(Listener listener){
+        this.noResultsToSaveListenerList.addLast(listener);
     }
 
     @Override public WikipediaPage getLastWikiPageSearched(){
@@ -88,17 +93,20 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
             lastPageTitleSearchedInWiki = giveFormatForStorage(pageTitle);
             lastIntroPageSearchedInWiki = giveFormatForStorage(pageIntroText);
 
-            //TODO: capaz sea mejor que todos sean listas así no hay que hacer estos chequeos null.
-            if(wikipediaSearchInfoListener != null){
-                wikipediaSearchInfoListener.didFoundPageInWikipedia();
-            }
+            notifyAllListeners(succesfullySearchedWikipediaInfoListenerList);
         }
         else{
-            if(wikipediaSearchInfoListener != null){
-                wikipediaSearchInfoListener.didNotFoundPageInWikipedia();
-            }
+            notifyAllListeners(failedSearchWikipediaInfoListenerList);
         }
     }
+
+    private void notifyAllListeners(LinkedList<Listener> list){
+        for (Listener listener : list) {
+            listener.notifyListener();
+        }
+    }
+
+
 
     private String giveFormatForStorage(String text){
         return text.replace("'", "`");
@@ -109,37 +117,24 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         if(lastPageSearchedWithSuccessInWiki){
             dataBase.saveInfo(lastPageTitleSearchedInWiki, lastIntroPageSearchedInWiki);
 
-            notifyAllSuccessfullySavedInfoListeners(succesfullySavedInfoListenerList);
+            notifyAllListeners(succesfullySavedInfoListenerList);
         }
         else{
-            notifyAllNoResultsToSaveListeners(noResultsToSaveListenerList);
+            notifyAllListeners(noResultsToSaveListenerList);
         }
     }
 
-    private void notifyAllSuccessfullySavedInfoListeners(LinkedList<SuccesfullySavedInfoListener> List){
-        for (SuccesfullySavedInfoListener succesfullySavedInfoListener : List) {
-            succesfullySavedInfoListener.didSuccessSavePageLocally();
-        }
-    }
-
-    private void notifyAllNoResultsToSaveListeners(LinkedList<NoResultsToSaveListener> List){
-        for (NoResultsToSaveListener noResultsToSaveListener : List) {
-            noResultsToSaveListener.noResultsToSaveLocally();
-        }
-    }
-
-   
     @Override public void searchInLocalStorage(String videoGameTitle) throws Exception {
         lastIntroPageSearchedLocally = dataBase.getExtract(videoGameTitle);
         lastPageTitleSearchedLocally = videoGameTitle;
 
-        storedSearchedInfoListener.didSearchPageStoredLocally();
+        notifyAllListeners(storedSearchedInfoListenerList);
     }
 
     @Override public void deleteFromLocalStorage(String videoGameTitle) throws Exception{
         dataBase.deleteEntry(videoGameTitle);
 
-        deletedInfoListener.didDeletePageStoredLocally();
+        notifyAllListeners(deletedInfoListenerList);
     }
 
     //for testing
@@ -163,12 +158,12 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     //getters for testing
 
     @Override
-    public LinkedList<SuccesfullySavedInfoListener> getListOfSuccesfullySavedInfoListenerList() {
+    public LinkedList<Listener> getListOfSuccesfullySavedInfoListenerList() {
         return succesfullySavedInfoListenerList;
     }
 
     @Override
-    public LinkedList<NoResultsToSaveListener> getListNoResultsToSaveListener() {
+    public LinkedList<Listener> getListNoResultsToSaveListener() {
         return noResultsToSaveListenerList;
     }
 }

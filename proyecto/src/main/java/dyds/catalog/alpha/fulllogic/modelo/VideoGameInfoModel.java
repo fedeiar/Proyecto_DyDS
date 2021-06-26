@@ -9,11 +9,12 @@ public interface VideoGameInfoModel {
     
     public void setVideoGameInfoRepository(DataBase dataBase);
 
-    public void setWikipediaSearchInfoListener(WikipediaSearchedInfoListener wikipediaSearchInfoListener);
-    public void setStoredSearchedInformationListener(StoredSearchedInfoListener storedSearchedInfoListener);
-    public void setDeletedInfoListener(DeletedInfoListener deletedInfoListener);
-    public void setSuccesfullySavedLocalInfoListener(SuccesfullySavedInfoListener succesfullySavedLocalInfoListener);
-    public void setNoResultsToSaveListener(NoResultsToSaveListener unsuccesfullySavedLocalInfoListener);
+    public void setSuccesfullySearchedWikipediaInfoListener(Listener succesfullySearchedWikipediaInfoListener);
+    public void setFailedSearchWikipediaInfoListener(Listener wikipediaSearchInfoListener);
+    public void setStoredSearchedInformationListener(Listener storedSearchedInfoListener);
+    public void setDeletedInfoListener(Listener deletedInfoListener);
+    public void setSuccesfullySavedLocalInfoListener(Listener succesfullySavedLocalInfoListener);
+    public void setNoResultsToSaveListener(Listener unsuccesfullySavedLocalInfoListener);
     
     public WikipediaPage getLastWikiPageSearched();
     public WikipediaPage getLastLocallyStoredWikiPageSearched();
@@ -38,7 +39,7 @@ public interface VideoGameInfoModel {
     public void setLastIntroPageSearchedInWiki(String lastIntroPageSearchedInWiki);
 
     //getters for testing
-    public LinkedList<SuccesfullySavedInfoListener> getListOfSuccesfullySavedInfoListenerList();
+    public LinkedList<Listener> getListOfSuccesfullySavedInfoListenerList();
 
-    public LinkedList<NoResultsToSaveListener> getListNoResultsToSaveListener();
+    public LinkedList<Listener> getListNoResultsToSaveListener();
 }
