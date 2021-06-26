@@ -7,12 +7,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import static dyds.catalog.alpha.fulllogic.utils.Utilidades.textToHtml;
 
 
 public class WikipediaSearcherImpl implements WikipediaSearcher{
@@ -39,7 +37,7 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         pageAPI = retrofit.create(WikipediaPageAPI.class);
     }
 
-    public boolean searchPage(String searchedTerm) throws Exception {
+    @Override public boolean searchPage(String searchedTerm) throws Exception {
         JsonObject searchResult = searchPageInWikipediaSearchAPI(searchedTerm);
 
         if(pageFound(searchResult)){
@@ -102,16 +100,11 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         return page.get("extract");
     }
 
-    public String getLastSearchedTitle() {
+    @Override public String getLastSearchedTitle() {
         return searchResultTitle;
     }
 
-    public String getLastSearchedPageIntro() {
+    @Override public String getLastSearchedPageIntro() {
         return searchResultPageIntro;
     }
-
-    //for testing
-
-    public void setValues(String title, String extract, boolean searchedPage){}
-
 }

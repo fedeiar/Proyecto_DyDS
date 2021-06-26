@@ -1,16 +1,15 @@
 package test;
 
 import dyds.catalog.alpha.fulllogic.modelo.*;
-import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBase;
+
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBaseImplementation;
 import dyds.catalog.alpha.fulllogic.presentador.*;
-import dyds.catalog.alpha.fulllogic.utils.Utilidades;
+
 import dyds.catalog.alpha.fulllogic.vista.*;
 
-import static org.junit.Assert.*;
+
 import static org.mockito.Mockito.*;
 
-import org.junit.Test;
 import org.junit.Before;
 
 import java.util.LinkedList;

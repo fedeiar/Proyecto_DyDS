@@ -2,11 +2,6 @@ package dyds.catalog.alpha.fulllogic.modelo;
 
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.*;
 
-import static dyds.catalog.alpha.fulllogic.utils.Utilidades.textToHtml;
-
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.LinkedList;
 
 public class VideoGameInfoModelImpl implements VideoGameInfoModel{
@@ -14,8 +9,8 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private WikipediaSearcher wikipediaSearcher;
     private DataBase dataBase;
 
-    private LinkedList<Listener> succesfullySearchedWikipediaInfoListenerList = new LinkedList<Listener>();
-    private LinkedList<Listener> failedSearchWikipediaInfoListenerList = new LinkedList<Listener>();
+    private LinkedList<Listener> pageFoundInWikipediaListenerListenerList = new LinkedList<Listener>();
+    private LinkedList<Listener> PageNotFoundInWikipediaListenerList = new LinkedList<Listener>();
     private LinkedList<Listener> storedSearchedInfoListenerList = new LinkedList<Listener>();
     private LinkedList<Listener> deletedInfoListenerList = new LinkedList<Listener>();
     private LinkedList<Listener> succesfullySavedInfoListenerList = new LinkedList<Listener>();
@@ -40,12 +35,12 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         dataBase.loadDatabase();
     }
 
-    @Override public void setSuccesfullySearchedWikipediaInfoListener(Listener listener){
-        this.succesfullySearchedWikipediaInfoListenerList.addLast(listener);
+    @Override public void setPageFoundInWikipediaListener(Listener listener){
+        this.pageFoundInWikipediaListenerListenerList.addLast(listener);
     }
 
-    @Override public void setFailedSearchWikipediaInfoListener(Listener listener){
-        this.failedSearchWikipediaInfoListenerList.addLast(listener);
+    @Override public void setPageNotFoundInWikipediaListener(Listener listener){
+        this.PageNotFoundInWikipediaListenerList.addLast(listener);
     }
 
     @Override public void setStoredSearchedInformationListener(Listener listener){
@@ -79,37 +74,32 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     }
     
 
-    //TODO: en los métodos que siguen, preguntar si el listener no es null antes de enviar un mensaje al que haya implementado al listener.
-
     @Override public void searchTermInWikipedia(String searchedTerm) throws Exception {
         boolean pageFound = wikipediaSearcher.searchPage(searchedTerm);
         lastPageSearchedWithSuccessInWiki = pageFound;
 
         if(pageFound){
-            //TODO: encapsular el titulo y el extracto(page title) en un objeto, debemos también encapsularlo en wikipediaSearchImpl?
             String pageTitle = wikipediaSearcher.getLastSearchedTitle();
             String pageIntroText = wikipediaSearcher.getLastSearchedPageIntro();
             
             lastPageTitleSearchedInWiki = giveFormatForStorage(pageTitle);
             lastIntroPageSearchedInWiki = giveFormatForStorage(pageIntroText);
 
-            notifyAllListeners(succesfullySearchedWikipediaInfoListenerList);
+            notifyAllListeners(pageFoundInWikipediaListenerListenerList);
         }
         else{
-            notifyAllListeners(failedSearchWikipediaInfoListenerList);
+            notifyAllListeners(PageNotFoundInWikipediaListenerList);
         }
     }
 
+    private String giveFormatForStorage(String text){
+        return text.replace("'", "`");
+    }
+    
     private void notifyAllListeners(LinkedList<Listener> list){
         for (Listener listener : list) {
             listener.notifyListener();
         }
-    }
-
-
-
-    private String giveFormatForStorage(String text){
-        return text.replace("'", "`");
     }
 
     

@@ -4,10 +4,6 @@ import dyds.catalog.alpha.fulllogic.modelo.*;
 import dyds.catalog.alpha.fulllogic.utils.Utilidades;
 import dyds.catalog.alpha.fulllogic.vista.*;
 
-import java.sql.SQLException;
-
-import javax.swing.*;
-
 public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
     private VideoGameInfoModel videoGameInfoModel;
@@ -67,7 +63,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
     }
 
 
-    public void onEventSearchLocalEntriesInfo() {
+    @Override public void onEventSearchLocalEntriesInfo() {
         int index = view.getSelectedTitleIndex();
         if(aTitleWasSelected(index)){
             taskThread = new Thread(new Runnable(){
@@ -93,7 +89,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         return index > -1;
     }
 
-    public void onEventDeleteLocalEntryInfo() {
+    @Override public void onEventDeleteLocalEntryInfo() {
         int index = view.getSelectedTitleIndex();
         if(aTitleWasSelected(index)){
             taskThread = new Thread(new Runnable(){
@@ -117,7 +113,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
     
     }
 
-    public void setView(StoredInfoView vista) {
+    @Override public void setView(StoredInfoView vista) {
         this.view = vista;
         try {
             updateViewStoredTitles();

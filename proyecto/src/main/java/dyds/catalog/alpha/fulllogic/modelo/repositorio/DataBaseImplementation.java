@@ -3,7 +3,6 @@ package dyds.catalog.alpha.fulllogic.modelo.repositorio;
 import java.sql.*;
 import java.util.ArrayList;
 
-import javax.xml.crypto.Data;
 
 public class DataBaseImplementation implements DataBase{
 
@@ -26,7 +25,7 @@ public class DataBaseImplementation implements DataBase{
         return instance;
     }
 
-    public void loadDatabase(){
+    @Override public void loadDatabase(){
         try{
             initConnectionToDataBase();
   
@@ -60,7 +59,7 @@ public class DataBaseImplementation implements DataBase{
         }
     }
     
-    public ArrayList<String> getTitles() throws SQLException {
+    @Override public ArrayList<String> getTitles() throws SQLException {
         ArrayList<String> titles = new ArrayList<>();
         
         initConnectionToDataBase();
@@ -75,7 +74,7 @@ public class DataBaseImplementation implements DataBase{
         return titles;
     }
 
-    public String getExtract(String title) throws SQLException {
+    @Override public String getExtract(String title) throws SQLException {
         String extract = "";
         
         initConnectionToDataBase();
@@ -89,7 +88,7 @@ public class DataBaseImplementation implements DataBase{
         return extract;
     }
 
-    public void saveInfo(String title, String extract) throws SQLException{
+    @Override public void saveInfo(String title, String extract) throws SQLException{
         initConnectionToDataBase();
 
         statement.executeUpdate("replace into catalog values(null, '"+ title + "', '"+ extract + "', 1)");
@@ -97,7 +96,7 @@ public class DataBaseImplementation implements DataBase{
         closeConnectionToDataBase();
     }
 
-    public void deleteEntry(String title) throws SQLException{
+    @Override public void deleteEntry(String title) throws SQLException{
         try {
             initConnectionToDataBase();
 

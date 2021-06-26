@@ -5,10 +5,6 @@ import dyds.catalog.alpha.fulllogic.utils.Utilidades;
 
 import dyds.catalog.alpha.fulllogic.vista.*;
 
-import java.sql.SQLException;
-
-import javax.swing.*;
-
 public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     private WikipediaSearchView view;
@@ -22,7 +18,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     private void initListeners(){
         
-        videoGameInfoModel.setSuccesfullySearchedWikipediaInfoListener(new Listener() {
+        videoGameInfoModel.setPageFoundInWikipediaListener(new Listener() {
 
             public void notifyListener() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastWikiPageSearched();
@@ -34,7 +30,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
         });
 
-        videoGameInfoModel.setFailedSearchWikipediaInfoListener(new Listener(){
+        videoGameInfoModel.setPageNotFoundInWikipediaListener(new Listener(){
 
             @Override public void notifyListener() {
                 String pageIntroText = "No Results";
@@ -62,11 +58,11 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
 
     }
 
-    public void setView(WikipediaSearchView view){
+    @Override public void setView(WikipediaSearchView view){
         this.view = view;
     }
 
-    public void onEventSearchInWikipedia() {
+    @Override public void onEventSearchInWikipedia() {
         String lastTermSearched = view.getSearchedTerm();
         taskThread = new Thread(new Runnable(){
 
@@ -83,7 +79,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
         taskThread.start();
     }
 
-    public void onEventSaveSearchLocally() {
+    @Override public void onEventSaveSearchLocally() {
         taskThread = new Thread(new Runnable(){
             @Override public void run() {
                 try {
@@ -99,7 +95,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
     }
 
     //for testing
-    public boolean isActivellyWorking() {
+    @Override public boolean isActivellyWorking() {
         return taskThread.isAlive();
     };
 }

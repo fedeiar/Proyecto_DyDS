@@ -6,8 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.*;
 
-import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBase;
-import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBaseImplementation;
 import dyds.catalog.alpha.fulllogic.presentador.StoredInfoPresenter;
 
 public class StoredInfoViewImpl implements StoredInfoView{
@@ -46,7 +44,7 @@ public class StoredInfoViewImpl implements StoredInfoView{
         });
     }
 
-    public Container getContent(){
+    @Override public Container getContent(){
         return this.storagePanel;
     }
 
@@ -63,41 +61,37 @@ public class StoredInfoViewImpl implements StoredInfoView{
         }
     }
 
-    public int getSelectedTitleIndex() {
+    @Override public int getSelectedTitleIndex() {
         return storedTitlesComboBox.getSelectedIndex();
     }
 
-    public String getSelectedTitle() {
+    @Override public String getSelectedTitle() {
         return storedTitlesComboBox.getSelectedItem().toString();
     }
 
-    public void cleanPageIntroText(){
+    @Override public void cleanPageIntroText(){
         storedTitlesComboBox.setSelectedIndex(-1);
         storedPageIntroTextPane.setText("");
     }
 
-    public void setStoredSearchedTitles(Object[] storedTitles){
+    @Override public void setStoredSearchedTitles(Object[] storedTitles){
         storedTitlesComboBox.setModel(new DefaultComboBoxModel(storedTitles));
         this.setWatingStatus();
     }
 
-    public void setLocalStoredPageIntro(String storedPageIntro){
+    @Override public void setLocalStoredPageIntro(String storedPageIntro){
         storedPageIntroTextPane.setText(storedPageIntro);
         this.setWatingStatus();
     }
 
-    public void operationSucceded(String title, String message){
+    @Override public void operationSucceded(String title, String message){
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
         this.setWatingStatus();
     }
 
-    public void operationFailed(String title, String message){
+    @Override public void operationFailed(String title, String message){
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
         this.setWatingStatus();;
-    }
-
-    public void setSelectedStoredTitle(String title) {
-        storedTitlesComboBox.setSelectedItem(title);
     }
 
 }

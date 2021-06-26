@@ -1,6 +1,5 @@
 package dyds.catalog.alpha.fulllogic.modelo;
 
-import java.sql.SQLException;
 import java.util.LinkedList;
 
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBase;
@@ -9,12 +8,12 @@ public interface VideoGameInfoModel {
     
     public void setVideoGameInfoRepository(DataBase dataBase);
 
-    public void setSuccesfullySearchedWikipediaInfoListener(Listener succesfullySearchedWikipediaInfoListener);
-    public void setFailedSearchWikipediaInfoListener(Listener wikipediaSearchInfoListener);
+    public void setPageFoundInWikipediaListener(Listener PageFoundInWikipediaListener);
+    public void setPageNotFoundInWikipediaListener(Listener PageNotFoundInWikipediaListener);
     public void setStoredSearchedInformationListener(Listener storedSearchedInfoListener);
     public void setDeletedInfoListener(Listener deletedInfoListener);
     public void setSuccesfullySavedLocalInfoListener(Listener succesfullySavedLocalInfoListener);
-    public void setNoResultsToSaveListener(Listener unsuccesfullySavedLocalInfoListener);
+    public void setNoResultsToSaveListener(Listener noResultsToSaveListener);
     
     public WikipediaPage getLastWikiPageSearched();
     public WikipediaPage getLastLocallyStoredWikiPageSearched();

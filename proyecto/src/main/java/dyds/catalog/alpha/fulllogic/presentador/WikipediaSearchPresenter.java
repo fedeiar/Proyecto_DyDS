@@ -1,7 +1,6 @@
 package dyds.catalog.alpha.fulllogic.presentador;
 
 import dyds.catalog.alpha.fulllogic.vista.WikipediaSearchView;
-import dyds.catalog.alpha.fulllogic.vista.*;
 
 public interface WikipediaSearchPresenter {
 
@@ -12,5 +11,5 @@ public interface WikipediaSearchPresenter {
     public void setView(WikipediaSearchView view);
 
     //for testing
-    boolean isActivellyWorking();
+    public boolean isActivellyWorking();
 }

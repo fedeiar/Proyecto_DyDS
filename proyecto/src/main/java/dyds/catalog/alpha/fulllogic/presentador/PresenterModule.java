@@ -1,8 +1,6 @@
 package dyds.catalog.alpha.fulllogic.presentador;
 
 import dyds.catalog.alpha.fulllogic.modelo.VideoGameInfoModel;
-import dyds.catalog.alpha.fulllogic.presentador.StoredInfoPresenter;
-import dyds.catalog.alpha.fulllogic.presentador.WikipediaSearchPresenter;
 
 public class PresenterModule {
     
@@ -28,8 +26,8 @@ public class PresenterModule {
     }
 
     public StoredInfoPresenter setUpStoredInfoView(VideoGameInfoModel videoGameInfoModel){
-        StoredInfoPresenter storedInformationPresenter = new StoredInfoPresenterImpl(videoGameInfoModel);
-        return storedInformationPresenter;
+        storedInfoPresenter = new StoredInfoPresenterImpl(videoGameInfoModel);
+        return storedInfoPresenter;
     }
 
 }
