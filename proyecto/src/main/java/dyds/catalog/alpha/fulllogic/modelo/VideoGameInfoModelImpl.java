@@ -1,6 +1,7 @@
 package dyds.catalog.alpha.fulllogic.modelo;
 
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.*;
+import dyds.catalog.alpha.fulllogic.utils.Utilidades;
 
 import java.util.LinkedList;
 
@@ -82,18 +83,14 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
             String pageTitle = wikipediaSearcher.getLastSearchedTitle();
             String pageIntroText = wikipediaSearcher.getLastSearchedPageIntro();
             
-            lastPageTitleSearchedInWiki = giveFormatForStorage(pageTitle);
-            lastIntroPageSearchedInWiki = giveFormatForStorage(pageIntroText);
+            lastPageTitleSearchedInWiki = Utilidades.giveFormatForStorage(pageTitle);
+            lastIntroPageSearchedInWiki = Utilidades.giveFormatForStorage(pageIntroText);
 
             notifyAllListeners(pageFoundInWikipediaListenerListenerList);
         }
         else{
             notifyAllListeners(PageNotFoundInWikipediaListenerList);
         }
-    }
-
-    private String giveFormatForStorage(String text){
-        return text.replace("'", "`");
     }
     
     private void notifyAllListeners(LinkedList<Listener> list){

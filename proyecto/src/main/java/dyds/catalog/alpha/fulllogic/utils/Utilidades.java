@@ -2,6 +2,11 @@ package dyds.catalog.alpha.fulllogic.utils;
 
 public class Utilidades {
 
+
+    public static String giveFormatForStorage(String text){
+        return text.replace("'", "`");
+    }
+
     public static String formatData(String title, String text, String term){
         String formattedText;
         
@@ -21,7 +26,7 @@ public class Utilidades {
     }
 
 
-    public static String textToHtml(String text, String term) {
+    private static String textToHtml(String text, String term) {
 
         StringBuilder builder = new StringBuilder();
 
