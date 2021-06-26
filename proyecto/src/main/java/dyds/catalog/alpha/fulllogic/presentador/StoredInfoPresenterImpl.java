@@ -17,7 +17,7 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
 
     private void initListeners(){
         
-        videoGameInfoModel.setSearchedStoredInfoListenerList(new Listener() {
+        videoGameInfoModel.setSearchedStoredInfoListener(new Listener() {
 
             public void notifyListener() {
                 WikipediaPage wikiPage = videoGameInfoModel.getLastLocallyStoredWikiPageSearched();

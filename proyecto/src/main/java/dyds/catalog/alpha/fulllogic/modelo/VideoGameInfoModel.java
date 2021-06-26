@@ -2,15 +2,15 @@ package dyds.catalog.alpha.fulllogic.modelo;
 
 import java.util.LinkedList;
 
-import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBase;
+import dyds.catalog.alpha.fulllogic.modelo.repositorio.Database;
 
 public interface VideoGameInfoModel {
     
-    public void setVideoGameInfoRepository(DataBase dataBase);
+    public void setVideoGameInfoRepository(Database dataBase);
 
     public void setPageFoundInWikipediaListener(Listener PageFoundInWikipediaListener);
     public void setPageNotFoundInWikipediaListener(Listener PageNotFoundInWikipediaListener);
-    public void setSearchedStoredInfoListenerList(Listener storedSearchedInfoListener);
+    public void setSearchedStoredInfoListener(Listener storedSearchedInfoListener);
     public void setDeletedInfoListener(Listener deletedInfoListener);
     public void setSuccesfullySavedLocalInfoListener(Listener succesfullySavedLocalInfoListener);
     public void setNoResultsToSaveListener(Listener noResultsToSaveListener);

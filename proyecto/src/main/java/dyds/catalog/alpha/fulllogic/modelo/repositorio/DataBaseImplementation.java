@@ -2,25 +2,25 @@ package dyds.catalog.alpha.fulllogic.modelo.repositorio;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
-
-public class DataBaseImplementation implements DataBase{
+public class DatabaseImplementation implements Database{
 
     private final int TIMEOUT_SEGUNDOS = 30;
 
-    private static DataBaseImplementation instance;
+    private static DatabaseImplementation instance;
 
     private Connection connection;
     private Statement statement;
     
 
-    private DataBaseImplementation(){
+    private DatabaseImplementation(){
 
     }
 
-    public static DataBaseImplementation getInstance(){
+    public static DatabaseImplementation getInstance(){
         if (instance == null){
-            instance = new DataBaseImplementation();
+            instance = new DatabaseImplementation();
         }
         return instance;
     }
@@ -59,7 +59,7 @@ public class DataBaseImplementation implements DataBase{
         }
     }
     
-    @Override public ArrayList<String> getTitles() throws SQLException {
+    @Override public List<String> getTitles() throws SQLException {
         ArrayList<String> titles = new ArrayList<>();
         
         initConnectionToDataBase();

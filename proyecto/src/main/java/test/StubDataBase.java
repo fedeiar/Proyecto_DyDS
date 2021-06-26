@@ -1,11 +1,11 @@
 package test;
 
-import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBase;
+import dyds.catalog.alpha.fulllogic.modelo.repositorio.Database;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class StubDataBase implements DataBase {
+public class StubDataBase implements Database {
     String title = null;
     String extract = null;
 

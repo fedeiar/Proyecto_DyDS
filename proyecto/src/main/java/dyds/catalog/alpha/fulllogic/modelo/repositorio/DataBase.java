@@ -1,12 +1,12 @@
 package dyds.catalog.alpha.fulllogic.modelo.repositorio;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public interface DataBase{
+public interface Database{
     
     public void loadDatabase();
 
-    public ArrayList<String> getTitles() throws Exception;
+    public List<String> getTitles() throws Exception;
 
     public String getExtract(String title) throws Exception;
 

@@ -7,7 +7,7 @@ import java.util.LinkedList;
 public class VideoGameInfoModelImpl implements VideoGameInfoModel{
 
     private WikipediaSearcher wikipediaSearcher;
-    private DataBase dataBase;
+    private Database dataBase;
 
     private LinkedList<Listener> pageFoundInWikipediaListenerListenerList = new LinkedList<Listener>();
     private LinkedList<Listener> PageNotFoundInWikipediaListenerList = new LinkedList<Listener>();
@@ -23,14 +23,14 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     private String lastIntroPageSearchedLocally;
     private String lastPageTitleSearchedLocally;
 
-    public VideoGameInfoModelImpl(DataBase database, WikipediaSearcher wikipediaSearcher){
+    public VideoGameInfoModelImpl(Database database, WikipediaSearcher wikipediaSearcher){
         this.wikipediaSearcher = wikipediaSearcher;
         lastPageSearchedWithSuccessInWiki = false;
         dataBase = database;
         dataBase.loadDatabase();
     }
 
-    @Override public void setVideoGameInfoRepository(DataBase dataBase){
+    @Override public void setVideoGameInfoRepository(Database dataBase){
         this.dataBase = dataBase;
         dataBase.loadDatabase();
     }
@@ -43,7 +43,7 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         this.PageNotFoundInWikipediaListenerList.addLast(listener);
     }
 
-    @Override public void setSearchedStoredInfoListenerList(Listener listener){
+    @Override public void setSearchedStoredInfoListener(Listener listener){
         this.searchedStoredInfoListenerList.addLast(listener);    
     }
 

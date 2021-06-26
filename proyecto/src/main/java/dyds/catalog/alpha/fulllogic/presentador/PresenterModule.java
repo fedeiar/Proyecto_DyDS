@@ -25,7 +25,7 @@ public class PresenterModule {
         return wikipediaSearchPresenter;
     }
 
-    public StoredInfoPresenter setUpStoredInfoView(VideoGameInfoModel videoGameInfoModel){
+    public StoredInfoPresenter setUpStoredInfoPresenter(VideoGameInfoModel videoGameInfoModel){
         storedInfoPresenter = new StoredInfoPresenterImpl(videoGameInfoModel);
         return storedInfoPresenter;
     }

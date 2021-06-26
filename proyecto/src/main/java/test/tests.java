@@ -2,7 +2,7 @@ package test;
 
 import dyds.catalog.alpha.fulllogic.modelo.*;
 
-import dyds.catalog.alpha.fulllogic.modelo.repositorio.DataBaseImplementation;
+import dyds.catalog.alpha.fulllogic.modelo.repositorio.DatabaseImplementation;
 import dyds.catalog.alpha.fulllogic.presentador.*;
 
 import dyds.catalog.alpha.fulllogic.vista.*;
@@ -26,10 +26,10 @@ public class tests {
 
     @Before
     public void setUp() throws Exception {
-        videoGameInfoModel = ModelModule.getInstance().setUpModel(DataBaseImplementation.getInstance(),new WikipediaSearcherImpl());
+        videoGameInfoModel = ModelModule.getInstance().setUpModel(DatabaseImplementation.getInstance(),new WikipediaSearcherImpl());
 
         wikipediaSearchPresenter = PresenterModule.getInstance().setUpWikipediaSearchPresenter(videoGameInfoModel);
-        storedInfoPresenter = PresenterModule.getInstance().setUpStoredInfoView(videoGameInfoModel);
+        storedInfoPresenter = PresenterModule.getInstance().setUpStoredInfoPresenter(videoGameInfoModel);
 
         wikipediaSearchView = ViewModule.getInstance().setUpWikipediaSearchView(wikipediaSearchPresenter);
         storedInfoView = ViewModule.getInstance().setUpStoredInfoView(storedInfoPresenter);
