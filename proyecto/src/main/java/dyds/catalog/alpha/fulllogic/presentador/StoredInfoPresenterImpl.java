@@ -121,4 +121,9 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
             view.operationFailed("Initialization", "Error loading stored titles when initializating");
         }
     }
+
+    //for testing
+    @Override public boolean isActivellyWorking() {
+        return taskThread.isAlive();
+    };
 }

@@ -145,7 +145,27 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
     //getters for testing
 
     @Override
-    public LinkedList<Listener> getListOfSuccesfullySavedInfoListenerList() {
+    public LinkedList<Listener> getListPageFoundInWikipediaListenerListenerList() {
+        return pageFoundInWikipediaListenerListenerList;
+    }
+
+    @Override
+    public LinkedList<Listener> getListPageNotFoundInWikipediaListenerList() {
+        return PageNotFoundInWikipediaListenerList;
+    }
+
+    @Override
+    public LinkedList<Listener> getListSearchedStoredInfoListenerList() {
+        return searchedStoredInfoListenerList;
+    }
+
+    @Override
+    public LinkedList<Listener> getListDeletedInfoListenerList() {
+        return deletedInfoListenerList;
+    }
+
+    @Override
+    public LinkedList<Listener> getListSuccesfullySavedInfoListenerList() {
         return succesfullySavedInfoListenerList;
     }
 

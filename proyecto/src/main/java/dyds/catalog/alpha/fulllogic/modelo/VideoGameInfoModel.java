@@ -38,7 +38,16 @@ public interface VideoGameInfoModel {
     public void setLastIntroPageSearchedInWiki(String lastIntroPageSearchedInWiki);
 
     //getters for testing
-    public LinkedList<Listener> getListOfSuccesfullySavedInfoListenerList();
+
+    public LinkedList<Listener> getListPageFoundInWikipediaListenerListenerList();
+
+    public LinkedList<Listener> getListPageNotFoundInWikipediaListenerList();
+
+    public LinkedList<Listener> getListSearchedStoredInfoListenerList();
+
+    public LinkedList<Listener> getListDeletedInfoListenerList();
+
+    public LinkedList<Listener> getListSuccesfullySavedInfoListenerList();
 
     public LinkedList<Listener> getListNoResultsToSaveListener();
 }

@@ -107,4 +107,9 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
     @Override public String getLastSearchedPageIntro() {
         return searchResultPageIntro;
     }
+
+    @Override
+    public void setValues(String title, String extract, boolean searchedPage) {
+
+    }
 }

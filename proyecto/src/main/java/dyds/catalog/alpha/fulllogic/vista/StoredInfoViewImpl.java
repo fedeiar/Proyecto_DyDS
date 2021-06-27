@@ -94,4 +94,16 @@ public class StoredInfoViewImpl implements StoredInfoView{
         this.setWatingStatus();;
     }
 
+    //setter for testing
+    @Override
+    public void setSelectedTitleIndex(int index) {
+        storedTitlesComboBox.setSelectedIndex(index);
+    }
+
+    //getter for testing
+    @Override public String getActualSearch() {
+        return storedPageIntroTextPane.getText();
+    }
+
+
 }

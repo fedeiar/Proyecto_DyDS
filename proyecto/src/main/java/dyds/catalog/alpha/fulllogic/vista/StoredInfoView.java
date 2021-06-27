@@ -19,4 +19,11 @@ public interface StoredInfoView {
     public void operationFailed(String pageSave, String s);
 
     public void operationSucceded(String pageDelete, String pageDeletedSuccesfully);
+
+    //setter for testing
+    public void setSelectedTitleIndex(int index);
+
+    //getter for testing
+    public String getActualSearch();
+
 }
