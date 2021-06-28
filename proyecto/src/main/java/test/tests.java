@@ -44,7 +44,7 @@ public class tests {
 
         //set at least one listener
         Listener listener = mock(Listener.class);
-        doNothing().when(listener).notifyListener();
+        doNothing().when(listener).notifyListener(); //TODO: para que esta linea? si por default los void ya no hacen nada
         videoGameInfoModel.setPageFoundInWikipediaListener(listener);
 
         //init test
