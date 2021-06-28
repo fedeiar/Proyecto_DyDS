@@ -162,7 +162,7 @@ public class tests {
         String term = "league of legends";
 
         //Stub WikipediaSearcher and set values
-        WikipediaSearcher stubWikipediaSearcher = new StubWikipediaSearcher();
+        StubWikipediaSearcher stubWikipediaSearcher = new StubWikipediaSearcher();
         stubWikipediaSearcher.setValues(title,extract,true);
 
         //set StubWikipediaSearcher
