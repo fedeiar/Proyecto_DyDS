@@ -17,6 +17,7 @@ import dyds.catalog.alpha.fulllogic.vista.WikipediaSearchView;
 import org.junit.Test;
 
 import javax.swing.*;
+import java.util.List;
 
 public class tests {
     VideoGameInfoModel videoGameInfoModel;
@@ -34,7 +35,6 @@ public class tests {
         WikipediaSearcher mockWikipediaSearcher = mock(WikipediaSearcher.class);
 
         //Mocking methods in wikipediaSearcher
-        //TODO tengo que poner un valor al parametro del searchPage?
         when(mockWikipediaSearcher.searchPage("League of Legends")).thenReturn(true);
         when(mockWikipediaSearcher.getLastSearchedTitle()).thenReturn("League of Legends");
         when(mockWikipediaSearcher.getLastSearchedPageIntro()).thenReturn("League of Legends is a game ...");
@@ -61,7 +61,6 @@ public class tests {
         WikipediaSearcher mockWikipediaSearcher = mock(WikipediaSearcher.class);
 
         //Mocking methods in wikipediaSearcher
-        //TODO tengo que poner un valor al parametro del searchPage?
         when(mockWikipediaSearcher.searchPage("League of Legends")).thenReturn(false);
         when(mockWikipediaSearcher.getLastSearchedTitle()).thenReturn("No results");
         when(mockWikipediaSearcher.getLastSearchedPageIntro()).thenReturn("No results");
@@ -255,16 +254,56 @@ public class tests {
     }
 
     @Test
+    public void testIntegracionDeleteFromLocalStorage() throws Exception {
+        initSystem();
+
+        //setting last search
+        String title = "Z";
+        String extract = "Z is a game";
+
+        //simulate new search saved succesfully
+        videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
+        videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
+        videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
+
+        wikipediaSearchPresenter.onEventSaveSearchLocally();
+        waitForControllerTaskInSearchPresenter();
+
+        //get index of title, and selecting in combobox
+        List<String> listOfTitles = DatabaseImplementation.getInstance().getTitles();
+        java.util.Collections.sort(listOfTitles);
+        int indexTitleInComboBox = listOfTitles.indexOf(title);
+        storedInfoView.setSelectedTitleIndex(indexTitleInComboBox);
+        waitForControllerTaskInStoredInfoPresenter();
+
+        storedInfoPresenter.onEventDeleteLocalEntryInfo();
+        waitForControllerTaskInStoredInfoPresenter();
+
+        assertEquals(false,DatabaseImplementation.getInstance().getTitles().contains(title));
+    }
+
+    @Test
     public void testIntegracionGetPageIntroFromLocalStorage() throws Exception{
         initSystem();
 
         //setting last search
-        String title = "Half-Life (series)";
-        String extract = "Half-Life is a series of first-person shooter (FPS) games developed and published by Valve. The games combine shooting combat, puzzles, and storytelling. The original Half-Life, Valve`s first product, was released in 1998 for Windows to critical and commercial success. Players control Gordon Freeman, a scientist who must survive an alien invasion. The innovative scripted sequences were influential on the FPS genre, and the game inspired numerous community-developed mods, including the multiplayer games Counter-Strike and Day of Defeat. Half-Life was followed by the expansions Opposing Force (1999), Blue Shift (2001) and Decay (2001), developed by Gearbox Software. In 2004, Valve released Half-Life 2 to further success, with a new setting and characters and physics-based gameplay. It was followed by the extra level Lost Coast (2005) and the episodic sequels Episode One (2006) and Episode Two (2007). The first game in the Portal series, set in the same universe as Half-Life, was released in 2007. Over the following decade, numerous Half-Life games were canceled, including Episode Three, a version of Half-Life 3, and games developed by Junction Point Studios and Arkane Studios. In 2020, after years of speculation, Valve released its flagship virtual reality game, Half-Life: Alyx. Set before Half-Life 2, players control Freeman`s ally Alyx Vance in her quest to defeat the alien Combine.";
+        String title = "League of legends";
+        String extract = "League of legends is a game of";
 
-        //select title in combobox
-        storedInfoView.cleanPageIntroText();
-        storedInfoView.setSelectedTitleIndex(0);
+        //simulate sucessfully last search
+        videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
+        videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
+        videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
+
+        //calling event
+        wikipediaSearchPresenter.onEventSaveSearchLocally();
+        waitForControllerTaskInSearchPresenter();
+
+        //get index of title, and selecting in combobox
+        List<String> listOfTitles = DatabaseImplementation.getInstance().getTitles();
+        java.util.Collections.sort(listOfTitles);
+        int indexTitleInComboBox = listOfTitles.indexOf(title);
+        storedInfoView.setSelectedTitleIndex(indexTitleInComboBox);
 
         //waiting for save
         waitForControllerTaskInStoredInfoPresenter();
@@ -276,30 +315,6 @@ public class tests {
 
         //check results
         assertEquals(JTP.getText(),storedInfoView.getActualSearch());
-    }
-
-    @Test
-    public void testIntegracionDeleteFromLocalStorage() throws Exception {
-        initSystem();
-
-        //setting last search
-        String title = "Z";
-        String extract = "Z is a game";
-        //simulate new search saved succesfully
-        videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
-        videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
-        videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
-
-        wikipediaSearchPresenter.onEventSaveSearchLocally();
-        waitForControllerTaskInSearchPresenter();
-        //select from local storage
-        storedInfoView.setSelectedTitleIndex(5);
-        waitForControllerTaskInStoredInfoPresenter();
-
-        storedInfoPresenter.onEventDeleteLocalEntryInfo();
-        waitForControllerTaskInStoredInfoPresenter();
-
-        assertEquals(false,DatabaseImplementation.getInstance().getTitles().contains(title));
     }
 
     //methods for testing
