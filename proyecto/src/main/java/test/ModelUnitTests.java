@@ -19,7 +19,7 @@ import org.junit.Test;
 import javax.swing.*;
 import java.util.List;
 
-public class testsUnitarios {
+public class ModelUnitTests {
     VideoGameInfoModel videoGameInfoModel;
     WikipediaSearchPresenter wikipediaSearchPresenter;
     StoredInfoPresenter storedInfoPresenter;
@@ -27,7 +27,6 @@ public class testsUnitarios {
     WikipediaSearchView wikipediaSearchView;
     StoredInfoView storedInfoView;
 
-    //tests unitarios
 
     @Test(timeout = 4000)
     public void testNewSearchInWikipediaAndFound() throws Exception {
@@ -44,7 +43,6 @@ public class testsUnitarios {
 
         //set at least one listener
         Listener listener = mock(Listener.class);
-        doNothing().when(listener).notifyListener();
         videoGameInfoModel.setPageFoundInWikipediaListener(listener);
 
         //init test

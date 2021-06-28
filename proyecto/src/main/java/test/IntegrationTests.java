@@ -4,6 +4,7 @@ import dyds.catalog.alpha.fulllogic.modelo.ModelModule;
 import dyds.catalog.alpha.fulllogic.modelo.VideoGameInfoModel;
 import dyds.catalog.alpha.fulllogic.modelo.WikipediaSearcher;
 import dyds.catalog.alpha.fulllogic.modelo.WikipediaSearcherImpl;
+import dyds.catalog.alpha.fulllogic.modelo.repositorio.Database;
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.DatabaseImplementation;
 import dyds.catalog.alpha.fulllogic.presentador.PresenterModule;
 import dyds.catalog.alpha.fulllogic.presentador.StoredInfoPresenter;
@@ -14,15 +15,19 @@ import dyds.catalog.alpha.fulllogic.vista.ViewModule;
 import dyds.catalog.alpha.fulllogic.vista.WikipediaSearchView;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import javax.swing.*;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class testsIntegracion {
+public class IntegrationTests {
     VideoGameInfoModel videoGameInfoModel;
     WikipediaSearchPresenter wikipediaSearchPresenter;
     StoredInfoPresenter storedInfoPresenter;
@@ -32,7 +37,7 @@ public class testsIntegracion {
 
     @Before
     public void initSystem(){
-        videoGameInfoModel = ModelModule.getInstance().setUpModel(DatabaseImplementation.getInstance(), new WikipediaSearcherImpl());
+        videoGameInfoModel = ModelModule.getInstance().setUpModel(DatabaseImplementation.getInstance(), new StubWikipediaSearcher());
 
         wikipediaSearchPresenter = PresenterModule.getInstance().setUpWikipediaSearchPresenter(videoGameInfoModel);
         storedInfoPresenter = PresenterModule.getInstance().setUpStoredInfoPresenter(videoGameInfoModel);
@@ -44,7 +49,6 @@ public class testsIntegracion {
         storedInfoPresenter.setView(storedInfoView);
     }
 
-    //tests integracion
     @Test
     public void testIntegracionNuevaBusquedaExitosa() throws Exception{
         String title = "League of legends";
@@ -52,7 +56,7 @@ public class testsIntegracion {
         String term = "league of legends";
 
         //Stub WikipediaSearcher and set values
-        WikipediaSearcher stubWikipediaSearcher = new StubWikipediaSearcher();
+        StubWikipediaSearcher stubWikipediaSearcher = new StubWikipediaSearcher();
         stubWikipediaSearcher.setValues(title,extract,true);
 
         //set StubWikipediaSearcher
@@ -65,7 +69,7 @@ public class testsIntegracion {
         wikipediaSearchPresenter.onEventSearchInWikipedia();
 
         //wait for search
-        waitForControllerTaskInSearchPresenter();
+        waitForWikipediaSearchPresenter();
 
         //simulate JtextPane
         JTextPane JTP = new JTextPane();
@@ -84,7 +88,7 @@ public class testsIntegracion {
         videoGameInfoModel.setWikipediaSearcher(mockWikipediaSearcher);
 
         //Simular el ingreso de datos a la vista
-        wikipediaSearchView.setPageIntroText("League of Legends");
+        wikipediaSearchView.setTermOfSearch("League of Legends");
         wikipediaSearchPresenter.onEventSearchInWikipedia();
 
         //simulate JtextPane
@@ -111,7 +115,7 @@ public class testsIntegracion {
         wikipediaSearchPresenter.onEventSaveSearchLocally();
 
         //waiting for save
-        waitForControllerTaskInSearchPresenter();
+        waitForWikipediaSearchPresenter();
 
         //check results
         assertEquals(extract, DatabaseImplementation.getInstance().getExtract(title));
@@ -123,6 +127,8 @@ public class testsIntegracion {
         //setting last search
         String title = "League of Legends";
         String extract = "No results";
+        videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
+        videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
 
         //simulate last failed search
         videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(false);
@@ -131,10 +137,39 @@ public class testsIntegracion {
         wikipediaSearchPresenter.onEventSaveSearchLocally();
 
         //waiting for save
-        waitForControllerTaskInSearchPresenter();
+        waitForWikipediaSearchPresenter();
 
         //check results
-        assertEquals(false,DatabaseImplementation.getInstance().getTitles().contains("League of Legends"));
+        assertEquals(false,DatabaseImplementation.getInstance().getTitles().contains(title));
+    }
+
+    @Test
+    public void testFailedToSaveLastSuccesfulSearchInDatabase(){
+        try{
+            //enviroment setup
+            Database database = mock(Database.class);
+            doThrow().when(database).saveInfo(Mockito.anyString(), Mockito.anyString());
+            videoGameInfoModel.setVideoGameInfoRepository(database);
+
+            String title = "League of legends";
+            String extract = "League of legends is a game of";
+
+            videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
+            videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
+            videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
+
+            //functionality execution
+            wikipediaSearchPresenter.onEventSaveSearchLocally();
+
+            waitForWikipediaSearchPresenter();
+
+            //compare result
+            fail();
+        }
+        catch(Exception e){
+
+        }
+
     }
 
     @Test
@@ -149,17 +184,17 @@ public class testsIntegracion {
         videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
 
         wikipediaSearchPresenter.onEventSaveSearchLocally();
-        waitForControllerTaskInSearchPresenter();
+        waitForWikipediaSearchPresenter();
 
         //get index of title, and selecting in combobox
         List<String> listOfTitles = DatabaseImplementation.getInstance().getTitles();
         java.util.Collections.sort(listOfTitles);
         int indexTitleInComboBox = listOfTitles.indexOf(title);
         storedInfoView.setSelectedTitleIndex(indexTitleInComboBox);
-        waitForControllerTaskInStoredInfoPresenter();
+        waitForStoredInfoPresenter();
 
         storedInfoPresenter.onEventDeleteLocalEntryInfo();
-        waitForControllerTaskInStoredInfoPresenter();
+        waitForStoredInfoPresenter();
 
         assertEquals(false,DatabaseImplementation.getInstance().getTitles().contains(title));
     }
@@ -177,7 +212,7 @@ public class testsIntegracion {
 
         //calling event
         wikipediaSearchPresenter.onEventSaveSearchLocally();
-        waitForControllerTaskInSearchPresenter();
+        waitForWikipediaSearchPresenter();
 
         //get index of title, and selecting in combobox
         List<String> listOfTitles = DatabaseImplementation.getInstance().getTitles();
@@ -186,7 +221,7 @@ public class testsIntegracion {
         storedInfoView.setSelectedTitleIndex(indexTitleInComboBox);
 
         //waiting for save
-        waitForControllerTaskInStoredInfoPresenter();
+        waitForStoredInfoPresenter();
 
         //simulate JTextPane
         JTextPane JTP = new JTextPane();
@@ -199,11 +234,11 @@ public class testsIntegracion {
 
     //methods for testing
 
-    private void waitForControllerTaskInSearchPresenter() throws InterruptedException {
+    private void waitForWikipediaSearchPresenter() throws InterruptedException {
         while (wikipediaSearchPresenter.isActivellyWorking()) Thread.sleep(1);
     }
 
-    private void waitForControllerTaskInStoredInfoPresenter() throws InterruptedException {
+    private void waitForStoredInfoPresenter() throws InterruptedException {
         while (storedInfoPresenter.isActivellyWorking()) Thread.sleep(1);
     }
 
