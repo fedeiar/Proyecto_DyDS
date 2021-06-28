@@ -30,6 +30,9 @@ import static org.mockito.Mockito.when;
 
 public class IntegrationTests {
     VideoGameInfoModel videoGameInfoModel;
+    Database database;
+    StubWikipediaSearcher stubWikipediaSearcher;
+
     WikipediaSearchPresenter wikipediaSearchPresenter;
     StoredInfoPresenter storedInfoPresenter;
 
@@ -38,7 +41,9 @@ public class IntegrationTests {
 
     @Before
     public void initSystem(){
-        videoGameInfoModel = ModelModule.getInstance().setUpModel(DatabaseImplementation.getInstance(), new StubWikipediaSearcher());
+        database = DatabaseImplementation.getInstance();
+        stubWikipediaSearcher = new StubWikipediaSearcher();
+        videoGameInfoModel = ModelModule.getInstance().setUpModel(database, stubWikipediaSearcher);
 
         wikipediaSearchPresenter = PresenterModule.getInstance().setUpWikipediaSearchPresenter(videoGameInfoModel);
         storedInfoPresenter = PresenterModule.getInstance().setUpStoredInfoPresenter(videoGameInfoModel);
@@ -52,16 +57,13 @@ public class IntegrationTests {
 
     @Test
     public void testIntegracionNuevaBusquedaExitosa() throws Exception{
+        //setup enviroment
         String title = "League of legends";
         String extract = "League of legends is a game of";
         String term = "league of legends";
 
-        //Stub WikipediaSearcher and set values
-        StubWikipediaSearcher stubWikipediaSearcher = new StubWikipediaSearcher();
+        //set values of stubbed WikipediaSearcher
         stubWikipediaSearcher.setValues(title,extract,true);
-
-        //set StubWikipediaSearcher
-        videoGameInfoModel.setWikipediaSearcher(stubWikipediaSearcher);
 
         //Simular el ingreso de datos a la vista
         wikipediaSearchView.setTermOfSearch(term);
