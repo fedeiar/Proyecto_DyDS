@@ -19,6 +19,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.swing.*;
+import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec;
+
 import java.util.List;
 
 public class ModelUnitTests {
@@ -113,7 +115,7 @@ public class ModelUnitTests {
         Listener listener = mock(Listener.class);
         videoGameInfoModel.setSuccesfullySavedLocalInfoListener(listener);
 
-        //metodo guardar informacion localmente
+        //run unit
         videoGameInfoModel.storeLastSearchedPage();
 
         //revisar si el resultado es el esperado
@@ -137,12 +139,39 @@ public class ModelUnitTests {
         Listener listener = mock(Listener.class);
         videoGameInfoModel.setNoResultsToSaveListener(listener);
 
-        //metodo guardar informacion localmente
+        //run unit
         videoGameInfoModel.storeLastSearchedPage();
 
         //revisar si el resultado es el esperado
         verify(videoGameInfoModel.getListNoResultsToSaveListener().getFirst()).notifyListener();
         assertNull(stubDataBase.getExtract(title));
+    }
+
+    @Test
+    public void testFailedToSaveInDatabase(){
+        try{
+            //enviroment setup
+            String title = "League of Legends";
+            String extract = "League of Legends is a game of ...";
+
+            Database database = mock(Database.class);
+            doThrow(new Exception()).when(database).saveInfo(title, extract);
+            videoGameInfoModel.setVideoGameInfoRepository(database);
+
+            videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
+            videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
+            videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
+
+            //run unit
+            videoGameInfoModel.storeLastSearchedPage();
+
+            //verify output
+            fail("Expected exception did not happen");
+        }
+        catch(Exception e){
+
+        }
+    
     }
 
     @Test

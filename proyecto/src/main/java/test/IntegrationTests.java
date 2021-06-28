@@ -146,14 +146,13 @@ public class IntegrationTests {
 
     @Test
     public void testFailedToSaveLastSuccesfulSearchInDatabase() throws Exception{
-        
             //enviroment setup
-            Database database = mock(Database.class);
-            doThrow(new Exception()).when(database).saveInfo(Mockito.anyString(), Mockito.anyString());
-            videoGameInfoModel.setVideoGameInfoRepository(database);
-
             String title = "League of legends";
             String extract = "League of legends is a game of";
+
+            Database database = mock(Database.class);
+            doThrow(new Exception()).when(database).saveInfo(title, extract);
+            videoGameInfoModel.setVideoGameInfoRepository(database);
 
             videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
             videoGameInfoModel.setLastPageTitleSearchedInWiki(title);

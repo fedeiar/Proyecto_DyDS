@@ -6,7 +6,7 @@ import dyds.catalog.alpha.fulllogic.modelo.repositorio.Database;
 
 public interface VideoGameInfoModel {
     
-    public void setVideoGameInfoRepository(Database dataBase);
+    public void setVideoGameInfoRepository(Database database);
 
     public void setPageFoundInWikipediaListener(Listener PageFoundInWikipediaListener);
     public void setPageNotFoundInWikipediaListener(Listener PageNotFoundInWikipediaListener);
