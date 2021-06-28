@@ -8,6 +8,4 @@ public interface WikipediaSearcher {
     public String getLastSearchedTitle();
     
     public String getLastSearchedPageIntro();
-
-    public void setValues(String title, String extract, boolean searchedPage);
 }

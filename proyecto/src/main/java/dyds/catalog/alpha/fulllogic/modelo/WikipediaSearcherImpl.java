@@ -108,8 +108,4 @@ public class WikipediaSearcherImpl implements WikipediaSearcher{
         return searchResultPageIntro;
     }
 
-    @Override
-    public void setValues(String title, String extract, boolean searchedPage) {
-
-    }
 }
