@@ -162,9 +162,9 @@ public class IntegrationTests {
             wikipediaSearchPresenter.onEventSaveSearchLocally();
 
             waitForWikipediaSearchPresenter();
-
+            
             //compare result
-            fail();
+            fail("Expected exception did not happen");
         }
         catch(Exception e){
 
