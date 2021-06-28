@@ -84,7 +84,7 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
             @Override public void run() {
                 try {
                     videoGameInfoModel.storeLastSearchedPage();
-                } 
+                }
                 catch (Exception e) {
                     view.operationFailed("Page save", "Failed page saving");
                 }

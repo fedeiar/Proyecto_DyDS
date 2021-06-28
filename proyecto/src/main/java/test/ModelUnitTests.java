@@ -14,6 +14,8 @@ import dyds.catalog.alpha.fulllogic.utils.Utilidades;
 import dyds.catalog.alpha.fulllogic.vista.StoredInfoView;
 import dyds.catalog.alpha.fulllogic.vista.ViewModule;
 import dyds.catalog.alpha.fulllogic.vista.WikipediaSearchView;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -21,57 +23,74 @@ import java.util.List;
 
 public class ModelUnitTests {
     VideoGameInfoModel videoGameInfoModel;
+    StubDataBase stubDataBase;
+
     WikipediaSearchPresenter wikipediaSearchPresenter;
     StoredInfoPresenter storedInfoPresenter;
 
     WikipediaSearchView wikipediaSearchView;
     StoredInfoView storedInfoView;
 
+    
+
+    @Before
+    public void setUpEnviroment(){
+        stubDataBase = new StubDataBase();
+        videoGameInfoModel = ModelModule.getInstance().setUpModel(stubDataBase, mock(WikipediaSearcher.class));
+    }
+
 
     @Test(timeout = 4000)
     public void testNewSearchInWikipediaAndFound() throws Exception {
+        //enviorment setup
+        String title = "League of Legends";
+        String extract = "League of Legends is a game of ...";
+        
         //Mock wikipediaSearcher
         WikipediaSearcher mockWikipediaSearcher = mock(WikipediaSearcher.class);
 
         //Mocking methods in wikipediaSearcher
-        when(mockWikipediaSearcher.searchPage("League of Legends")).thenReturn(true);
-        when(mockWikipediaSearcher.getLastSearchedTitle()).thenReturn("League of Legends");
-        when(mockWikipediaSearcher.getLastSearchedPageIntro()).thenReturn("League of Legends is a game ...");
+        when(mockWikipediaSearcher.searchPage(title)).thenReturn(true);
+        when(mockWikipediaSearcher.getLastSearchedTitle()).thenReturn(title);
+        when(mockWikipediaSearcher.getLastSearchedPageIntro()).thenReturn(extract);
 
         //setup model
-        videoGameInfoModel = ModelModule.getInstance().setUpModel(new StubDataBase(), mockWikipediaSearcher);
+        videoGameInfoModel.setWikipediaSearcher(mockWikipediaSearcher);
 
         //set at least one listener
         Listener listener = mock(Listener.class);
         videoGameInfoModel.setPageFoundInWikipediaListener(listener);
 
         //init test
-        videoGameInfoModel.searchTermInWikipedia("League of Legends");
+        videoGameInfoModel.searchTermInWikipedia(title);
 
         //check results
         verify(videoGameInfoModel.getListPageFoundInWikipediaListenerListenerList().getFirst()).notifyListener();
-        assertEquals("League of Legends", videoGameInfoModel.getLastWikiPageSearched().getTitle());
+        assertEquals(title, videoGameInfoModel.getLastWikiPageSearched().getTitle());
     }
 
     @Test(timeout = 4000)
     public void testNewSearchInWikipediaButNotFound() throws Exception {
+        //enviorment setup
+        String title = "League of Legends";
+        String extract = "";
+
         //Mock wikipediaSearcher
         WikipediaSearcher mockWikipediaSearcher = mock(WikipediaSearcher.class);
 
         //Mocking methods in wikipediaSearcher
-        when(mockWikipediaSearcher.searchPage("League of Legends")).thenReturn(false);
-        when(mockWikipediaSearcher.getLastSearchedTitle()).thenReturn("No results");
-        when(mockWikipediaSearcher.getLastSearchedPageIntro()).thenReturn("No results");
+        when(mockWikipediaSearcher.searchPage(title)).thenReturn(false);
+        when(mockWikipediaSearcher.getLastSearchedTitle()).thenReturn(extract);
+        when(mockWikipediaSearcher.getLastSearchedPageIntro()).thenReturn(extract);
 
-        videoGameInfoModel = ModelModule.getInstance().setUpModel(new StubDataBase(), mockWikipediaSearcher);
+        videoGameInfoModel.setWikipediaSearcher(mockWikipediaSearcher);
 
         //set at least one listener
         Listener listener = mock(Listener.class);
-        doNothing().when(listener).notifyListener();
         videoGameInfoModel.setPageNotFoundInWikipediaListener(listener);
 
         //init test
-        videoGameInfoModel.searchTermInWikipedia("League of Legends");
+        videoGameInfoModel.searchTermInWikipedia(title);
 
         //check results
         verify(videoGameInfoModel.getListPageNotFoundInWikipediaListenerList().getFirst()).notifyListener();
@@ -80,19 +99,18 @@ public class ModelUnitTests {
 
     @Test
     public void testSuccesfullySaveLocally() throws Exception {
-        //Stub dataBase
-        Database stubDataBase = new StubDataBase();
-        videoGameInfoModel = new VideoGameInfoModelImpl(stubDataBase, mock(WikipediaSearcher.class));
+        //enviroment setup
+        String title = "League of Legends";
+        String extract = "League of Legends is a game of ...";
 
         //Supongo que la ultima busqueda fue realizada exitosamente
         //seteo una ultima busqueda
+        videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
+        videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
         videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
-        videoGameInfoModel.setLastPageTitleSearchedInWiki("League of Legends");
-        videoGameInfoModel.setLastIntroPageSearchedInWiki("League of Legends is a game of ...");
 
         //set at least one listener
         Listener listener = mock(Listener.class);
-        doNothing().when(listener).notifyListener();
         videoGameInfoModel.setSuccesfullySavedLocalInfoListener(listener);
 
         //metodo guardar informacion localmente
@@ -100,24 +118,23 @@ public class ModelUnitTests {
 
         //revisar si el resultado es el esperado
         verify(videoGameInfoModel.getListSuccesfullySavedInfoListenerList().getFirst()).notifyListener();
-        assertEquals("League of Legends is a game of ...", stubDataBase.getExtract(null));
+        assertEquals(extract, stubDataBase.getExtract(null));
     }
 
     @Test
     public void testNoResultsToSaveLocally() throws Exception {
-        //Stub database
-        Database stubDataBase = new StubDataBase();
-        videoGameInfoModel = new VideoGameInfoModelImpl(stubDataBase,mock(WikipediaSearcher.class));
+        //enviroment setup
+        String title = "League of Legends";
+        String extract = "League of Legends is a game of ...";
 
-        //Supongo que la ultima busqueda fue realizada exitosamente
+        //Supongo que la ultima busqueda no produjo resultados
         //seteo una ultima busqueda
+        videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
+        videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
         videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(false);
-        videoGameInfoModel.setLastPageTitleSearchedInWiki("League of Legends");
-        videoGameInfoModel.setLastIntroPageSearchedInWiki("League of Legends is a game of ...");
 
         //set at least one listener
         Listener listener = mock(Listener.class);
-        doNothing().when(listener).notifyListener();
         videoGameInfoModel.setNoResultsToSaveListener(listener);
 
         //metodo guardar informacion localmente
@@ -125,25 +142,26 @@ public class ModelUnitTests {
 
         //revisar si el resultado es el esperado
         verify(videoGameInfoModel.getListNoResultsToSaveListener().getFirst()).notifyListener();
+        assertNull(stubDataBase.getExtract(title));
     }
 
     @Test
     public void testDeleteFromLocalStorage() throws Exception {
-        //Stub database
-        Database stubDataBase = new StubDataBase();
+        //enviroment setup
+        String title = "League of Legends";
+        String extract = "League of Legends is a game of ...";
         //set something in database
-        stubDataBase.saveInfo("Something", "Something");
+        stubDataBase.saveInfo(title, extract);
 
         //set up stubDatabase
         videoGameInfoModel = new VideoGameInfoModelImpl(stubDataBase,mock(WikipediaSearcher.class));
 
         //set at least one listener
         Listener listener = mock(Listener.class);
-        doNothing().when(listener).notifyListener();
         videoGameInfoModel.setDeletedInfoListener(listener);
 
         //metodo eliminar informacion localmente
-        videoGameInfoModel.deleteFromLocalStorage("Something");
+        videoGameInfoModel.deleteFromLocalStorage(title);
 
         //check results
         verify(videoGameInfoModel.getListDeletedInfoListenerList().getFirst()).notifyListener();
