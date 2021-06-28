@@ -25,6 +25,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class IntegrationTests {
@@ -144,11 +145,11 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testFailedToSaveLastSuccesfulSearchInDatabase(){
-        try{
+    public void testFailedToSaveLastSuccesfulSearchInDatabase() throws Exception{
+        
             //enviroment setup
             Database database = mock(Database.class);
-            doThrow().when(database).saveInfo(Mockito.anyString(), Mockito.anyString());
+            doThrow(new Exception()).when(database).saveInfo(Mockito.anyString(), Mockito.anyString());
             videoGameInfoModel.setVideoGameInfoRepository(database);
 
             String title = "League of legends";
@@ -164,11 +165,8 @@ public class IntegrationTests {
             waitForWikipediaSearchPresenter();
             
             //compare result
-            fail("Expected exception did not happen");
-        }
-        catch(Exception e){
-
-        }
+            //TODO: como hago para verificar que se haya ejecutado el bloque catch del presentador?
+        
 
     }
 
