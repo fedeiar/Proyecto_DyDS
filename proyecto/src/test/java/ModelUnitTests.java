@@ -1,5 +1,3 @@
-package test;
-
 import dyds.catalog.alpha.fulllogic.modelo.*;
 
 import static org.junit.Assert.*;

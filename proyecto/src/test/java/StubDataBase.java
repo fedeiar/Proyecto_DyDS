@@ -1,5 +1,3 @@
-package test;
-
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.Database;
 
 import java.sql.SQLException;

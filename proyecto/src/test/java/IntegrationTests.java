@@ -1,5 +1,3 @@
-package test;
-
 import dyds.catalog.alpha.fulllogic.modelo.ModelModule;
 import dyds.catalog.alpha.fulllogic.modelo.VideoGameInfoModel;
 import dyds.catalog.alpha.fulllogic.modelo.WikipediaSearcher;

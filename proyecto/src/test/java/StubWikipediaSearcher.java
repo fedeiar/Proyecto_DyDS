@@ -1,5 +1,3 @@
-package test;
-
 import dyds.catalog.alpha.fulllogic.modelo.WikipediaSearcher;
 
 public class StubWikipediaSearcher implements WikipediaSearcher {
