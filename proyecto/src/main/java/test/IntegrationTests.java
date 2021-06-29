@@ -3,7 +3,7 @@ package test;
 import dyds.catalog.alpha.fulllogic.modelo.ModelModule;
 import dyds.catalog.alpha.fulllogic.modelo.VideoGameInfoModel;
 import dyds.catalog.alpha.fulllogic.modelo.WikipediaSearcher;
-import dyds.catalog.alpha.fulllogic.modelo.WikipediaSearcherImpl;
+
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.Database;
 import dyds.catalog.alpha.fulllogic.modelo.repositorio.DatabaseImplementation;
 import dyds.catalog.alpha.fulllogic.presentador.PresenterModule;
@@ -15,17 +15,17 @@ import dyds.catalog.alpha.fulllogic.vista.ViewModule;
 import dyds.catalog.alpha.fulllogic.vista.WikipediaSearchView;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+
 
 import javax.swing.*;
-import java.util.List;
+
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.doNothing;
+
+
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+
 import static org.mockito.Mockito.when;
 
 public class IntegrationTests {
@@ -56,128 +56,128 @@ public class IntegrationTests {
     }
 
     @Test
-    public void testIntegracionNuevaBusquedaExitosa() throws Exception{
-        //setup enviroment
+    public void testSuccesfullSearchInWikipedia() throws Exception{
         String title = "League of legends";
         String extract = "League of legends is a game of";
         String term = "league of legends";
 
-        //set values of stubbed WikipediaSearcher
         stubWikipediaSearcher.setValues(title,extract,true);
 
-        //Simular el ingreso de datos a la vista
         wikipediaSearchView.setTermOfSearch(term);
 
-        //search button
         wikipediaSearchPresenter.onEventSearchInWikipedia();
 
-        //wait for search
         waitForWikipediaSearchPresenter();
 
-        //simulate JtextPane
-        JTextPane JTP = new JTextPane();
-        JTP.setContentType("text/html");
-        JTP.setText(Utilidades.formatData(title,extract,term));
+        JTextPane jTextPane = new JTextPane();
+        jTextPane.setContentType("text/html");
+        jTextPane.setText(Utilidades.formatData(title,extract,term));
 
-        //check results
-        assertEquals(JTP.getText(),wikipediaSearchView.getActualSearch());
+        assertEquals(jTextPane.getText(),wikipediaSearchView.getActualSearch());
     }
 
     @Test
-    public void testIntegracionNuevaBusquedaSinExito() throws Exception{
-        //mock WikipediaSearcher
+    public void testNoResultsSearchInWikipedia() throws Exception{
         WikipediaSearcher mockWikipediaSearcher = mock(WikipediaSearcher.class);
         when(mockWikipediaSearcher.searchPage("Something")).thenReturn(false);
         videoGameInfoModel.setWikipediaSearcher(mockWikipediaSearcher);
 
-        //Simular el ingreso de datos a la vista
         wikipediaSearchView.setTermOfSearch("League of Legends");
         wikipediaSearchPresenter.onEventSearchInWikipedia();
 
-        //simulate JtextPane
-        JTextPane JTP = new JTextPane();
-        JTP.setContentType("text/html");
-        JTP.setText("No Results");
+        waitForWikipediaSearchPresenter();
 
-        //check results
-        assertEquals(JTP.getText(),wikipediaSearchView.getActualSearch());
+        JTextPane jTextPane = new JTextPane();
+        jTextPane.setContentType("text/html");
+        jTextPane.setText("No Results");
+
+        assertEquals(jTextPane.getText(), wikipediaSearchView.getActualSearch());
     }
 
     @Test
-    public void testIntegracionSuccesfullySaveLocally() throws Exception {
-        //setting last search
+    public void testSuccessfullySavedLocalInfo() throws Exception {
         String title = "League of legends";
         String extract = "League of legends is a game of";
 
-        //simulate sucessfully last search
+        videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
+        videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
+        videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
+
+        wikipediaSearchPresenter.onEventSaveSearchLocally();
+
+        waitForWikipediaSearchPresenter();
+    
+        assertEquals(true, storedInfoPresenter.getView().doesComboBoxContainsTitle(title));
+    }
+
+    @Test
+    public void testNoResultsToSaveLocally() throws Exception {
+        String title = "League of Legends";
+        String extract = "No results";
+
+        videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
+        videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
+        videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(false);
+
+        wikipediaSearchPresenter.onEventSaveSearchLocally();
+
+        waitForWikipediaSearchPresenter();
+
+        assertEquals(false,storedInfoPresenter.getView().doesComboBoxContainsTitle(title));
+    }
+
+    @Test
+    public void testFailedToSaveInDatabaseLastSuccesfullSearchInWikipedia() throws Exception{
+        String title = "League of legends";
+        String extract = "League of legends is a game of";
+
+        Database database = mock(Database.class);
+        doThrow(new Exception()).when(database).saveInfo(title, extract);
+        videoGameInfoModel.setVideoGameInfoRepository(database);
+
         videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
         videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
         videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
 
-        //calling event
         wikipediaSearchPresenter.onEventSaveSearchLocally();
 
-        //waiting for save
         waitForWikipediaSearchPresenter();
-
-        //check results
-        assertEquals(extract, DatabaseImplementation.getInstance().getExtract(title));
-        assertEquals(true,DatabaseImplementation.getInstance().getTitles().contains(title));
+        
+        assertEquals("Failed page saving", wikipediaSearchPresenter.getView().getDialogTestMessage());
     }
 
     @Test
-    public void testIntegracionNoResultsToSaveLocally() throws Exception {
-        //setting last search
-        String title = "League of Legends";
-        String extract = "No results";
+    public void testGetPageIntroFromLocalStorage() throws Exception{
+        String title = "League of legends";
+        String extract = "League of legends is a game of";
+
+        videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
         videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
         videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
 
-        //simulate last failed search
-        videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(false);
-
-        //calling event
         wikipediaSearchPresenter.onEventSaveSearchLocally();
 
-        //waiting for save
         waitForWikipediaSearchPresenter();
 
-        //check results
-        assertEquals(false,DatabaseImplementation.getInstance().getTitles().contains(title));
+        int indexTitleInComboBox = storedInfoPresenter.getView().getTitleIndexInComboBox(title);
+        // por como funciona comboBox, el siguiente método hará que se disparé el listener del comboBox alertando así al Presentador, es por ello que después
+        // de invocarlo no llamamos al Presentador como hacemos normalmente.
+        storedInfoView.setSelectedTitleIndex(indexTitleInComboBox); 
+
+        waitForStoredInfoPresenter();
+
+        JTextPane jTextPane = new JTextPane();
+        jTextPane.setContentType("text/html");
+        jTextPane.setText(Utilidades.formatData(title,extract));
+
+        assertEquals(jTextPane.getText(), storedInfoView.getLocalStoredPageIntro());
     }
 
     @Test
-    public void testFailedToSaveLastSuccesfulSearchInDatabase() throws Exception{
-            //enviroment setup
-            String title = "League of legends";
-            String extract = "League of legends is a game of";
-
-            Database database = mock(Database.class);
-            doThrow(new Exception()).when(database).saveInfo(title, extract);
-            videoGameInfoModel.setVideoGameInfoRepository(database);
-
-            videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
-            videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
-            videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
-
-            //functionality execution
-            wikipediaSearchPresenter.onEventSaveSearchLocally();
-
-            waitForWikipediaSearchPresenter();
-            
-            //compare result
-            //TODO: como hago para verificar que se haya ejecutado el bloque catch del presentador?
-        
-
-    }
-
-    @Test
-    public void testIntegracionDeleteFromLocalStorage() throws Exception {
-        //setting last search
+    public void testDeleteFromLocalStorage() throws Exception {
         String title = "Z";
         String extract = "Z is a game";
 
-        //simulate new search saved succesfully
         videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
         videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
         videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
@@ -185,53 +185,19 @@ public class IntegrationTests {
         wikipediaSearchPresenter.onEventSaveSearchLocally();
         waitForWikipediaSearchPresenter();
 
-        //get index of title, and selecting in combobox
-        List<String> listOfTitles = DatabaseImplementation.getInstance().getTitles();
-        java.util.Collections.sort(listOfTitles);
-        int indexTitleInComboBox = listOfTitles.indexOf(title);
+        int indexTitleInComboBox = storedInfoPresenter.getView().getTitleIndexInComboBox(title);
+        // mismo problema que el test anterior
         storedInfoView.setSelectedTitleIndex(indexTitleInComboBox);
+
         waitForStoredInfoPresenter();
 
         storedInfoPresenter.onEventDeleteLocalEntryInfo();
         waitForStoredInfoPresenter();
 
-        assertEquals(false,DatabaseImplementation.getInstance().getTitles().contains(title));
+        assertEquals(false, storedInfoPresenter.getView().doesComboBoxContainsTitle(title));
     }
 
-    @Test
-    public void testIntegracionGetPageIntroFromLocalStorage() throws Exception{
-        //setting last search
-        String title = "League of legends";
-        String extract = "League of legends is a game of";
-
-        //simulate sucessfully last search
-        videoGameInfoModel.setLastPageSearchedWithSuccessInWiki(true);
-        videoGameInfoModel.setLastPageTitleSearchedInWiki(title);
-        videoGameInfoModel.setLastIntroPageSearchedInWiki(extract);
-
-        //calling event
-        wikipediaSearchPresenter.onEventSaveSearchLocally();
-        waitForWikipediaSearchPresenter();
-
-        //get index of title, and selecting in combobox
-        List<String> listOfTitles = DatabaseImplementation.getInstance().getTitles();
-        java.util.Collections.sort(listOfTitles);
-        int indexTitleInComboBox = listOfTitles.indexOf(title);
-        storedInfoView.setSelectedTitleIndex(indexTitleInComboBox);
-
-        //waiting for save
-        waitForStoredInfoPresenter();
-
-        //simulate JTextPane
-        JTextPane JTP = new JTextPane();
-        JTP.setContentType("text/html");
-        JTP.setText(Utilidades.formatData(title,extract));
-
-        //check results
-        assertEquals(JTP.getText(),storedInfoView.getActualSearch());
-    }
-
-    //methods for testing
+    
 
     private void waitForWikipediaSearchPresenter() throws InterruptedException {
         while (wikipediaSearchPresenter.isActivellyWorking()) Thread.sleep(1);

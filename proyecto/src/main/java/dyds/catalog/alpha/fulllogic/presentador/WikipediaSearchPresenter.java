@@ -10,6 +10,10 @@ public interface WikipediaSearchPresenter {
 
     public void setView(WikipediaSearchView view);
 
-    //for testing
+
+    //methods for testing
+    
     public boolean isActivellyWorking();
+
+    public WikipediaSearchView getView();
 }

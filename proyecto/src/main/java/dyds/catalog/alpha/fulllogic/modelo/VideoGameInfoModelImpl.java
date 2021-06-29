@@ -83,8 +83,8 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
             String pageTitle = wikipediaSearcher.getLastSearchedTitle();
             String pageIntroText = wikipediaSearcher.getLastSearchedPageIntro();
             
-            lastPageTitleSearchedInWiki = Utilidades.giveFormatForStorage(pageTitle);
-            lastIntroPageSearchedInWiki = Utilidades.giveFormatForStorage(pageIntroText);
+            lastPageTitleSearchedInWiki = Utilidades.giveFormatForStorageInSQL(pageTitle);
+            lastIntroPageSearchedInWiki = Utilidades.giveFormatForStorageInSQL(pageIntroText);
 
             notifyAllListeners(pageFoundInWikipediaListenerListenerList);
         }
@@ -124,25 +124,23 @@ public class VideoGameInfoModelImpl implements VideoGameInfoModel{
         notifyAllListeners(deletedInfoListenerList);
     }
 
-    //for testing
+    // methods for testing
 
-    public void setWikipediaSearcher(WikipediaSearcher wikipediaSearcher){
+    @Override public void setWikipediaSearcher(WikipediaSearcher wikipediaSearcher){
         this.wikipediaSearcher = wikipediaSearcher;
-    };
-
-    public void setLastPageSearchedWithSuccessInWiki(boolean value) {
-        lastPageSearchedWithSuccessInWiki = value;
-    };
-
-    public void setLastPageTitleSearchedInWiki(String lastPageTitleSearchedInWiki){
-        this.lastPageTitleSearchedInWiki = lastPageTitleSearchedInWiki;
-    };
-
-    public void setLastIntroPageSearchedInWiki(String lastIntroPageSearchedInWiki) {
-        this.lastIntroPageSearchedInWiki = lastIntroPageSearchedInWiki;
     }
 
-    //getters for testing
+    @Override public void setLastPageSearchedWithSuccessInWiki(boolean value) {
+        lastPageSearchedWithSuccessInWiki = value;
+    }
+
+    @Override public void setLastPageTitleSearchedInWiki(String lastPageTitleSearchedInWiki){
+        this.lastPageTitleSearchedInWiki = lastPageTitleSearchedInWiki;
+    }
+
+    @Override public void setLastIntroPageSearchedInWiki(String lastIntroPageSearchedInWiki) {
+        this.lastIntroPageSearchedInWiki = lastIntroPageSearchedInWiki;
+    }
 
     @Override
     public LinkedList<Listener> getListPageFoundInWikipediaListenerListenerList() {

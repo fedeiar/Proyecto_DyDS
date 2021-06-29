@@ -91,18 +91,42 @@ public class StoredInfoViewImpl implements StoredInfoView{
 
     @Override public void operationFailed(String title, String message){
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
-        this.setWatingStatus();;
+        this.setWatingStatus();
     }
 
-    //setter for testing
+    
+    //methods for testing
+
     @Override
     public void setSelectedTitleIndex(int index) {
         storedTitlesComboBox.setSelectedIndex(index);
     }
 
-    //getter for testing
-    @Override public String getActualSearch() {
+    @Override public String getLocalStoredPageIntro() {
         return storedPageIntroTextPane.getText();
+    }
+
+    @Override public boolean doesComboBoxContainsTitle(String title){
+        boolean contains = false;;
+        int size = storedTitlesComboBox.getItemCount();
+        for(int i = 0; i < size && !contains; i++){
+            String item = storedTitlesComboBox.getItemAt(i).toString();
+            contains = item.equals(title);
+        }
+        return contains;
+    }
+
+    @Override public int getTitleIndexInComboBox(String title){
+        int index = -1;
+        int size = storedTitlesComboBox.getItemCount();
+        for(int i = 0; i < size; i++){
+            String item = storedTitlesComboBox.getItemAt(i).toString();
+            if(item.equals(title)){
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
 

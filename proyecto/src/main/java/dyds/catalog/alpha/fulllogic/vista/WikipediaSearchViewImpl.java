@@ -19,6 +19,9 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
 
     private WikipediaSearchPresenter wikipediaSearchPresenter;
 
+    //for testing
+    private String dialogTestMessageBody = null;
+
     public WikipediaSearchViewImpl(WikipediaSearchPresenter wikipediaSearchPresenter){
         this.wikipediaSearchPresenter = wikipediaSearchPresenter;
         formatView();
@@ -78,16 +81,23 @@ public class WikipediaSearchViewImpl implements WikipediaSearchView{
     }
 
     @Override public void operationFailed(String title, String message){
+        dialogTestMessageBody = message;
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
         this.setWatingStatus();
     }
 
-    //setters & getters for testing
+    
+    //methods for testing
+
     @Override public String getActualSearch() {
         return searchedPageIntroTextPane.getText();
     }
 
     @Override public void setTermOfSearch(String termOfSearch){
         searchTextField.setText(termOfSearch);
+    }
+
+    @Override public String getDialogTestMessage(){
+        return dialogTestMessageBody;
     }
 }

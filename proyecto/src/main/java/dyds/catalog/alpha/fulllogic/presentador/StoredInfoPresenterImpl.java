@@ -95,9 +95,9 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
             taskThread = new Thread(new Runnable(){
 
                 @Override public void run(){
-                    String tituloInformacion = view.getSelectedTitle();
+                    String selectedTitle = view.getSelectedTitle();
                     try {
-                        videoGameInfoModel.deleteFromLocalStorage(tituloInformacion);
+                        videoGameInfoModel.deleteFromLocalStorage(selectedTitle);
                     } 
                     catch (Exception e) {
                         view.operationFailed("Page delete", "Failed page deletion");
@@ -122,8 +122,14 @@ public class StoredInfoPresenterImpl implements StoredInfoPresenter{
         }
     }
 
-    //for testing
+    
+    //methods for testing
+
     @Override public boolean isActivellyWorking() {
         return taskThread.isAlive();
-    };
+    }
+
+    @Override public StoredInfoView getView(){
+        return view;
+    }
 }

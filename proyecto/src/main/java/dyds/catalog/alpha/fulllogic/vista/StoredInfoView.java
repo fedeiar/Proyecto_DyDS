@@ -2,6 +2,7 @@ package dyds.catalog.alpha.fulllogic.vista;
 
 import java.awt.*;
 
+
 public interface StoredInfoView {
     
     public Container getContent();
@@ -20,10 +21,14 @@ public interface StoredInfoView {
 
     public void operationSucceded(String pageDelete, String pageDeletedSuccesfully);
 
-    //setter for testing
+
+    //methods for testing
+    
     public void setSelectedTitleIndex(int index);
 
-    //getter for testing
-    public String getActualSearch();
+    public String getLocalStoredPageIntro();
 
+    public boolean doesComboBoxContainsTitle(String title);
+
+    public int getTitleIndexInComboBox(String title);
 }

@@ -13,8 +13,12 @@ public interface WikipediaSearchView {
 
     public void operationFailed(String title, String message);
 
-    //setters & getters for testing
+    
+    //methods for testing
+
     public void setTermOfSearch(String termOfSearch);
 
     public String getActualSearch();
+
+    public String getDialogTestMessage();
 }

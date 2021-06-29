@@ -89,13 +89,19 @@ public class WikipediaSearchPresenterImpl implements WikipediaSearchPresenter {
                     view.operationFailed("Page save", "Failed page saving");
                 }
             }
-
+            
         });
         taskThread.start();
     }
 
-    //for testing
+
+    //methods for testing
+
     @Override public boolean isActivellyWorking() {
         return taskThread.isAlive();
-    };
+    }
+
+    @Override public WikipediaSearchView getView(){
+        return view;
+    }
 }

@@ -3,7 +3,7 @@ package dyds.catalog.alpha.fulllogic.utils;
 public class Utilidades {
 
 
-    public static String giveFormatForStorage(String text){
+    public static String giveFormatForStorageInSQL(String text){
         return text.replace("'", "`");
     }
 
@@ -33,7 +33,6 @@ public class Utilidades {
         builder.append("<font face=\"arial\">");
 
         String textWithBold = text
-                //.replace("'", "`") //Replace to avoid SQL errors, we will have to find a workaround..
                 .replaceAll("(?i)" + term, "<b>" + term +"</b>"); //Highlight the search term in the extract
 
         builder.append(textWithBold);

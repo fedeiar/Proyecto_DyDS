@@ -10,6 +10,10 @@ public interface StoredInfoPresenter {
 
     public void setView(StoredInfoView view);
 
-    //for testing
+    
+    //methods for testing
+
     public boolean isActivellyWorking();
+
+    public StoredInfoView getView();
 }
